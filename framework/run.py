@@ -1,19 +1,10 @@
 import sys
-import yaml, os, pathlib
-from sys import path
-from pathlib import Path
 from datetime import datetime
-from core.miscellaneous import print_log, root_directory
-from core.configuration import get_connections, get_test_cases, get_settings
-from core.compare import get_aborted_object
-from core.loader import load_data_from_source
-from core.compare import compare_dataframes
-from core.export import export_test_results
+from core import *
 
-
-connections = get_connections(root_directory, sys.argv[1:])
-test_cases = get_test_cases(root_directory)
-settings = get_settings(root_directory)
+connections = get_connections(ROOT_DIRECTORY, sys.argv[1:])
+test_cases = get_test_cases(ROOT_DIRECTORY)
+settings = get_settings(ROOT_DIRECTORY)
 
 all_results = []
 for test_name in test_cases:
@@ -48,4 +39,4 @@ for test_name in test_cases:
         print_log(str(e), 40)
 
 print_log("Export results")
-export_test_results(root_directory, settings, all_results)
+export_test_results(ROOT_DIRECTORY, settings, all_results)
