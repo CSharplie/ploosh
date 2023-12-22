@@ -3,17 +3,18 @@ import yaml, os, pathlib
 from sys import path
 from pathlib import Path
 from datetime import datetime
-
-run_path = os.path.dirname(__file__)
-root_directory = os.path.abspath(f"{run_path}/../")
-path.append(f"{root_directory}/framework/resources")
-
 from core.miscellaneous import print_log
 from core.configuration import get_connections, get_test_cases, get_settings
 from core.compare import get_aborted_object
 from core.loader import load_data_from_source
 from core.compare import compare_dataframes
 from core.export import export_test_results
+
+
+
+print(path)
+exit()
+
 
 connections = get_connections(root_directory, sys.argv[1:])
 test_cases = get_test_cases(root_directory)

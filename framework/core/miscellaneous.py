@@ -1,4 +1,10 @@
 import logging
+import os
+from sys import path
+
+run_path = os.path.dirname(__file__)
+root_directory = os.path.abspath(f"{run_path}/../")
+path.append(f"{root_directory}/framework/resources")
 
 DEBUG_LEVEL_PRINT = 25
 logging.addLevelName(25, "INFO")
