@@ -22,7 +22,7 @@ def get_settings(root_directory):
 
 def get_test_cases(root_directory):
     files_list = list(pathlib.Path(f"{root_directory}/test_cases").rglob("*.yml"))
-    
+
     test_cases = None
     for file_path in files_list:
         with open(file_path) as f:
@@ -32,5 +32,5 @@ def get_test_cases(root_directory):
             else:
                 for key in configuration.keys():
                     test_cases[key] = configuration[key]
-                    
+
     return test_cases

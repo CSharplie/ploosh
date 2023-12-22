@@ -2,7 +2,7 @@ import pandas as pd
 import urllib
 
 from sqlalchemy import create_engine
-from sqlalchemy.engine import URL 
+from sqlalchemy.engine import URL
 from core.miscellaneous import get_parameter_value
 
 def get_data_from_mssql(test_case_definition, connection):

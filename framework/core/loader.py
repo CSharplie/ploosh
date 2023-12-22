@@ -1,4 +1,4 @@
-from datetime import datetime 
+from datetime import datetime
 from core.connectors import get_data_from_connector
 
 def load_data_from_source(dataset_definition, connections):

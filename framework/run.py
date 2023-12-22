@@ -2,7 +2,7 @@ import sys
 import yaml, os, pathlib
 from sys import path
 from pathlib import Path
-from datetime import datetime 
+from datetime import datetime
 
 run_path = os.path.dirname(__file__)
 root_directory = os.path.abspath(f"{run_path}/../")
@@ -32,7 +32,7 @@ for test_name in test_cases:
     compare_options = None
     if "compare_options" in current_test_case.keys():
         compare_options = current_test_case["compare_options"]
-   
+
     start_time = datetime.now()
     try:
         print_log("Load source dataset")

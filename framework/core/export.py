@@ -58,14 +58,14 @@ def export_test_trx(export_folder, all_results):
 
     execution_id_list = []
     test_id_list = []
-   
+
     for i in list(range(0, len(all_results))):
         execution_id_list.append(str(uuid.uuid4()))
         test_id_list.append(str(uuid.uuid4()))
 
 
     xml_unit_test_result = ""
-    xml_test_definitions = ""  
+    xml_test_definitions = ""
     xml_test_entry = ""
 
     count_failed = 0
@@ -120,7 +120,7 @@ def export_test_trx(export_folder, all_results):
         xml_unit_test_result += f"<UnitTestResult executionId='{execution_id}' testId='{test_id}' testName='{test_name}' duration='{duration}' startTime='{state_time}' endTime='{end_time}' outcome='{state}' testListId='{test_list_id}'>{output_message_xml}{result_files_xml}</UnitTestResult>"
         xml_test_definitions += f"<UnitTest id='{test_id}' name='{test_name}'><Execution id='{execution_id}'/></UnitTest>"
         xml_test_entry += f"<TestEntry testId='{test_id}' executionId='{execution_id}' testListId='{test_list_id}'/>"
-    
+
         global_start_date = np.min(np.array(start_times)).strftime(date_format)
         global_end_date = np.max(np.array(end_times)).strftime(date_format)
 
@@ -139,7 +139,7 @@ def export_test_trx(export_folder, all_results):
                     <Output StdOut='' />
                 </ResultSummary>
             </TestRun>"""
-        
+
     with open(export_file_path, "w") as f:
         f.write(xml.dom.minidom.parseString(xml_string).toprettyxml())
         f.close()

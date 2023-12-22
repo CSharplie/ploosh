@@ -1,4 +1,4 @@
-from datetime import datetime 
+from datetime import datetime
 import pandas as pd
 
 
@@ -49,9 +49,9 @@ def compare_dataframes(test_name, df_source, df_expected, compare_options):
     end_time = datetime.now()
     duration = (end_time - start_time).microseconds / 60000000
 
-    if error_message is None: 
+    if error_message is None:
         state = "passed"
-    else: 
+    else:
         state = "failed"
 
     return {
