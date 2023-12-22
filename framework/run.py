@@ -3,17 +3,12 @@ import yaml, os, pathlib
 from sys import path
 from pathlib import Path
 from datetime import datetime
-from core.miscellaneous import print_log
+from core.miscellaneous import print_log, root_directory
 from core.configuration import get_connections, get_test_cases, get_settings
 from core.compare import get_aborted_object
 from core.loader import load_data_from_source
 from core.compare import compare_dataframes
 from core.export import export_test_results
-
-
-
-print(path)
-exit()
 
 
 connections = get_connections(root_directory, sys.argv[1:])
