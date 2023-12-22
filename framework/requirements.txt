@@ -3,3 +3,4 @@ pyadomd==0.1.1
 pyodbc==4.0.39
 openpyxl==3.1.2
 sqlalchemy==2.0.20
+pyjeb==0.1.10

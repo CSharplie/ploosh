@@ -1,17 +1,29 @@
 import pathlib
 import re
 import yaml
+from pyjeb import control_and_setup
+from core.connectors import get_connection_configuration
 
 def get_connections(root_directory, argv):
     with open(f"{root_directory}/connections.yml") as f:
         content = f.read()
-        for arg in argv:
-            result = re.search(r"v_([\w]+)=(.*)", arg)
-            if result is not None:
-                name = result.group(1)
-                value = result.group(2)
-                content = content.replace(f"{{{name}}}", value)
         connections = yaml.safe_load(content)
+
+    # get variables from args and convert to dict
+    variables = {}
+    for arg in argv:
+        result = re.search(r"v_([\w]+)=(.*)", arg)
+        if result is not None:
+            name = result.group(1)
+            value = result.group(2)
+            variables[name] = value
+
+    # apply control on each configuration
+    for connection_name in connections:
+        connection_type = connections[connection_name]["type"]
+        connection_configuration = get_connection_configuration(connection_type)
+        connections[connection_name] = control_and_setup(connections[connection_name], connection_configuration, variables=variables, functions=None)
+
     return connections
 
 def get_settings(root_directory):

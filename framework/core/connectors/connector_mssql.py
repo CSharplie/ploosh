@@ -5,7 +5,36 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from core.miscellaneous import get_parameter_value
 
-def get_data_from_mssql(test_case_definition, connection):
+def get_connection_configuration():
+    return [
+        {
+            "name": "mode",
+            "validset": ["connection_string", "password"],
+            "default" : "connection_string"
+        },
+        {
+            "name": "hostname",
+            "default" : None
+        },
+        {
+            "name": "database",
+            "default" : None
+        },
+        {
+            "name": "username",
+            "default" : None
+        },
+        {
+            "name": "password",
+            "default" : None
+        },
+        {
+            "name": "driver",
+            "default" : "SQL Server"
+        }
+    ]
+
+def get_data(test_case_definition, connection):
     query = get_parameter_value(test_case_definition, "query", "03x003")
     mode = get_parameter_value(connection, "mode", "03x003")
 
