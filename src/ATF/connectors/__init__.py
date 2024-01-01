@@ -3,6 +3,7 @@ import sys
 import inspect
 from connectors.connector_mssql import ConnectorMSSQL
 from connectors.connector_csv import ConnectorCSV
+from connectors.connector_mysql import ConnectorMYSQL
 
 def get_connectors():
     """Get all existings connectors"""

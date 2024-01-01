@@ -36,7 +36,8 @@ class ExporterTRX(Exporter):
         error_message = html.escape(current_case.error_message, quote = False)
 
         output_message_xml = f"<Output><ErrorInfo><Message>{error_message}</Message></ErrorInfo></Output>"
-
+        result_files_xml = ""
+        
         if current_case.df_compare_gap is not None:
             detail_path = os.path.abspath(f"{output_folder}/in/{execution_id}")
             detail_file_path = os.path.abspath(f"{detail_path}/{case_name}.xlsx")
