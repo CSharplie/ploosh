@@ -153,5 +153,11 @@ class Case:
         self.compare_duration.calculate_duration()
 
         self.global_duration.start = self.source.duration.start
-        self.global_duration.end = np.max(np.array([self.source.duration.end, self.expected.duration.end, self.compare_duration.end]))
+
+        ends = []
+        if self.source.duration.end is not None: ends.append(self.source.duration.end)
+        if self.expected.duration.end is not None: ends.append(self.expected.duration.end)
+        if self.compare_duration.end is not None: ends.append(self.compare_duration.end)
+
+        self.global_duration.end = np.max(np.array(ends))
         self.global_duration.calculate_duration()
