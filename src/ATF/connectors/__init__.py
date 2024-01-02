@@ -1,15 +1,17 @@
 """Data connectors"""
-import sys
+from importlib import import_module
+import os
 import inspect
-from connectors.connector_mssql import ConnectorMSSQL
-from connectors.connector_csv import ConnectorCSV
-from connectors.connector_mysql import ConnectorMYSQL
 
 def get_connectors():
     """Get all existings connectors"""
     connectors = {}
-    for name, obj in inspect.getmembers(sys.modules["connectors"]):
-        if inspect.isclass(obj) and name.startswith("Connector"):
-            current_connector = obj()
-            connectors[current_connector.name] = current_connector
+
+    files = [name for name in os.listdir(os.path.dirname(__file__)) if name.endswith(".py") and name.startswith("connector_")]
+    for file in files:
+        module_mame = file[:-3]
+        for name, obj in inspect.getmembers(import_module(f"connectors.{module_mame}")):
+            if inspect.isclass(obj) and name.startswith("Connector"):
+                current_connector = obj()
+                connectors[current_connector.name] = current_connector
     return connectors

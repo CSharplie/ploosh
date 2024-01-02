@@ -1,16 +1,17 @@
 """Result exporter"""
-import sys
+from importlib import import_module
+import os
 import inspect
-from exporters.exporter_json import ExporterJSON
-from exporters.exporter_csv import ExporterCSV
-from exporters.exporter_trx import ExporterTRX
 
 def get_exporters():
     """Get all existings exporters"""
+    connectors = {}
 
-    exporters = {}
-    for name, obj in inspect.getmembers(sys.modules["exporters"]):
-        if inspect.isclass(obj) and name.startswith("Exporter"):
-            current_exporter = obj()
-            exporters[current_exporter.name] = current_exporter
-    return exporters
+    files = [name for name in os.listdir(os.path.dirname(__file__)) if name.endswith(".py") and name.startswith("exporter_")]
+    for file in files:
+        module_mame = file[:-3]
+        for name, obj in inspect.getmembers(import_module(f"exporters.{module_mame}")):
+            if inspect.isclass(obj) and name.startswith("Exporter"):
+                current_connector = obj()
+                connectors[current_connector.name] = current_connector
+    return connectors
