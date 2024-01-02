@@ -1,30 +1,34 @@
 """Module for log functions"""
+from datetime import datetime
 import logging
+from colorama import init, Fore, Back, Style
 
-INFO_LEVEL_PRINT = 25
-ERROR_LEVEL_PRINT = 40
+LEVELS_PRINT = {
+    "INFO": Fore.GREEN,
+    "WARNING": Fore.YELLOW,
+    "ERROR": Fore.RED
+}
 
 LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
-LOG_FORMAT_STRING = "[%(asctime)s] [%(levelname)s] [%(message)s]"
+LOG_FORMAT_STRING = f"{Fore.CYAN}[%(asctime)s]{Style.RESET_ALL} <LEVEL_COLOR>[%(levelname)s]{Style.RESET_ALL}[%(message)s]"
 
-logging.addLevelName(INFO_LEVEL_PRINT, "INFO")
-def logging_print(self, message, *args, **kws):
-    """Print with info level"""
-    self._log(INFO_LEVEL_PRINT, message, args, **kws)
-
-logging.Logger.print = logging_print
-logging.basicConfig(format = LOG_FORMAT_STRING, datefmt = LOG_FORMAT_DATE, level = INFO_LEVEL_PRINT)
 
 class Log:
     """Log class contain all functions to log"""
     @staticmethod
-    def print(message:str, level:int = INFO_LEVEL_PRINT):
+    def print(message:str, level:str = "INFO"):
         """Print a message with all metadata informations"""
-        log = logging.getLogger()
-        log.setLevel(level)
-        log.log(level, message)
+
+        date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        print(f"{Fore.CYAN}[{date_time}] {LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {message}")
 
     @staticmethod
     def print_error(message:str):
         """Print an error message with all metadata informations"""
-        Log.print(message, ERROR_LEVEL_PRINT)
+        Log.print(message, "ERROR")
+
+    @staticmethod
+    def print_warning(message:str):
+        """Print an warning message with all metadata informations"""
+        Log.print(message, "WARNING")
