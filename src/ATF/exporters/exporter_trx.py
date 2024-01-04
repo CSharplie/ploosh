@@ -63,8 +63,9 @@ class ExporterTRX(Exporter):
         for i, case_name in enumerate(cases):
             current_case = cases[case_name]
 
-            start_times.append(current_case.global_duration.start)
-            end_times.append(current_case.global_duration.end)
+            if current_case.global_duration.start is not None:
+                start_times.append(current_case.global_duration.start)
+                end_times.append(current_case.global_duration.end)
 
             execution_id = execution_id_list[i]
             test_id = test_id_list[i]
@@ -90,8 +91,8 @@ class ExporterTRX(Exporter):
             xml_test_definitions += f"<UnitTest id='{test_id}' name='{case_name}'><Execution id='{execution_id}'/></UnitTest>"
             xml_test_entry += f"<TestEntry testId='{test_id}' executionId='{execution_id}' testListId='{test_list_id}'/>"
 
-a            global_start_date = Exporter.date_to_string(np.min(np.array(start_times)))
-            global_end_date = Exporter.date_to_string(np.max(np.array(end_times)))
+        global_start_date = Exporter.date_to_string(np.min(np.array(start_times)))
+        global_end_date = Exporter.date_to_string(np.max(np.array(end_times)))
 
         xml_string = f"""<?xml version='1.0' encoding='UTF-8'?>
             <TestRun xmlns='http://microsoft.com/schemas/VisualStudio/TeamTest/2010' id='{trx_id}'>
