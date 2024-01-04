@@ -9,11 +9,14 @@ class ConnectorCSV(Connector):
     def __init__(self):
         self.name = "CSV"
         self.connection_definition = []
-        self.configuration_definition = [{ "name": "path" }]
+        self.configuration_definition = [
+            { "name": "path" },
+            { "name": "delimiter", "default": "," }
+        ]
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
         path = configuration["path"]
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, delimiter=configuration["delimiter"])
         return df
