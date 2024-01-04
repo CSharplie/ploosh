@@ -12,8 +12,8 @@
             "args": ["--connections", "connections.yml"
                 , "--cases", "./test_cases/"
                 , "--export", "trx"
-                //, "--p_mysql_password_db", "qbN1EQM2i6"
                 , "--p_mysql_password_db", "gQ6HLvrh4Tm6C73ReF4K"
+                , "--p_postgresql_password_db", "gQ6HLvrh4Tm6C73ReF4K"
                 , "--p_mssql_password_db", "gQ6HLvrh4Tm6C73ReF4K"],
             "console": "integratedTerminal",
             "justMyCode": true

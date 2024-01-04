@@ -49,7 +49,7 @@ class Duration:
         if self.end is not None:
             self.duration = (self.end - self.start).microseconds / 60000000
 
-@dataclass
+
 class CaseItem:
     """Structure of case item (source or expected)"""
 
@@ -57,11 +57,11 @@ class CaseItem:
     connection = None
     configuration = None
 
-    duration = Duration()
-
+    duration = None
     df_data = None
 
     def __init__(self, configuration, connector, connection):
+        self.duration = Duration()
         self.connector = connector
         self.connection = connection
         self.configuration = configuration
@@ -74,8 +74,8 @@ class Case:
     source = None
     expected = None
 
-    global_duration = Duration()
-    compare_duration = Duration()
+    global_duration = None
+    compare_duration = None
 
     state = "notExecuted"
     error_type = None
@@ -90,6 +90,8 @@ class Case:
         self.expected = CaseItem(configuration["expected"], expected.connector, expected.connection)
         self.options = options
         self.disabled = disabled
+        self.global_duration = Duration()
+        self.compare_duration = Duration()
 
     def load_data(self, obj_type:str):
         """ Load data from connector"""
@@ -180,12 +182,14 @@ class Case:
         self.expected.duration.calculate_duration()
         self.compare_duration.calculate_duration()
 
-        self.global_duration.start = self.source.duration.start
-
         ends = []
         if self.source.duration.end is not None: ends.append(self.source.duration.end)
         if self.expected.duration.end is not None: ends.append(self.expected.duration.end)
         if self.compare_duration.end is not None: ends.append(self.compare_duration.end)
 
-        self.global_duration.end = np.max(np.array(ends))
+        if len(ends) == 0:
+            self.global_duration.duration = 0
+        else:
+            self.global_duration.start = self.source.duration.start
+            self.global_duration.end = np.max(np.array(ends))
         self.global_duration.calculate_duration()
