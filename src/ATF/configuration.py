@@ -15,11 +15,16 @@ class Configuration:
     connections = {}
 
     case_definition = [
+        { "name": "disabled", "type": "boolean", "default": False },
+        { "name": "options", "type": "dict", "default": {} },
+        { "name": "options.ignore", "type": "list", "default": None },
+        { "name": "options.sort", "type": "list", "default": None },
         { "name": "source", "type": "dict" },
-        { "name": "source.type"},
-        { "name": "source.connection", "default": None},
+        { "name": "source.type" },
+        { "name": "source.connection", "default": None },
         { "name": "expected", "type": "dict" },
-        { "name": "expected.connection", "default": None},
+        { "name": "expected.connection", "default": None },
+        { "name": "expected.connection", "default": None },
     ]
 
     def __init__(self, parameters:Parameters, connectors:dict, exporters:dict):
@@ -95,7 +100,8 @@ class Configuration:
                     case["expected"] = control_and_setup(case["expected"], expected_configuration_definition, self.parameters.variables, None)
                     expected_definition = ConnectionDescription(expected_connector, self.get_connection(case["expected"]["connection"]))
 
-                    cases[case_name] = Case(configuration, source_definition, expected_definition)
+
+                    cases[case_name] = Case(configuration, source_definition, expected_definition, case["options"], case["disabled"])
 
         return cases
 

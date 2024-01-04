@@ -5,6 +5,28 @@ import numpy as np
 import pandas as pd
 
 @dataclass
+class StateStatistics:
+    """Statistics of test case executions"""
+    not_executed = 0
+    executed = 0
+    passed = 0
+    failed = 0
+    error = 0
+    total = 0
+
+    def add_state(self, state):
+        """add new state to statistics"""
+        if state == "passed": self.passed += 1
+        if state == "failed": self.failed += 1
+        if state == "error": self.error += 1
+        if state == "notExecuted": self.not_executed += 1
+
+        if state != "notExecuted": self.executed += 1
+
+        self.total += 1
+
+
+@dataclass
 class ConnectionDescription:
     """Tuple of connection and connector"""
     connector = None
@@ -47,21 +69,27 @@ class CaseItem:
 class Case:
     """Test case item"""
 
+    options = None
+
     source = None
     expected = None
 
     global_duration = Duration()
     compare_duration = Duration()
 
-    state = None
+    state = "notExecuted"
     error_type = None
     error_message = None
 
     df_compare_gap = None
 
-    def __init__(self, configuration, source, expected):
+    disabled = None
+
+    def __init__(self, configuration, source, expected, options, disabled):
         self.source = CaseItem(configuration["source"], source.connector, source.connection)
         self.expected = CaseItem(configuration["expected"], expected.connector, expected.connection)
+        self.options = options
+        self.disabled = disabled
 
     def load_data(self, obj_type:str):
         """ Load data from connector"""
@@ -101,9 +129,9 @@ class Case:
             self.error_message = f"The count in source dataset ({count_source}) is differant than the count the in expected dataset ({count_expected})"
 
         if self.error_message is None and count_source != 0:
-            #if compare_options is not None and compare_options["ignore"] is not None:
-            #    df_source = df_source.drop(columns = compare_options["ignore"], axis = 1, errors = "ignore")
-            #    df_expected = df_expected.drop(columns = compare_options["ignore"], axis = 1, errors = "ignore")
+            if self.options is not None and self.options["ignore"] is not None:
+                self.source.df_data = self.source.df_data.drop(columns = self.options["ignore"], axis = 1, errors = "ignore")
+                self.expected.df_data = self.expected.df_data.drop(columns = self.options["ignore"], axis = 1, errors = "ignore")
 
             df_columns_source = pd.DataFrame({ "columns": self.source.df_data.columns }).sort_values(by = ["columns"]).reset_index()
             df_columns_expected = pd.DataFrame({ "columns": self.expected.df_data.columns }).sort_values(by = ["columns"]).reset_index()
@@ -120,9 +148,9 @@ class Case:
                     self.df_compare_gap = df_compare
 
         if self.error_message is None and count_source != 0:
-            #if compare_options is not None and compare_options["sort"] is not None:
-            #    df_source = df_source.sort_values(by = compare_options["sort"]).reset_index()
-            #    df_expected = df_expected.sort_values(by = compare_options["sort"]).reset_index()
+            if self.options is not None and self.options["sort"] is not None:
+                self.source.df_data = self.source.df_data.sort_values(by = self.options["sort"]).reset_index()
+                self.expected.df_data = self.expected.df_data.sort_values(by = self.options["sort"]).reset_index()
 
             df_compare = self.source.df_data.compare(self.expected.df_data, result_names = ("source", "expected"))
             if len(df_compare) != 0 :

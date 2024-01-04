@@ -1,29 +1,12 @@
 """Export test case result to TRX format"""
 
-import dataclasses
 import html
 import os
 import uuid
 import xml.dom.minidom
 import numpy as np
 from exporters.exporter import Exporter
-
-@dataclasses.dataclass
-class StateCounter:
-    """Store number of states occurence"""
-    count_failed = 0
-    count_passed = 0
-    count_errors = 0
-
-    def add_state(self, state):
-        """Add new state in the object"""
-        match state:
-            case "failed":
-                self.count_failed += 1
-            case "passed":
-                self.count_passed += 1
-            case _:
-                self.count_errors += 1
+from case import StateStatistics 
 
 class ExporterTRX(Exporter):
     """Export test case result to TRX format"""
@@ -73,7 +56,7 @@ class ExporterTRX(Exporter):
         xml_test_definitions = ""
         xml_test_entry = ""
 
-        state_counter = StateCounter()
+        state_statistics = StateStatistics()
 
         start_times = []
         end_times = []
@@ -86,12 +69,12 @@ class ExporterTRX(Exporter):
             execution_id = execution_id_list[i]
             test_id = test_id_list[i]
 
-            state_counter.add_state(current_case.state)
+            state_statistics.add_state(current_case.state)
 
             output_message_xml = ""
             result_files_xml = ""
 
-            if current_case.state != "passed":
+            if current_case.state != "passed" and current_case.error_message is not None:
                 output_message_xml, result_files_xml = self.get_failed_blocks(case_name, current_case, execution_id_list[i], output_folder)
 
             xml_unit_test_result += f"""<UnitTestResult
@@ -120,17 +103,17 @@ class ExporterTRX(Exporter):
                 <TestLists><TestList id='{test_list_id}' name='All Loaded Results'/></TestLists>
                 <ResultSummary outcome='Complete'>
                     <Counters 
-                        total='{len(cases)}'
-                        executed='{len(cases)}'
-                        passed='{state_counter.count_passed}'
-                        failed='{state_counter.count_failed}'
-                        error='{state_counter.count_errors}'
+                        total='{state_statistics.total}'
+                        executed='{state_statistics.executed}'
+                        passed='{state_statistics.passed}'
+                        failed='{state_statistics.failed}'
+                        error='{state_statistics.error}'
                         timeout='0'
                         aborted='0'
                         inconclusive='0'
                         passedButRunAborted='0'
                         notRunnable='0'
-                        notExecuted='0'
+                        notExecuted='{state_statistics.not_executed}'
                         disconnected='0'
                         warning='0'
                         completed='0'

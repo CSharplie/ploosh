@@ -1,11 +1,10 @@
 """Module for log functions"""
 from datetime import datetime
-import logging
-from colorama import init, Fore, Back, Style
+from colorama import Fore, Style
 
 LEVELS_PRINT = {
     "INFO": Fore.GREEN,
-    "WARNING": Fore.YELLOW,
+    "WARN": Fore.YELLOW,
     "ERROR": Fore.RED
 }
 
@@ -31,4 +30,4 @@ class Log:
     @staticmethod
     def print_warning(message:str):
         """Print an warning message with all metadata informations"""
-        Log.print(message, "WARNING")
+        Log.print(message, "WARN")
