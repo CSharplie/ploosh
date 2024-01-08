@@ -52,9 +52,20 @@ def print_compare_state(current_case):
         state_item["function"](f"Error type   : {state_item['color']}{current_case.error_type.upper()}")
         state_item["function"](f"Error message: {state_item['color']}{current_case.error_message}")
 
-def print_statistics(statistics):
-    message = "Summary: "
-    message += f"passed: {Fore.GREEN}{statistics.passed}{Style.RESET_ALL}, "
+def print_summary(cases, statistics):
+    for case_name in cases:
+        state = cases[case_name].state
+        color = Fore.CYAN
+
+        if state == "error": color = Fore.RED
+        if state == "passed": color = Fore.GREEN
+        if state == "failed": color = Fore.YELLOW
+
+        if state == "not_executed": state = "skipped"
+
+        Log.print(f"{case_name} [...] {color}{state}")
+
+    message = f"passed: {Fore.GREEN}{statistics.passed}{Style.RESET_ALL}, "
     message += f"failed: {Fore.YELLOW}{statistics.failed}{Style.RESET_ALL}, "
     message += f"error: {Fore.RED}{statistics.error}{Style.RESET_ALL}, "
     message += f"skipped: {Fore.CYAN}{statistics.not_executed}{Style.RESET_ALL}"
@@ -65,7 +76,7 @@ def main():
     """Main function"""
     statistics = StateStatistics()
 
-    Log.print(f"{Fore.CYAN}Initialization")
+    Log.print(f"{Fore.CYAN}Initialization[...]")
     try:
         Log.print("Load connectors")
         connectors = get_connectors()
@@ -80,16 +91,16 @@ def main():
         Log.print_error(str(e))
         exit(1)
 
-    Log.print(f"{Fore.CYAN}Start processing tests cases")
+    Log.print(f"{Fore.CYAN}Start processing tests cases[...]")
     for i, case_name in enumerate(cases):
         current_case = cases[case_name]
         
         if current_case.disabled:
-            Log.print(f"{Fore.MAGENTA}Skip test case '{case_name}' ({i + 1}/{len(cases)})")
+            Log.print(f"{Fore.MAGENTA}{case_name} [...] ({i + 1}/{len(cases)}) - Skipped")
             statistics.add_state(current_case.state)
             continue
 
-        Log.print(f"{Fore.MAGENTA}Process test case '{case_name}' ({i + 1}/{len(cases)})")
+        Log.print(f"{Fore.MAGENTA}{case_name} [...] ({i + 1}/{len(cases)}) - Started")
 
         Log.print("Load source data")
         if not load_data(current_case, "source", statistics):
@@ -107,10 +118,11 @@ def main():
 
         current_case.calculate_durations()
 
-    Log.print(f"{Fore.CYAN}Export results")
+    Log.print(f"{Fore.CYAN}Export results[...]")
     configuration.exporter.export(cases)
-    
-    print_statistics(statistics)
+    Log.print(f"{Fore.CYAN}Summary[...]")
+
+    print_summary(cases, statistics)
 
     if statistics.error > 0:
         exit(1)
