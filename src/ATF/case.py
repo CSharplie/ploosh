@@ -135,8 +135,8 @@ class Case:
                 self.source.df_data = self.source.df_data.drop(columns = self.options["ignore"], axis = 1, errors = "ignore")
                 self.expected.df_data = self.expected.df_data.drop(columns = self.options["ignore"], axis = 1, errors = "ignore")
 
-            df_columns_source = pd.DataFrame({ "columns": self.source.df_data.columns }).sort_values(by = ["columns"]).reset_index()
-            df_columns_expected = pd.DataFrame({ "columns": self.expected.df_data.columns }).sort_values(by = ["columns"]).reset_index()
+            df_columns_source = pd.DataFrame({ "columns": self.source.df_data.columns }).sort_values(by = ["columns"]).reset_index(drop=True)
+            df_columns_expected = pd.DataFrame({ "columns": self.expected.df_data.columns }).sort_values(by = ["columns"]).reset_index(drop=True)
 
             message = "The headers are differant between source dataset and expected dataset"
             if len(df_columns_source) != len(df_columns_expected):
@@ -151,8 +151,8 @@ class Case:
 
         if self.error_message is None and count_source != 0:
             if self.options is not None and self.options["sort"] is not None:
-                self.source.df_data = self.source.df_data.sort_values(by = self.options["sort"]).reset_index()
-                self.expected.df_data = self.expected.df_data.sort_values(by = self.options["sort"]).reset_index()
+                self.source.df_data = self.source.df_data.sort_values(by = self.options["sort"]).reset_index(drop=True)
+                self.expected.df_data = self.expected.df_data.sort_values(by = self.options["sort"]).reset_index(drop=True)
 
             df_compare = self.source.df_data.compare(self.expected.df_data, result_names = ("source", "expected"))
             if len(df_compare) != 0 :
