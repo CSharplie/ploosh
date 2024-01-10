@@ -61,9 +61,9 @@ def print_summary(cases, statistics):
         if state == "passed": color = Fore.GREEN
         if state == "failed": color = Fore.YELLOW
 
-        if state == "not_executed": state = "skipped"
+        if state == "notExecuted": state = "skipped"
 
-        Log.print(f"{case_name} [...] {color}{state}")
+        Log.print(f"{case_name} [...] {color}{state.upper()}")
 
     message = f"passed: {Fore.GREEN}{statistics.passed}{Style.RESET_ALL}, "
     message += f"failed: {Fore.YELLOW}{statistics.failed}{Style.RESET_ALL}, "
@@ -124,7 +124,7 @@ def main():
 
     print_summary(cases, statistics)
 
-    if statistics.error > 0:
+    if statistics.error > 0 and parameters.failure_on_error:
         exit(1)
 
 if __name__ == "__main__":

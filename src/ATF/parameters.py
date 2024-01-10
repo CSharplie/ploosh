@@ -7,6 +7,7 @@ class Parameters:
     path_cases = None
     path_output = None
     export = None
+    failure_on_error = None
     variables = {}
 
     def __init__(self, argv:list):
@@ -16,6 +17,7 @@ class Parameters:
         self.path_cases = self.get_value("cases", "./cases")
         self.path_output = self.get_value("output", "./output")
         self.export = self.get_value("export", "JSON").upper()
+        self.failure_on_error = self.get_value("failure", True)
 
     def set_args(self, args):
         """Set dictionary of args with cleaned name"""
@@ -37,7 +39,10 @@ class Parameters:
     def get_value(self, long_name:str, default):
         """Get value or default value from args"""
         if long_name in self.args:
-            return self.args[long_name]
+            value = self.args[long_name]
+            if str(value).upper() == "TRUE": return True
+            if str(value).upper() == "FALSE": return False
+            return value
 
         return default
 
