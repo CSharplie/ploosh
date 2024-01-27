@@ -75,5 +75,3 @@ class Log:
         Log.print("#[...]#", filler=" ")
         Log.print("#[...]https://github.com/CSharplie/Ploosh #", filler=" ")
         Log.print("[...]", filler="#")
-
-        exit()
