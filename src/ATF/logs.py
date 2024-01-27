@@ -23,15 +23,16 @@ LOG_FORMAT_STRING = f"{Fore.CYAN}[%(asctime)s]{Style.RESET_ALL} <LEVEL_COLOR>[%(
 class Log:
     """Log class contain all functions to log"""
     @staticmethod
-    def print(message:str, level:str = "INFO"):
+    def print(message:str, level:str = "INFO", filler:str = "."):
         """Print a message with all metadata informations"""
 
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-
+        count_filler = 1 if message.count("[...]") == 0 else message.count("[...]")
+        
         raw_message = re.sub(r'[^\w ]*[\d]+m', '', message)
         print_length = len(raw_message)
-        feed_characters = "." * (CONSOLE_LOG_SPACE - print_length + 5)
+        feed_characters = filler * math.trunc((CONSOLE_LOG_SPACE - print_length + (5 * count_filler)) / count_filler)
         message = message.replace("[...]", feed_characters)
 
         rows_to_print = [message]
@@ -58,3 +59,18 @@ class Log:
     def print_warning(message:str):
         """Print an warning message with all metadata informations"""
         Log.print(message, "WARN")
+
+    @staticmethod
+    def print_logo():
+        """Print the ATF logo"""
+
+        Log.print("[...]", filler="#")
+        Log.print("#[...]     _      _____   _____ [...]#", filler=" ")
+        Log.print("#[...]    / \    |_   _| |  ___|[...]#", filler=" ")
+        Log.print("#[...]   / _ \     | |   | |_   [...]#", filler=" ")
+        Log.print("#[...]  / ___ \    | |   |  _|  [...]#", filler=" ")
+        Log.print("#[...] /_/   \_\   |_|   |_|    [...]#", filler=" ")
+        Log.print("#[...]Automatized Testing Framework [...]#", filler=" ")
+        Log.print("#[...]#", filler=" ")
+        Log.print("#[...] by Charlie Collier: https://github.com/CSharplie/TWC #", filler=" ")
+        Log.print("[...]", filler="#")

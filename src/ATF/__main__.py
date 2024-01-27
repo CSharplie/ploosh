@@ -74,6 +74,9 @@ def print_summary(cases, statistics):
 
 def main():
     """Main function"""
+
+    Log.print_logo()
+
     statistics = StateStatistics()
 
     Log.print(f"{Fore.CYAN}Initialization[...]")
