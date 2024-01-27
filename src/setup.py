@@ -11,7 +11,7 @@ setup (
     packages = find_packages(),
     entry_points = {
         "console_scripts": [
-            "ploosh = ATF.__main__:main"
+            "ploosh = ploosh.__main__:main"
         ]
     },
     install_requires=[
