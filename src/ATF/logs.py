@@ -65,12 +65,15 @@ class Log:
         """Print the ATF logo"""
 
         Log.print("[...]", filler="#")
-        Log.print("#[...]     _      _____   _____ [...]#", filler=" ")
-        Log.print("#[...]    / \    |_   _| |  ___|[...]#", filler=" ")
-        Log.print("#[...]   / _ \     | |   | |_   [...]#", filler=" ")
-        Log.print("#[...]  / ___ \    | |   |  _|  [...]#", filler=" ")
-        Log.print("#[...] /_/   \_\   |_|   |_|    [...]#", filler=" ")
-        Log.print("#[...]Automatized Testing Framework [...]#", filler=" ")
+        Log.print("#[...]       .__                      .__      [...]#", filler=" ")
+        Log.print("#[...]______ |  |   ____   ____  _____|  |__   [...]#", filler=" ")
+        Log.print("#[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \  [...]#", filler=" ")
+        Log.print("#[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \ [...]#", filler=" ")
+        Log.print("#[...]|   __/|____/\____/ \____/____  |___|  / [...]#", filler=" ")
+        Log.print("#[...]|__|                          \/     \/  [...]#", filler=" ")
+        Log.print("#[...]Automatized Testing Framework[...]#", filler=" ")
         Log.print("#[...]#", filler=" ")
-        Log.print("#[...] by Charlie Collier: https://github.com/CSharplie/TWC #", filler=" ")
+        Log.print("#[...]https://github.com/CSharplie/Ploosh #", filler=" ")
         Log.print("[...]", filler="#")
+
+        exit()

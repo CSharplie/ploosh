@@ -2,8 +2,8 @@
 from setuptools import setup, find_packages
 
 setup (
-    name = "ATF",
-    version = "0.0.1",
+    name = "ploosh",
+    version = "0.1.0",
     platforms="Any",
     long_description="tests",
     python_requires=">=3.6",
@@ -11,7 +11,7 @@ setup (
     packages = find_packages(),
     entry_points = {
         "console_scripts": [
-            "ATF = ATF.__main__:main"
+            "ploosh = ATF.__main__:main"
         ]
     },
     install_requires=[
