@@ -1,11 +1,20 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/framework/run.py",
+            "program": "${workspaceRoot}/src/ATF/__main__.py",
+            "args": ["--connections", "connections.yml"
+                , "--cases", "./test_cases/"
+                , "--export", "trx"
+                , "--p_mysql_password_db", "gQ6HLvrh4Tm6C73ReF4K"
+                , "--p_postgresql_password_db", "gQ6HLvrh4Tm6C73ReF4K"
+                , "--p_mssql_password_db", "gQ6HLvrh4Tm6C73ReF4K"],
             "console": "integratedTerminal",
             "justMyCode": true
         }
