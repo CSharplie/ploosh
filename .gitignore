@@ -1,5 +1,10 @@
-**/__pycache__
-/.venv
+.venv
+.pytest_cache
+__pycache__
+src/build
+src/dist
+src/ploosh.egg-info
+data
 test_cases
 output
 connections.yml
