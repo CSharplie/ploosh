@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-with open("../README.md", encoding="UTF-8") as f:
+with open("../readme.md", encoding="UTF-8") as f:
     long_description = "".join(f.readlines())
 
 # replace relative link by absolute github link
@@ -11,7 +11,7 @@ long_description = long_description.replace("(/", "(https://github.com/CSharplie
 
 setup (
     name = "ploosh",
-    version = "0.1.0",
+    version = "0.1.2",
     description="A framework to automatize your tests for data projects",
     long_description=long_description,
     long_description_content_type="text/markdown",
