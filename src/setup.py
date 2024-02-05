@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-with open("../README.md", encoding="UTF-8") as f:
+with open("../readme.md", encoding="UTF-8") as f:
     long_description = "".join(f.readlines())
 
 # replace relative link by absolute github link
