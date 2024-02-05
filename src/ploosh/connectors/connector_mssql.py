@@ -3,6 +3,7 @@
 
 import pandas as pd
 from sqlalchemy import create_engine
+import urllib
 from connectors.connector import Connector
 
 class ConnectorMSSQL(Connector):
@@ -33,12 +34,22 @@ class ConnectorMSSQL(Connector):
                 "default" : None
             },
             {
-                "name":"port",
+                "name": "port",
                 "default": 1433,
                 "type": "integer"
             },
             {
-                "name":"driver",
+                "name": "encrypt",
+                "default": True,
+                "type": "boolean"
+            },
+            {
+                "name": "trust_server_certificate",
+                "default": False,
+                "type": "boolean"
+            },
+            {
+                "name": "driver",
                 "default": "ODBC Driver 18 for SQL Server",
             },
             {
@@ -59,8 +70,11 @@ class ConnectorMSSQL(Connector):
             username = connection["username"]
             password = connection["password"]
             database = connection["database"]
+            trust_server_certificate = "yes" if connection["trust_server_certificate"] else "no"
+            encrypt = "yes" if connection["encrypt"] else "no"
 
-            connection_string = f"mssql+pyodbc://{username}:{password}@{hostname}:{port}/{database}?driver={driver}"
+            odbc_connect = urllib.parse.quote_plus(f"Driver={driver};Server={hostname};Database={database};Uid={username};Pwd={password};Encrypt={encrypt};TrustServerCertificate={trust_server_certificate};")
+            connection_string = f'mssql+pyodbc:///?odbc_connect={odbc_connect}'
 
         sql_connection = create_engine(connection_string, echo=False)
 
