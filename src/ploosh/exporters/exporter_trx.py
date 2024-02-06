@@ -78,6 +78,10 @@ class ExporterTRX(Exporter):
             if current_case.state != "passed" and current_case.error_message is not None:
                 output_message_xml, result_files_xml = self.get_failed_blocks(case_name, current_case, execution_id_list[i], output_folder)
 
+            outcome = current_case.state
+            if outcome == "error":
+                outcome = "aborted"
+
             xml_unit_test_result += f"""<UnitTestResult
                 executionId='{execution_id}'
                 testId='{test_id}'
@@ -85,7 +89,7 @@ class ExporterTRX(Exporter):
                 duration='{current_case.global_duration.duration}'
                 startTime='{Exporter.date_to_string(current_case.global_duration.start)}'
                 endTime='{Exporter.date_to_string(current_case.global_duration.end)}'
-                outcome='{current_case.state}'
+                outcome='{outcome}'
                 testListId='{test_list_id}'>{output_message_xml}{result_files_xml}</UnitTestResult>"""
 
             xml_test_definitions += f"<UnitTest id='{test_id}' name='{case_name}'><Execution id='{execution_id}'/></UnitTest>"
