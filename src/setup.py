@@ -11,7 +11,7 @@ long_description = long_description.replace("(/", "(https://github.com/CSharplie
 
 setup (
     name = "ploosh",
-    version = "0.1.3",
+    version = "0.1.4",
     description="A framework to automatize your tests for data projects",
     long_description=long_description,
     long_description_content_type="text/markdown",
