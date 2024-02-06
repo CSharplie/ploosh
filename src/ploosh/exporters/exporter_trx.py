@@ -124,6 +124,7 @@ class ExporterTRX(Exporter):
                 </ResultSummary>
             </TestRun>"""
 
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         with open(output_file, "w", encoding="UTF-8") as file:
             dom_string = xml.dom.minidom.parseString(xml_string).toprettyxml()
             dom_string = os.linesep.join([s for s in dom_string.splitlines() if s.strip()])

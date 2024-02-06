@@ -1,5 +1,6 @@
 """Export test case result to CSV format"""
 import csv
+import os
 from exporters.exporter import Exporter
 
 class ExporterCSV(Exporter):
@@ -49,6 +50,7 @@ class ExporterCSV(Exporter):
 
             data.append(case_data)
 
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         with open(output_file, "w", encoding="UTF-8") as f:
             writer = csv.writer(f, lineterminator="\n")
             writer.writerows(data)

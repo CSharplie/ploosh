@@ -1,6 +1,7 @@
 """Export test case result to JSON format"""
 
 import json
+import os
 from exporters.exporter import Exporter
 
 class ExporterJSON(Exporter):
@@ -52,5 +53,6 @@ class ExporterJSON(Exporter):
 
             data.append(case_data)
 
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         with open(output_file, "w", encoding="UTF-8") as f:
             f.write(json.dumps(data, indent=2))
