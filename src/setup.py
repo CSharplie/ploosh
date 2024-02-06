@@ -12,7 +12,7 @@ def setup_ploosh(name):
 
     setup (
         name = name,
-        version = "0.1.8",
+        version = "0.1.9",
         description="A framework to automatize your tests for data projects",
         long_description=long_description,
         long_description_content_type="text/markdown",
