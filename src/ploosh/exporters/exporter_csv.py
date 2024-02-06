@@ -1,5 +1,6 @@
 """Export test case result to CSV format"""
 import csv
+import os
 from exporters.exporter import Exporter
 
 class ExporterCSV(Exporter):
@@ -49,6 +50,13 @@ class ExporterCSV(Exporter):
 
             data.append(case_data)
 
+            if case.df_compare_gap is not None:
+                detail_file_path = f"{self.output_path}/json/test_results/{name}.xlsx"
+
+                os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
+                case.df_compare_gap.to_excel(detail_file_path)
+
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         with open(output_file, "w", encoding="UTF-8") as f:
             writer = csv.writer(f, lineterminator="\n")
             writer.writerows(data)

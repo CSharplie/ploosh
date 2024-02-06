@@ -4,6 +4,7 @@ __pycache__
 /src/build
 /src/dist
 /src/ploosh.egg-info
+/src/ploosh_core.egg-info
 /tests/connections
 /data
 /test_cases

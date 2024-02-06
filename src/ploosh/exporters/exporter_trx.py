@@ -22,13 +22,10 @@ class ExporterTRX(Exporter):
         result_files_xml = ""
         
         if current_case.df_compare_gap is not None:
-            detail_path = os.path.abspath(f"{output_folder}/in/{execution_id}")
-            detail_file_path = os.path.abspath(f"{detail_path}/{case_name}.xlsx")
-            result_files_xml = f"<ResultFiles><ResultFile path='{case_name}.xlsx' comment='test'/></ResultFiles>"
+            detail_file_path = f"{output_folder}/test_results/In/{execution_id}/{case_name}.xlsx"
+            result_files_xml = f"<ResultFiles><ResultFile path='{case_name}.xlsx'/></ResultFiles>"
 
-            if not os.path.exists(detail_path):
-                os.makedirs(detail_path)
-
+            os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
             current_case.df_compare_gap.to_excel(detail_file_path)
 
         return output_message_xml, result_files_xml
@@ -78,6 +75,10 @@ class ExporterTRX(Exporter):
             if current_case.state != "passed" and current_case.error_message is not None:
                 output_message_xml, result_files_xml = self.get_failed_blocks(case_name, current_case, execution_id_list[i], output_folder)
 
+            outcome = current_case.state
+            if outcome == "error":
+                outcome = "failed"
+
             xml_unit_test_result += f"""<UnitTestResult
                 executionId='{execution_id}'
                 testId='{test_id}'
@@ -85,7 +86,7 @@ class ExporterTRX(Exporter):
                 duration='{current_case.global_duration.duration}'
                 startTime='{Exporter.date_to_string(current_case.global_duration.start)}'
                 endTime='{Exporter.date_to_string(current_case.global_duration.end)}'
-                outcome='{current_case.state}'
+                outcome='{outcome}'
                 testListId='{test_list_id}'>{output_message_xml}{result_files_xml}</UnitTestResult>"""
 
             xml_test_definitions += f"<UnitTest id='{test_id}' name='{case_name}'><Execution id='{execution_id}'/></UnitTest>"
@@ -109,21 +110,12 @@ class ExporterTRX(Exporter):
                         passed='{state_statistics.passed}'
                         failed='{state_statistics.failed}'
                         error='{state_statistics.error}'
-                        timeout='0'
-                        aborted='0'
-                        inconclusive='0'
-                        passedButRunAborted='0'
-                        notRunnable='0'
-                        notExecuted='{state_statistics.not_executed}'
-                        disconnected='0'
-                        warning='0'
-                        completed='0'
-                        inProgress='0'
-                        pending='0' />
+                        notExecuted='{state_statistics.not_executed}' />
                     <Output StdOut='' />
                 </ResultSummary>
             </TestRun>"""
 
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         with open(output_file, "w", encoding="UTF-8") as file:
             dom_string = xml.dom.minidom.parseString(xml_string).toprettyxml()
             dom_string = os.linesep.join([s for s in dom_string.splitlines() if s.strip()])

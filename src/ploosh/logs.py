@@ -1,8 +1,8 @@
 """Module for log functions"""
 from datetime import datetime
-import os
 import re
 import math
+import shutil
 from colorama import Fore, Style
 
 LEVELS_PRINT = {
@@ -11,8 +11,7 @@ LEVELS_PRINT = {
     "ERRO": Fore.RED
 }
 
-
-CONSOLE_WIDTH = os.get_terminal_size().columns
+CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(120, 50)).columns
 CONSOLE_WIDTH_GAP = 29
 CONSOLE_LOG_SPACE = CONSOLE_WIDTH - CONSOLE_WIDTH_GAP
 
@@ -65,13 +64,13 @@ class Log:
         """Print the ATF logo"""
 
         Log.print("[...]", filler="#")
-        Log.print("#[...]       .__                      .__      [...]#", filler=" ")
-        Log.print("#[...]______ |  |   ____   ____  _____|  |__   [...]#", filler=" ")
-        Log.print("#[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \  [...]#", filler=" ")
-        Log.print("#[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \ [...]#", filler=" ")
-        Log.print("#[...]|   __/|____/\____/ \____/____  |___|  / [...]#", filler=" ")
-        Log.print("#[...]|__|                          \/     \/  [...]#", filler=" ")
-        Log.print("#[...]Automatized Testing Framework[...]#", filler=" ")
+        Log.print("#[...]       .__                      .__     [...]#", filler=" ")
+        Log.print("#[...]______ |  |   ____   ____  _____|  |__  [...]#", filler=" ")
+        Log.print("#[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]#", filler=" ")
+        Log.print("#[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]#", filler=" ")
+        Log.print("#[...]|   __/|____/\____/ \____/____  |___|  /[...]#", filler=" ")
+        Log.print("#[...]|__|                          \/     \/ [...]#", filler=" ")
+        Log.print("#[...]Automatized Testing Framework [...]#", filler=" ")
         Log.print("#[...]#", filler=" ")
         Log.print("#[...]https://github.com/CSharplie/Ploosh #", filler=" ")
         Log.print("[...]", filler="#")
