@@ -23,7 +23,7 @@ class ExporterTRX(Exporter):
         
         if current_case.df_compare_gap is not None:
             detail_file_path = f"{output_folder}/test_results/In/{execution_id}/{case_name}.xlsx"
-            result_files_xml = f"<ResultFiles><ResultFile path='{case_name}.xlsx' comment='test'/></ResultFiles>"
+            result_files_xml = f"<ResultFiles><ResultFile path='{case_name}.xlsx'/></ResultFiles>"
 
             os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
             current_case.df_compare_gap.to_excel(detail_file_path)
@@ -77,7 +77,7 @@ class ExporterTRX(Exporter):
 
             outcome = current_case.state
             if outcome == "error":
-                outcome = "aborted"
+                outcome = "failed"
 
             xml_unit_test_result += f"""<UnitTestResult
                 executionId='{execution_id}'
@@ -109,18 +109,8 @@ class ExporterTRX(Exporter):
                         executed='{state_statistics.executed}'
                         passed='{state_statistics.passed}'
                         failed='{state_statistics.failed}'
-                        error='0'
-                        timeout='0'
-                        aborted='{state_statistics.error}'
-                        inconclusive='0'
-                        passedButRunAborted='0'
-                        notRunnable='0'
-                        notExecuted='{state_statistics.not_executed}'
-                        disconnected='0'
-                        warning='0'
-                        completed='0'
-                        inProgress='0'
-                        pending='0' />
+                        error='{state_statistics.error}'
+                        notExecuted='{state_statistics.not_executed}' />
                     <Output StdOut='' />
                 </ResultSummary>
             </TestRun>"""
