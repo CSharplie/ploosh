@@ -22,7 +22,7 @@ class ExporterTRX(Exporter):
         result_files_xml = ""
         
         if current_case.df_compare_gap is not None:
-            detail_file_path = f"{output_folder}/test_results/in/{execution_id}/{case_name}.xlsx"
+            detail_file_path = f"{output_folder}/test_results/In/{execution_id}/{case_name}.xlsx"
             result_files_xml = f"<ResultFiles><ResultFile path='{case_name}.xlsx' comment='test'/></ResultFiles>"
 
             os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)

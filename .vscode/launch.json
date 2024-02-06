@@ -13,9 +13,9 @@
             "args": ["--connections", "connections.yml"
                 , "--cases", "./test_cases/"
                 , "--export", "trx"
-                , "--p_mysql_password_db", "gQ6HLvrh4Tm6C73ReF4K"
-                , "--p_postgresql_password_db", "gQ6HLvrh4Tm6C73ReF4K"
-                , "--p_mssql_password_db", "gQ6HLvrh4Tm6C73ReF4K"], 
+                , "--p_mysql_password_db", "mTp3T5pZSvPV8m7zCsaq"
+                , "--p_postgresql_password_db", "mTp3T5pZSvPV8m7zCsaq"
+                , "--p_mssql_password_db", "mTp3T5pZSvPV8m7zCsaq"], 
             "console": "integratedTerminal",
             "justMyCode": true
         }
