@@ -59,20 +59,20 @@ class Log:
         Log.print(message, "WARN")
 
     @staticmethod
-    def print_logo():
+    def print_logo(version):
         """Print the ATF logo"""
 
-        Log.print("[...]", filler="#")
-        Log.print("#[...]       .__                      .__     [...]#", filler=" ")
-        Log.print("#[...]______ |  |   ____   ____  _____|  |__  [...]#", filler=" ")
-        Log.print("#[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]#", filler=" ")
-        Log.print("#[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]#", filler=" ")
-        Log.print("#[...]|   __/|____/\____/ \____/____  |___|  /[...]#", filler=" ")
-        Log.print("#[...]|__|                          \/     \/ [...]#", filler=" ")
-        Log.print("#[...]Automatized Testing Framework [...]#", filler=" ")
-        Log.print("#[...]#", filler=" ")
-        Log.print("#[...]https://github.com/CSharplie/Ploosh #", filler=" ")
-        Log.print("[...]", filler="#")
+        Log.print(f"[...]", filler="~")
+        Log.print(f"[...]       .__                      .__     [...]", filler=" ")
+        Log.print(f"[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
+        Log.print(f"[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
+        Log.print(f"[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
+        Log.print(f"[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
+        Log.print(f"[...]|__|                          \/     \/ [...]", filler=" ")
+        Log.print(f"[...]Automatized Testing Framework (v {version})[...]", filler=" ")
+        Log.print(f"[...]", filler=" ")
+        Log.print(f"[...]https://github.com/CSharplie/ploosh", filler=" ")
+        Log.print(f"[...]", filler="~")
 
 def print_compare_state(current_case):
     state = current_case.state.upper()

@@ -2,8 +2,7 @@
 # pylint: disable=C0103
 
 from setuptools import setup, find_packages
-
-PLOOSH_VERSION = "0.1.11"
+from ploosh import PLOOSH_VERSION
 
 def setup_ploosh(name, install_requires):
     with open("../readme.md", encoding="UTF-8") as f:

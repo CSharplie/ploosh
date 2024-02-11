@@ -9,6 +9,8 @@ from exporters import get_exporters
 from parameters import Parameters
 from configuration import Configuration
 
+PLOOSH_VERSION = "0.1.13"
+
 def load_data(current_case, process_type, statistics):
     """load data from source or expected"""
 
@@ -41,7 +43,7 @@ def compare_data(current_case, statistics):
 def main():
     """Main function"""
 
-    Log.print_logo()
+    Log.print_logo(PLOOSH_VERSION)
 
     statistics = StateStatistics()
 
