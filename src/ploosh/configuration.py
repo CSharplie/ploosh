@@ -76,7 +76,7 @@ class Configuration:
         """Get cases from user confiration and apply control and variable setup"""
 
         cases = {}
-        files_list = list(pathlib.Path(self.parameters.path_cases).rglob("*.yml"))
+        files_list = list(pathlib.Path(self.parameters.path_cases).rglob(self.parameters.path_cases_filter))
 
         for file_path in files_list:
             with open(file_path, encoding="UTF-8") as file:
