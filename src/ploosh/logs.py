@@ -18,7 +18,6 @@ CONSOLE_LOG_SPACE = CONSOLE_WIDTH - CONSOLE_WIDTH_GAP
 LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
 LOG_FORMAT_STRING = f"{Fore.CYAN}[%(asctime)s]{Style.RESET_ALL} <LEVEL_COLOR>[%(levelname)s]{Style.RESET_ALL}[%(message)s]"
 
-
 class Log:
     """Log class contain all functions to log"""
     @staticmethod
@@ -74,3 +73,37 @@ class Log:
         Log.print("#[...]#", filler=" ")
         Log.print("#[...]https://github.com/CSharplie/Ploosh #", filler=" ")
         Log.print("[...]", filler="#")
+
+def print_compare_state(current_case):
+    state = current_case.state.upper()
+    state_matrix = {
+        "FAILED" : { "color": Fore.YELLOW, "function": Log.print_warning },
+        "ERROR" : { "color": Fore.RED, "function": Log.print_error },
+        "PASSED" : { "color": Fore.GREEN, "function": Log.print },
+    }
+    state_item = state_matrix[state]
+    state_item["function"](f"Compare state: {state_item['color']}{state}")
+    
+    if state != "PASSED":
+        state_item["function"](f"Error type   : {state_item['color']}{current_case.error_type.upper()}")
+        state_item["function"](f"Error message: {state_item['color']}{current_case.error_message}")
+
+def print_summary(cases, statistics):
+    for case_name in cases:
+        state = cases[case_name].state
+        color = Fore.CYAN
+
+        if state == "error": color = Fore.RED
+        if state == "passed": color = Fore.GREEN
+        if state == "failed": color = Fore.YELLOW
+
+        if state == "notExecuted": state = "skipped"
+
+        Log.print(f"{case_name} [...] {color}{state.upper()}")
+
+    message = f"passed: {Fore.GREEN}{statistics.passed}{Style.RESET_ALL}, "
+    message += f"failed: {Fore.YELLOW}{statistics.failed}{Style.RESET_ALL}, "
+    message += f"error: {Fore.RED}{statistics.error}{Style.RESET_ALL}, "
+    message += f"skipped: {Fore.CYAN}{statistics.not_executed}{Style.RESET_ALL}"
+
+    Log.print(message)
