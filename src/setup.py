@@ -2,8 +2,7 @@
 # pylint: disable=C0103
 
 from setuptools import setup, find_packages
-
-PLOOSH_VERSION = "0.1.11"
+from ploosh.version import PLOOSH_VERSION
 
 def setup_ploosh(name, install_requires):
     with open("../readme.md", encoding="UTF-8") as f:
@@ -16,6 +15,7 @@ def setup_ploosh(name, install_requires):
             "colorama==0.4.6",
             "PyYAML==6.0.1",
             "Pyjeb==0.2.1",
+            "numpy==1.26.3",
             "pandas==2.1.4",
             "openpyxl==3.1.2",
             "sqlalchemy==1.4.51"

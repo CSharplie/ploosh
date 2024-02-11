@@ -1,9 +1,11 @@
 """Module for log functions"""
-from datetime import datetime
+
 import re
 import math
 import shutil
+from datetime import datetime
 from colorama import Fore, Style
+from version import PLOOSH_VERSION
 
 LEVELS_PRINT = {
     "INFO": Fore.GREEN,
@@ -17,7 +19,6 @@ CONSOLE_LOG_SPACE = CONSOLE_WIDTH - CONSOLE_WIDTH_GAP
 
 LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
 LOG_FORMAT_STRING = f"{Fore.CYAN}[%(asctime)s]{Style.RESET_ALL} <LEVEL_COLOR>[%(levelname)s]{Style.RESET_ALL}[%(message)s]"
-
 
 class Log:
     """Log class contain all functions to log"""
@@ -63,14 +64,48 @@ class Log:
     def print_logo():
         """Print the ATF logo"""
 
-        Log.print("[...]", filler="#")
-        Log.print("#[...]       .__                      .__     [...]#", filler=" ")
-        Log.print("#[...]______ |  |   ____   ____  _____|  |__  [...]#", filler=" ")
-        Log.print("#[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]#", filler=" ")
-        Log.print("#[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]#", filler=" ")
-        Log.print("#[...]|   __/|____/\____/ \____/____  |___|  /[...]#", filler=" ")
-        Log.print("#[...]|__|                          \/     \/ [...]#", filler=" ")
-        Log.print("#[...]Automatized Testing Framework [...]#", filler=" ")
-        Log.print("#[...]#", filler=" ")
-        Log.print("#[...]https://github.com/CSharplie/Ploosh #", filler=" ")
-        Log.print("[...]", filler="#")
+        Log.print(f"[...]", filler="~")
+        Log.print(f"[...]       .__                      .__     [...]", filler=" ")
+        Log.print(f"[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
+        Log.print(f"[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
+        Log.print(f"[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
+        Log.print(f"[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
+        Log.print(f"[...]|__|                          \/     \/ [...]", filler=" ")
+        Log.print(f"[...]Automatized Testing Framework (v {PLOOSH_VERSION})[...]", filler=" ")
+        Log.print(f"[...]", filler=" ")
+        Log.print(f"[...]https://github.com/CSharplie/ploosh", filler=" ")
+        Log.print(f"[...]", filler="~")
+
+def print_compare_state(current_case):
+    state = current_case.state.upper()
+    state_matrix = {
+        "FAILED" : { "color": Fore.YELLOW, "function": Log.print_warning },
+        "ERROR" : { "color": Fore.RED, "function": Log.print_error },
+        "PASSED" : { "color": Fore.GREEN, "function": Log.print },
+    }
+    state_item = state_matrix[state]
+    state_item["function"](f"Compare state: {state_item['color']}{state}")
+    
+    if state != "PASSED":
+        state_item["function"](f"Error type   : {state_item['color']}{current_case.error_type.upper()}")
+        state_item["function"](f"Error message: {state_item['color']}{current_case.error_message}")
+
+def print_summary(cases, statistics):
+    for case_name in cases:
+        state = cases[case_name].state
+        color = Fore.CYAN
+
+        if state == "error": color = Fore.RED
+        if state == "passed": color = Fore.GREEN
+        if state == "failed": color = Fore.YELLOW
+
+        if state == "notExecuted": state = "skipped"
+
+        Log.print(f"{case_name} [...] {color}{state.upper()}")
+
+    message = f"passed: {Fore.GREEN}{statistics.passed}{Style.RESET_ALL}, "
+    message += f"failed: {Fore.YELLOW}{statistics.failed}{Style.RESET_ALL}, "
+    message += f"error: {Fore.RED}{statistics.error}{Style.RESET_ALL}, "
+    message += f"skipped: {Fore.CYAN}{statistics.not_executed}{Style.RESET_ALL}"
+
+    Log.print(message)

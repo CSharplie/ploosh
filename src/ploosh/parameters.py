@@ -5,6 +5,7 @@ class Parameters:
     args = {}
     path_connection = None
     path_cases = None
+    path_cases_filter = None
     path_output = None
     export = None
     failure_on_error = None
@@ -15,6 +16,7 @@ class Parameters:
         self.set_variables()
         self.path_connection = self.get_value("connections", "connections.yaml")
         self.path_cases = self.get_value("cases", "./cases")
+        self.path_cases_filter = self.get_value("filter", "*.yml")
         self.path_output = self.get_value("output", "./output")
         self.export = self.get_value("export", "JSON").upper()
         self.failure_on_error = self.get_value("failure", True)

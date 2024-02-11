@@ -128,7 +128,7 @@ class Case:
 
         if count_source != count_expected:
             self.error_type = "count"
-            self.error_message = f"The count in source dataset ({count_source}) is differant than the count the in expected dataset ({count_expected})"
+            self.error_message = f"The count in source dataset ({count_source}) is differant than the count in the expected dataset ({count_expected})"
 
         if self.error_message is None and count_source != 0:
             if self.options is not None and self.options["ignore"] is not None:
