@@ -12,7 +12,8 @@
             "program": "${workspaceRoot}/src/ploosh/__main__.py",
             "args": ["--connections", "connections.yml"
                 , "--cases", "./test_cases/"
-                , "--export", "trx"
+                , "--export", "json"
+                , "--filter", "*linkedin*"
                 , "--p_mysql_password_db", "mTp3T5pZSvPV8m7zCsaq"
                 , "--p_postgresql_password_db", "mTp3T5pZSvPV8m7zCsaq"
                 , "--p_mssql_password_db", "mTp3T5pZSvPV8m7zCsaq"], 

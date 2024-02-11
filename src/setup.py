@@ -15,6 +15,7 @@ def setup_ploosh(name, install_requires):
             "colorama==0.4.6",
             "PyYAML==6.0.1",
             "Pyjeb==0.2.1",
+            "numpy==1.26.3",
             "pandas==2.1.4",
             "openpyxl==3.1.2",
             "sqlalchemy==1.4.51"
