@@ -1,9 +1,11 @@
 """Module for log functions"""
-from datetime import datetime
+
 import re
 import math
 import shutil
+from datetime import datetime
 from colorama import Fore, Style
+from version import PLOOSH_VERSION
 
 LEVELS_PRINT = {
     "INFO": Fore.GREEN,
@@ -59,7 +61,7 @@ class Log:
         Log.print(message, "WARN")
 
     @staticmethod
-    def print_logo(version):
+    def print_logo():
         """Print the ATF logo"""
 
         Log.print(f"[...]", filler="~")
@@ -69,7 +71,7 @@ class Log:
         Log.print(f"[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
         Log.print(f"[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
         Log.print(f"[...]|__|                          \/     \/ [...]", filler=" ")
-        Log.print(f"[...]Automatized Testing Framework (v {version})[...]", filler=" ")
+        Log.print(f"[...]Automatized Testing Framework (v {PLOOSH_VERSION})[...]", filler=" ")
         Log.print(f"[...]", filler=" ")
         Log.print(f"[...]https://github.com/CSharplie/ploosh", filler=" ")
         Log.print(f"[...]", filler="~")
