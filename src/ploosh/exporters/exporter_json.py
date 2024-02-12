@@ -45,7 +45,7 @@ class ExporterJSON(Exporter):
                     "duration": case.compare_duration.duration,
                 }
 
-            if case.state != "passed":
+            if case.state in ["error", "failed"]:
                 case_data["error"] = {
                     "type": case.error_type,
                     "message": case.error_message
