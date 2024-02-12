@@ -1,4 +1,4 @@
-from helpers import get_users_dataset, get_dataframe_from_query
+from tests.helpers import get_users_dataset, get_dataframe_from_query
 from ploosh.connectors.connector_mssql import ConnectorMSSQL
 
 def test_connection_with_password():
