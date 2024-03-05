@@ -49,7 +49,7 @@ def main():
     try:
         Log.print("Load connectors")
         connectors = get_connectors()
-        Log.print("Load exeporters")
+        Log.print("Load exporters")
         exporters = get_exporters()
 
         Log.print("Load configuration")
