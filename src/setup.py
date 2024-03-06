@@ -18,7 +18,8 @@ def setup_ploosh(name, install_requires):
             "numpy==1.26.3",
             "pandas==2.1.4",
             "openpyxl==3.1.2",
-            "sqlalchemy==1.4.51"
+            "sqlalchemy==1.4.51",
+            "pyspark==3.5.1",
         ]
 
     setup (

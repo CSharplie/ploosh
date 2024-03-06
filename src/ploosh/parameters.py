@@ -14,12 +14,13 @@ class Parameters:
     def __init__(self, argv:list):
         self.set_args(argv[1:])
         self.set_variables()
-        self.path_connection = self.get_value("connections", "connections.yaml")
+        self.path_connection = self.get_value("connections", None)
         self.path_cases = self.get_value("cases", "./cases")
         self.path_cases_filter = self.get_value("filter", "*.yml")
         self.path_output = self.get_value("output", "./output")
         self.export = self.get_value("export", "JSON").upper()
         self.failure_on_error = self.get_value("failure", True)
+        self.spark_mode = self.get_value("spark", False)
 
     def set_args(self, args):
         """Set dictionary of args with cleaned name"""
