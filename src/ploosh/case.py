@@ -167,6 +167,49 @@ class Case:
         else:
             self.state = "failed"
 
+    def compare_dataframes_with_spark(self, spark_session):
+        """Compare source and expected dataframe using Spark"""
+
+        self.compare_duration.start = datetime.now()
+
+        count_source = self.source.df_data.count()
+        count_expected = self.expected.df_data.count()
+
+        if count_source != count_expected:
+            self.error_type = "count"
+            self.error_message = f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
+
+        if self.error_message is None and count_source != 0:
+            if self.options is not None and self.options["ignore"] is not None:
+                ignore_columns = self.options["ignore"]
+                self.source.df_data = self.source.df_data.drop(*ignore_columns)
+                self.expected.df_data = self.expected.df_data.drop(*ignore_columns)
+
+            source_columns = sorted(self.source.df_data.columns)
+            expected_columns = sorted(self.expected.df_data.columns)
+
+            if source_columns != expected_columns:
+                self.error_message = "The headers are different between source dataset and expected dataset"
+                self.error_type = "headers"
+
+            if self.error_message is None and count_source != 0:
+                #if self.options is not None and self.options["sort"] is not None:
+                #    self.source.df_data = self.source.df_data.orderBy(*self.options["sort"]).drop("index")
+                #    self.expected.df_data = self.expected.df_data.orderBy(*self.options["sort"]).drop("index")
+
+                df_compare = self.source.df_data.exceptAll(self.expected.df_data)
+                if df_compare.count() != 0:
+                    self.error_message = "Some rows are not equal between source dataset and expected dataset"
+                    self.error_type = "data"
+                    self.df_compare_gap = df_compare.toPandas()
+
+        self.compare_duration.end = datetime.now()
+
+        if self.error_message is None:
+            self.state = "passed"
+        else:
+            self.state = "failed"
+
     def compare_dataframes_error(self, message):
         """Setup error message for compare engine"""
 

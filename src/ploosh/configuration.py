@@ -59,9 +59,12 @@ class Configuration:
     def init_connections(self):
         """Load connections and apply control and variable setup"""
 
-        with open(self.parameters.path_connection, encoding="UTF-8") as file:
-            content = file.read()
-            self.connections = yaml.safe_load(content)
+        if self.parameters.path_connection is None:
+            self.connections = {}
+        else:
+            with open(self.parameters.path_connection, encoding="UTF-8") as file:
+                content = file.read()
+                self.connections = yaml.safe_load(content)
 
         connections = copy.copy(self.connections)
         for connection_name in connections:
@@ -73,7 +76,7 @@ class Configuration:
             self.connections[module_type] = control_and_setup(connection, connection_definition, self.parameters.variables, None)
 
     def get_cases(self):
-        """Get cases from user confiration and apply control and variable setup"""
+        """Get cases from user configuration and apply control and variable setup"""
 
         cases = {}
         files_list = list(pathlib.Path(self.parameters.path_cases).rglob(self.parameters.path_cases_filter))
@@ -100,6 +103,8 @@ class Configuration:
                     case["expected"] = control_and_setup(case["expected"], expected_configuration_definition, self.parameters.variables, None)
                     expected_definition = ConnectionDescription(expected_connector, self.get_connection(case["expected"]["connection"]))
 
+                    if source_connector.is_spark != expected_connector.is_spark:
+                        raise InvalidParameterException(f"'{case_name}': Source and expected must be both Spark or not Spark connectors")
 
                     cases[case_name] = Case(configuration, source_definition, expected_definition, case["options"], case["disabled"])
 
