@@ -2,6 +2,7 @@
 """Connector to return empty"""
 
 import pandas as pd
+from pyspark.sql.types import StructType
 from connectors.connector import Connector
 
 class ConnectorEmpty(Connector):
@@ -14,5 +15,8 @@ class ConnectorEmpty(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Return empty value"""
-        df = self.spark.emptyDataFrame
+        empty_RDD = self.spark.sparkContext.emptyRDD()
+        columns = StructType([])
+        df = self.spark.createDataFrame(data = empty_RDD, schema = columns)
+
         return df
