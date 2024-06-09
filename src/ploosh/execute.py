@@ -45,6 +45,7 @@ def compare_data(current_case, statistics, spark_session):
 def execute(args=None, spark_session=None):
     """Main function"""
 
+    Log.init()
     Log.print_logo()
 
     statistics = StateStatistics()

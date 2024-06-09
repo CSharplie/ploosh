@@ -47,7 +47,8 @@ class Duration:
     def calculate_duration(self):
         """Calculate the duration between start and end date"""
         if self.end is not None:
-            self.duration = (self.end - self.start).microseconds / 60000000
+            duration = self.end - self.start
+            self.duration = duration.seconds + (duration.microseconds / 1000000)
 
 
 class CaseItem:
