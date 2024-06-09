@@ -7,6 +7,7 @@ __pycache__
 /src/ploosh_core.egg-info
 /tests/connectors/connections/
 /data
+/logs
 /test_cases
 /output
 /connections.yml

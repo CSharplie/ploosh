@@ -1,5 +1,6 @@
 """Module for log functions"""
 
+import os
 import re
 import math
 import shutil
@@ -16,6 +17,10 @@ LEVELS_PRINT = {
 CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(120, 50)).columns
 CONSOLE_WIDTH_GAP = 29
 CONSOLE_LOG_SPACE = CONSOLE_WIDTH - CONSOLE_WIDTH_GAP
+
+LOG_FOLDER = "./logs"
+os.makedirs(LOG_FOLDER, exist_ok=True)
+LOGS_PATH = f"{LOG_FOLDER}/ploosh_{datetime.now().strftime('%Y%m%d%H%M%S')}.log"
 
 LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
 LOG_FORMAT_STRING = f"{Fore.CYAN}[%(asctime)s]{Style.RESET_ALL} <LEVEL_COLOR>[%(levelname)s]{Style.RESET_ALL}[%(message)s]"
@@ -47,8 +52,23 @@ class Log:
                     end = (i + 1) * CONSOLE_LOG_SPACE
                     rows_to_print.append(row[start:end])
 
+        rows_to_print = [f"{Fore.CYAN}[{date_time}] {LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}" for row in rows_to_print]
+
         for row in rows_to_print:
-            print(f"{Fore.CYAN}[{date_time}] {LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}")
+            print(row)
+
+        
+
+        with open(LOGS_PATH, "a", encoding="UTF-8") as f:
+            log_text = "\r\n".join(rows_to_print) + "\r\n"
+
+            for key in Fore.__dict__:
+                log_text = log_text.replace(Fore.__dict__[key], "")
+
+            for key in Style.__dict__:
+                log_text = log_text.replace(Style.__dict__[key], "")
+
+            f.write(log_text)
 
     @staticmethod
     def print_error(message:str):
