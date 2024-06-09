@@ -8,25 +8,27 @@ from datetime import datetime
 from colorama import Fore, Style
 from version import PLOOSH_VERSION
 
-LEVELS_PRINT = {
-    "INFO": Fore.GREEN,
-    "WARN": Fore.YELLOW,
-    "ERRO": Fore.RED
-}
-
-CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(120, 50)).columns
-CONSOLE_WIDTH_GAP = 29
-CONSOLE_LOG_SPACE = CONSOLE_WIDTH - CONSOLE_WIDTH_GAP
-
-LOG_FOLDER = "./logs"
-os.makedirs(LOG_FOLDER, exist_ok=True)
-LOGS_PATH = f"{LOG_FOLDER}/ploosh_{datetime.now().strftime('%Y%m%d%H%M%S')}.log"
-
-LOG_FORMAT_DATE = "%Y-%m-%d %H:%M:%S"
-LOG_FORMAT_STRING = f"{Fore.CYAN}[%(asctime)s]{Style.RESET_ALL} <LEVEL_COLOR>[%(levelname)s]{Style.RESET_ALL}[%(message)s]"
 
 class Log:
     """Log class contain all functions to log"""
+
+    @staticmethod
+    def init():
+        Log.LEVELS_PRINT = {
+            "INFO": Fore.GREEN,
+            "WARN": Fore.YELLOW,
+            "ERRO": Fore.RED
+        }
+
+        Log.CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(120, 50)).columns
+        Log.CONSOLE_WIDTH_GAP = 29
+        Log.CONSOLE_LOG_SPACE = Log.CONSOLE_WIDTH - Log.CONSOLE_WIDTH_GAP
+
+        Log.LOGS_FOLDER = "./logs"
+        Log.LOGS_PATH = f"{Log.LOGS_FOLDER}/ploosh_{datetime.now().strftime('%Y%m%d%H%M%S')}.log"
+
+        os.makedirs(Log.LOGS_FOLDER, exist_ok=True)
+
     @staticmethod
     def print(message:str, level:str = "INFO", filler:str = "."):
         """Print a message with all metadata informations"""
@@ -37,29 +39,29 @@ class Log:
         
         raw_message = re.sub(r'[^\w ]*[\d]+m', '', message)
         print_length = len(raw_message)
-        feed_characters = filler * math.trunc((CONSOLE_LOG_SPACE - print_length + (5 * count_filler)) / count_filler)
+        feed_characters = filler * math.trunc((Log.CONSOLE_LOG_SPACE - print_length + (5 * count_filler)) / count_filler)
         message = message.replace("[...]", feed_characters)
 
         rows_to_print = [message]
         # coloration will be disabled for multi ligne message
-        if print_length > CONSOLE_LOG_SPACE or "\n" in message:
+        if print_length > Log.CONSOLE_LOG_SPACE or "\n" in message:
             rows_to_print = []
             message_rows = raw_message.split("\n")
             for row in message_rows:
-                rows_count = math.ceil(len(row) / CONSOLE_LOG_SPACE)
+                rows_count = math.ceil(len(row) / Log.CONSOLE_LOG_SPACE)
                 for i in range(0, rows_count):
-                    start = i * CONSOLE_LOG_SPACE
-                    end = (i + 1) * CONSOLE_LOG_SPACE
+                    start = i * Log.CONSOLE_LOG_SPACE
+                    end = (i + 1) * Log.CONSOLE_LOG_SPACE
                     rows_to_print.append(row[start:end])
 
-        rows_to_print = [f"{Fore.CYAN}[{date_time}] {LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}" for row in rows_to_print]
+        rows_to_print = [f"{Fore.CYAN}[{date_time}] {Log.LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}" for row in rows_to_print]
 
         for row in rows_to_print:
             print(row)
 
         
 
-        with open(LOGS_PATH, "a", encoding="UTF-8") as f:
+        with open(Log.LOGS_PATH, "a", encoding="UTF-8") as f:
             log_text = "\r\n".join(rows_to_print) + "\r\n"
 
             for key in Fore.__dict__:
