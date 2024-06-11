@@ -136,6 +136,9 @@ class Case:
                 self.source.df_data = self.source.df_data.drop(columns = self.options["ignore"], axis = 1, errors = "ignore")
                 self.expected.df_data = self.expected.df_data.drop(columns = self.options["ignore"], axis = 1, errors = "ignore")
 
+            self.source.df_data.columns = map(str.lower, self.source.df_data.columns)
+            self.expected.df_data.columns = map(str.lower, self.expected.df_data.columns)
+
             df_columns_source = pd.DataFrame({ "columns": self.source.df_data.columns }).sort_values(by = ["columns"]).reset_index(drop=True)
             df_columns_expected = pd.DataFrame({ "columns": self.expected.df_data.columns }).sort_values(by = ["columns"]).reset_index(drop=True)
 
