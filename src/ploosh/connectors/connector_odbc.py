@@ -34,6 +34,10 @@ class ConnectorODCB(Connector):
                 "name": "password",
                 "default": None,
             },
+            {
+                "name": "encoding",
+                "default": "UTF-8"
+            }
         ]
         self.configuration_definition = [{ "name": "query" }, { "name": "connection" }]
 
@@ -48,6 +52,10 @@ class ConnectorODCB(Connector):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
           
+            odbc_connection.setdecoding(pyodbc.SQL_CHAR, encoding=connection["encoding"])
+            odbc_connection.setdecoding(pyodbc.SQL_WCHAR, encoding=connection["encoding"])
+            odbc_connection.setencoding(encoding=connection["encoding"])
+
             df = pd.read_sql(configuration["query"], odbc_connection)
 
         return df
