@@ -29,6 +29,7 @@ class ExporterJSON(Exporter):
                     "start": Exporter.date_to_string(case.source.duration.start),
                     "end":  Exporter.date_to_string(case.source.duration.end),
                     "duration":  case.source.duration.duration,
+                    "count":  case.source.count,
                 }
 
             if case.expected.duration.start is not None:
@@ -36,6 +37,7 @@ class ExporterJSON(Exporter):
                     "start": Exporter.date_to_string(case.expected.duration.start),
                     "end":  Exporter.date_to_string(case.expected.duration.end),
                     "duration":  case.expected.duration.duration,
+                    "count":  case.expected.count,
                 }
 
             if case.compare_duration.start is not None:
