@@ -114,6 +114,11 @@ class Case:
                 if type(obj.df_data[column][0]).__name__ == "Decimal":
                     obj.df_data[column] = obj.df_data[column].astype(float)
 
+            # remove time zones
+            date_columns = obj.df_data.select_dtypes(include=["datetime64[ns, UTC]"]).columns
+            for date_column in date_columns:
+                obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
+            obj.count = len(obj.df_data)
 
     def load_data_error(self, obj_type:str, message:str):
         """Setup error message for data loading"""
