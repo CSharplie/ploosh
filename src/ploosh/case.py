@@ -104,7 +104,16 @@ class Case:
 
         obj.duration.start = datetime.now()
         obj.df_data = obj.connector.get_data(obj.configuration, obj.connection)
-        obj.duration.end = datetime.now()
+
+        if not self.source.connector.is_spark:
+            # remap bad columns type
+            for column in obj.df_data.select_dtypes(include=["object"]).columns:
+                if len(obj.df_data) == 0:
+                    continue
+
+                if type(obj.df_data[column][0]).__name__ == "Decimal":
+                    obj.df_data[column] = obj.df_data[column].astype(float)
+
 
     def load_data_error(self, obj_type:str, message:str):
         """Setup error message for data loading"""
