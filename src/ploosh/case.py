@@ -60,6 +60,7 @@ class CaseItem:
 
     duration = None
     df_data = None
+    count = 0
 
     def __init__(self, configuration, connector, connection):
         self.duration = Duration()
@@ -119,6 +120,9 @@ class Case:
             for date_column in date_columns:
                 obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
             obj.count = len(obj.df_data)
+        else:
+            obj.count = obj.df_data.count()
+        obj.duration.end = datetime.now()
 
     def load_data_error(self, obj_type:str, message:str):
         """Setup error message for data loading"""
