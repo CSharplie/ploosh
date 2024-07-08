@@ -107,6 +107,11 @@ class Case:
         obj.df_data = obj.connector.get_data(obj.configuration, obj.connection)
 
         if not self.source.connector.is_spark:
+            for column in self.options["cast"]:
+                column_name = column["name"]
+                column_type = column["type"]
+                obj.df_data[column_name] = obj.df_data[column_name].astype(column_type)
+
             # remap bad columns type
             for column in obj.df_data.select_dtypes(include=["object"]).columns:
                 if len(obj.df_data) == 0:
