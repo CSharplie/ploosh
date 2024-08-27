@@ -95,6 +95,12 @@ class Case:
         self.global_duration = Duration()
         self.compare_duration = Duration()
 
+    def get_insensitive_item(self, name:str, items:list) -> str:
+        for item in items:
+            if name.upper().strip() == item.upper().strip():
+                return item
+        return name
+
     def load_data(self, obj_type:str):
         """ Load data from connector"""
 
@@ -108,9 +114,11 @@ class Case:
 
         if not self.source.connector.is_spark:
             for column in self.options["cast"]:
-                column_name = column["name"]
+                column_name = self.get_insensitive_item(column["name"], obj.df_data.columns)
                 column_type = column["type"]
-                obj.df_data[column_name] = obj.df_data[column_name].astype(column_type)
+                if column_type == "datetime":
+                    column_type = "datetime64[ns]"
+                obj.df_data[column_name] = obj.df_data[column_name].astype(column_type, errors="ignore")
 
             # remap bad columns type
             for column in obj.df_data.select_dtypes(include=["object"]).columns:
@@ -118,7 +126,7 @@ class Case:
                     continue
 
                 if type(obj.df_data[column][0]).__name__ == "Decimal":
-                    obj.df_data[column] = obj.df_data[column].astype(float)
+                    obj.df_data[column] = obj.df_data[column].astype(float, errors="ignore")
 
             # remove time zones
             date_columns = obj.df_data.select_dtypes(include=["datetime64[ns, UTC]"]).columns
@@ -126,6 +134,7 @@ class Case:
                 obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
             obj.count = len(obj.df_data)
         else:
+            # TODO: Add object re cast for spark mode 
             obj.count = obj.df_data.count()
         obj.duration.end = datetime.now()
 
