@@ -45,6 +45,7 @@ class ExporterJSON(Exporter):
                     "start": Exporter.date_to_string(case.compare_duration.start),
                     "end": Exporter.date_to_string(case.compare_duration.end),
                     "duration": case.compare_duration.duration,
+                    "sucess_rate": case.sucess_rate
                 }
 
             if case.state in ["error", "failed"]:

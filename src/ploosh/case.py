@@ -87,6 +87,8 @@ class Case:
 
     disabled = None
 
+    sucess_rate = 1
+
     def __init__(self, configuration, source, expected, options, disabled):
         self.source = CaseItem(configuration["source"], source.connector, source.connection)
         self.expected = CaseItem(configuration["expected"], expected.connector, expected.connection)
@@ -187,13 +189,21 @@ class Case:
 
         if self.error_message is None and count_source != 0:
             if self.options is not None and self.options["sort"] is not None:
-                self.source.df_data = self.source.df_data.sort_values(by = self.options["sort"]).reset_index(drop=True)
-                self.expected.df_data = self.expected.df_data.sort_values(by = self.options["sort"]).reset_index(drop=True)
+                sort_columns = self.options["sort"]
+
+                if len(self.options["sort"]) > 0 and self.options["sort"][0] == "*":
+                    sort_columns = list(df_columns_source["columns"])
+
+                self.source.df_data = self.source.df_data.sort_values(by = sort_columns).reset_index(drop=True)
+                self.expected.df_data = self.expected.df_data.sort_values(by = sort_columns).reset_index(drop=True)
 
             df_compare = self.source.df_data.compare(self.expected.df_data, result_names = ("source", "expected"))
             if len(df_compare) != 0 :
-                self.error_message = "Some rows are not equals between source dataset and expected dataset"
-                self.error_type = "data"
+                self.sucess_rate = (len(self.source.df_data) - len(df_compare)) / len(self.source.df_data)
+                if self.sucess_rate < self.options["pass_rate"]:
+                    self.error_message = "Some rows are not equals between source dataset and expected dataset"
+                    self.error_type = "data"
+
                 self.df_compare_gap = df_compare
 
         self.compare_duration.end = datetime.now()

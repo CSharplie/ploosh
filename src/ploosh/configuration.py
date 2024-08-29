@@ -22,6 +22,7 @@ class Configuration:
         { "name": "options.cast", "type": "list", "default": [] },
         { "name": "options.cast.name", "type": "string" },
         { "name": "options.cast.type", "type": "string", "validset": ["float", "int", "datetime", "string"]},
+        { "name": "options.pass_rate", "type": "decimal", "default": 1 },
         { "name": "source", "type": "dict" },
         { "name": "source.type" },
         { "name": "source.connection", "default": None },
