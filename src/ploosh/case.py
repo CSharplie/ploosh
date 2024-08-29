@@ -87,6 +87,8 @@ class Case:
 
     disabled = None
 
+    sucess_rate = 1
+
     def __init__(self, configuration, source, expected, options, disabled):
         self.source = CaseItem(configuration["source"], source.connector, source.connection)
         self.expected = CaseItem(configuration["expected"], expected.connector, expected.connection)
@@ -94,6 +96,12 @@ class Case:
         self.disabled = disabled
         self.global_duration = Duration()
         self.compare_duration = Duration()
+
+    def get_insensitive_item(self, name:str, items:list) -> str:
+        for item in items:
+            if name.upper().strip() == item.upper().strip():
+                return item
+        return name
 
     def load_data(self, obj_type:str):
         """ Load data from connector"""
@@ -108,9 +116,11 @@ class Case:
 
         if not self.source.connector.is_spark:
             for column in self.options["cast"]:
-                column_name = column["name"]
+                column_name = self.get_insensitive_item(column["name"], obj.df_data.columns)
                 column_type = column["type"]
-                obj.df_data[column_name] = obj.df_data[column_name].astype(column_type)
+                if column_type == "datetime":
+                    column_type = "datetime64[ns]"
+                obj.df_data[column_name] = obj.df_data[column_name].astype(column_type, errors="ignore")
 
             # remap bad columns type
             for column in obj.df_data.select_dtypes(include=["object"]).columns:
@@ -118,7 +128,7 @@ class Case:
                     continue
 
                 if type(obj.df_data[column][0]).__name__ == "Decimal":
-                    obj.df_data[column] = obj.df_data[column].astype(float)
+                    obj.df_data[column] = obj.df_data[column].astype(float, errors="ignore")
 
             # remove time zones
             date_columns = obj.df_data.select_dtypes(include=["datetime64[ns, UTC]"]).columns
@@ -126,6 +136,7 @@ class Case:
                 obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
             obj.count = len(obj.df_data)
         else:
+            # TODO: Add object re cast for spark mode 
             obj.count = obj.df_data.count()
         obj.duration.end = datetime.now()
 
@@ -178,13 +189,21 @@ class Case:
 
         if self.error_message is None and count_source != 0:
             if self.options is not None and self.options["sort"] is not None:
-                self.source.df_data = self.source.df_data.sort_values(by = self.options["sort"]).reset_index(drop=True)
-                self.expected.df_data = self.expected.df_data.sort_values(by = self.options["sort"]).reset_index(drop=True)
+                sort_columns = self.options["sort"]
+
+                if len(self.options["sort"]) > 0 and self.options["sort"][0] == "*":
+                    sort_columns = list(df_columns_source["columns"])
+
+                self.source.df_data = self.source.df_data.sort_values(by = sort_columns).reset_index(drop=True)
+                self.expected.df_data = self.expected.df_data.sort_values(by = sort_columns).reset_index(drop=True)
 
             df_compare = self.source.df_data.compare(self.expected.df_data, result_names = ("source", "expected"))
             if len(df_compare) != 0 :
-                self.error_message = "Some rows are not equals between source dataset and expected dataset"
-                self.error_type = "data"
+                self.sucess_rate = (len(self.source.df_data) - len(df_compare)) / len(self.source.df_data)
+                if self.sucess_rate < self.options["pass_rate"]:
+                    self.error_message = "Some rows are not equals between source dataset and expected dataset"
+                    self.error_type = "data"
+
                 self.df_compare_gap = df_compare
 
         self.compare_duration.end = datetime.now()

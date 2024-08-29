@@ -28,6 +28,7 @@ class ExporterCSV(Exporter):
                "compare_start",
                "compare_end",
                "compare_duration",
+               "sucess_rate",
                "error_type",
                "error_message",
         ]]
@@ -48,6 +49,7 @@ class ExporterCSV(Exporter):
                 Exporter.date_to_string(case.compare_duration.start),
                 Exporter.date_to_string(case.compare_duration.end),
                 case.compare_duration.duration,
+                case.sucess_rate,
                 case.error_type,
                 case.error_message,
             ]
