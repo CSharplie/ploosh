@@ -1,12 +1,15 @@
 """Module for log functions"""
 
+import math
 import os
 import re
-import math
 import shutil
 from datetime import datetime
+
 from colorama import Fore, Style
+
 from version import PLOOSH_VERSION
+
 
 class Log:
     """Log class contain all functions to log"""
@@ -17,7 +20,7 @@ class Log:
         Log.LEVELS_PRINT = {
             "INFO": Fore.GREEN,
             "WARN": Fore.YELLOW,
-            "ERRO": Fore.RED
+            "ERRO": Fore.RED,
         }
 
         # Get terminal size and set console log space
@@ -39,11 +42,13 @@ class Log:
 
         # Determine the number of filler characters needed
         count_filler = 1 if message.count("[...]") == 0 else message.count("[...]")
-        
+
         # Remove ANSI escape sequences from the message
-        raw_message = re.sub(r'[^\w ]*[\d]+m', '', message)
+        raw_message = re.sub(r"[^\w ]*[\d]+m", "", message)
         print_length = len(raw_message)
-        feed_characters = filler * math.trunc((Log.CONSOLE_LOG_SPACE - print_length + (5 * count_filler)) / count_filler)
+        feed_characters = filler * math.trunc(
+            (Log.CONSOLE_LOG_SPACE - print_length + (5 * count_filler)) / count_filler
+        )
         message = message.replace("[...]", feed_characters)
 
         rows_to_print = [message]
@@ -59,7 +64,10 @@ class Log:
                     rows_to_print.append(row[start:end])
 
         # Format each row with date, time, and log level
-        rows_to_print = [f"{Fore.CYAN}[{date_time}] {Log.LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}" for row in rows_to_print]
+        rows_to_print = [
+            f"{Fore.CYAN}[{date_time}] {Log.LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}"
+            for row in rows_to_print
+        ]
 
         # Print each row to the console
         for row in rows_to_print:
@@ -91,33 +99,35 @@ class Log:
     @staticmethod
     def print_logo():
         """Print the ATF logo"""
-        Log.print(f"[...]", filler="~")
-        Log.print(f"[...]       .__                      .__     [...]", filler=" ")
-        Log.print(f"[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
-        Log.print(f"[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
-        Log.print(f"[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
-        Log.print(f"[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
-        Log.print(f"[...]|__|                          \/     \/ [...]", filler=" ")
+        Log.print("[...]", filler="~")
+        Log.print("[...]       .__                      .__     [...]", filler=" ")
+        Log.print("[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
+        Log.print("[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
+        Log.print("[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
+        Log.print("[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
+        Log.print("[...]|__|                          \/     \/ [...]", filler=" ")
         Log.print(f"[...]Automatized Testing Framework (v {PLOOSH_VERSION})[...]", filler=" ")
-        Log.print(f"[...]", filler=" ")
-        Log.print(f"[...]https://github.com/CSharplie/ploosh", filler=" ")
-        Log.print(f"[...]", filler="~")
+        Log.print("[...]", filler=" ")
+        Log.print("[...]https://github.com/CSharplie/ploosh", filler=" ")
+        Log.print("[...]", filler="~")
+
 
 def print_compare_state(current_case):
     """Print the comparison state of a test case"""
 
     state = current_case.state.upper()
     state_matrix = {
-        "FAILED": { "color": Fore.YELLOW, "function": Log.print_warning },
-        "ERROR": { "color": Fore.RED, "function": Log.print_error },
-        "PASSED": { "color": Fore.GREEN, "function": Log.print },
+        "FAILED": {"color": Fore.YELLOW, "function": Log.print_warning},
+        "ERROR": {"color": Fore.RED, "function": Log.print_error},
+        "PASSED": {"color": Fore.GREEN, "function": Log.print},
     }
     state_item = state_matrix[state]
     state_item["function"](f"Compare state: {state_item['color']}{state}")
-    
+
     if state != "PASSED":
         state_item["function"](f"Error type   : {state_item['color']}{current_case.error_type.upper()}")
         state_item["function"](f"Error message: {state_item['color']}{current_case.error_message}")
+
 
 def print_summary(cases, statistics):
     """Print a summary of test case results"""
@@ -125,11 +135,15 @@ def print_summary(cases, statistics):
         state = cases[case_name].state
         color = Fore.CYAN
 
-        if state == "error": color = Fore.RED
-        if state == "passed": color = Fore.GREEN
-        if state == "failed": color = Fore.YELLOW
+        if state == "error":
+            color = Fore.RED
+        if state == "passed":
+            color = Fore.GREEN
+        if state == "failed":
+            color = Fore.YELLOW
 
-        if state == "notExecuted": state = "skipped"
+        if state == "notExecuted":
+            state = "skipped"
 
         Log.print(f"{case_name} [...] {color}{state.upper()}")
 

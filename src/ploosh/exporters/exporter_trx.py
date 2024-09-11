@@ -6,7 +6,8 @@ import uuid
 import xml.dom.minidom
 import numpy as np
 from exporters.exporter import Exporter
-from case import StateStatistics 
+from case import StateStatistics
+
 
 class ExporterTRX(Exporter):
     """Export test case result to TRX format"""
@@ -23,7 +24,7 @@ class ExporterTRX(Exporter):
         # Create the XML block for the error message
         output_message_xml = f"<Output><ErrorInfo><Message>{error_message}</Message></ErrorInfo></Output>"
         result_files_xml = ""
-        
+
         # If there is a comparison gap, export it to an Excel file
         if current_case.df_compare_gap is not None:
             detail_file_path = f"{output_folder}/test_results/In/{execution_id}/{case_name}.xlsx"
@@ -53,7 +54,7 @@ class ExporterTRX(Exporter):
         test_id_list = []
 
         # Generate unique IDs for each test case
-        for i in list(range(0, len(cases))):
+        for _ in list(range(0, len(cases))):
             execution_id_list.append(str(uuid.uuid4()))
             test_id_list.append(str(uuid.uuid4()))
 
@@ -89,7 +90,9 @@ class ExporterTRX(Exporter):
 
             # If the test case failed, get the XML blocks for the error message and result files
             if current_case.state != "passed" and current_case.error_message is not None:
-                output_message_xml, result_files_xml = self.get_failed_blocks(case_name, current_case, execution_id_list[i], output_folder)
+                output_message_xml, result_files_xml = self.get_failed_blocks(
+                    case_name, current_case, execution_id_list[i], output_folder
+                )
 
             outcome = current_case.state
             if outcome == "error":

@@ -5,6 +5,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from connectors.connector import Connector
 
+
 class ConnectorMYSQL(Connector):
     """Connector to read MYSQL database"""
 
@@ -14,41 +15,41 @@ class ConnectorMYSQL(Connector):
         self.connection_definition = [
             {
                 "name": "mode",
-                "default" : "password",
-                "validset": ["password", "connection_string"]
-            },    
+                "default": "password",
+                "validset": ["password", "connection_string"],
+            },
             {
                 "name": "hostname",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "database",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "username",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "password",
-                "default" : None
+                "default": None,
             },
             {
-                "name":"port",
+                "name": "port",
                 "default": 3306,
-                "type": "integer"
+                "type": "integer",
             },
             {
-                "name":"require_secure_transport",
+                "name": "require_secure_transport",
                 "default": False,
-                "type": "boolean"
+                "type": "boolean",
             },
             {
-                "name":"connection_string",
-                "default": None
-            }
+                "name": "connection_string",
+                "default": None,
+            },
         ]
-        self.configuration_definition = [{ "name": "query" }, { "name": "connection" }]
+        self.configuration_definition = [{"name": "query"}, {"name": "connection"}]
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
@@ -63,15 +64,19 @@ class ConnectorMYSQL(Connector):
             password = connection["password"]
             database = connection["database"]
             # Create the connection string for MySQL
-            connection_string = f"mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}"
+            connection_string = (
+                f"mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}"
+            )
 
         # Additional connection arguments
         connect_args = {}
         if connection["require_secure_transport"]:
-            connect_args = {'ssl': {'require_secure_transport': True}}
+            connect_args = {"ssl": {"require_secure_transport": True}}
 
         # Create a SQLAlchemy engine using the connection string and additional arguments
-        sql_connection = create_engine(connection_string, echo=False, connect_args=connect_args)
+        sql_connection = create_engine(
+            connection_string, echo=False, connect_args=connect_args
+        )
 
         # Execute the SQL query and read the data into a pandas DataFrame
         df = pd.read_sql(configuration["query"], sql_connection)

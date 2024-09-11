@@ -4,9 +4,10 @@
 import pandas as pd
 from connectors.connector import Connector
 
+
 class ConnectorEmpty(Connector):
     """Connector to return empty"""
-    
+
     def __init__(self):
         # Initialize the connector with its name and empty definitions
         self.name = "EMPTY"

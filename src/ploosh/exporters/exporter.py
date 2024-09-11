@@ -2,6 +2,7 @@
 """Test result exporter"""
 from datetime import datetime
 
+
 class Exporter:
     """Test result exporter"""
     name = None  # Name of the exporter

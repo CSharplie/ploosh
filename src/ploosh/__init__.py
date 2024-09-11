@@ -8,7 +8,15 @@ sys.path.append(os.path.dirname(__file__))
 
 from execute import execute
 
-def execute_cases(cases=None, connections=None, spark=None, spark_session=None, filter=None, path_output=None):
+
+def execute_cases(
+    cases=None,
+    connections=None,
+    spark=None,
+    spark_session=None,
+    filter=None,
+    path_output=None,
+):
     """Execute test cases with the given parameters"""
     args = ["ploosh"]
 

@@ -1,5 +1,6 @@
 """Module for parsing input parameters"""
 
+
 class Parameters:
     """Parse input parameters"""
     # Initialize class variables
@@ -17,7 +18,7 @@ class Parameters:
         # Set arguments and variables from the command-line input
         self.set_args(argv[1:])
         self.set_variables()
-        
+
         # Set paths and other parameters from the arguments
         self.path_connection = self.get_value("connections", None)
         self.path_cases = self.get_value("cases", "./cases")
@@ -50,8 +51,10 @@ class Parameters:
         """Get value or default value from args"""
         if long_name in self.args:
             value = self.args[long_name]
-            if str(value).upper() == "TRUE": return True
-            if str(value).upper() == "FALSE": return False
+            if str(value).upper() == "TRUE":
+                return True
+            if str(value).upper() == "FALSE":
+                return False
             return value
 
         return default
@@ -61,7 +64,7 @@ class Parameters:
         for name, value in self.args.items():
             if not name.startswith("p_"):
                 continue
-            
+
             # Clean the variable name and store it in the dictionary
             name = name.replace("p_", "")
             self.variables[name] = value

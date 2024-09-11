@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
+
 @dataclass
 class StateStatistics:
     """Statistics of test case executions"""
@@ -16,14 +17,20 @@ class StateStatistics:
 
     def add_state(self, state):
         """Add new state to statistics"""
-        if state == "passed": self.passed += 1
-        if state == "failed": self.failed += 1
-        if state == "error": self.error += 1
-        if state == "notExecuted": self.not_executed += 1
+        if state == "passed":
+            self.passed += 1
+        if state == "failed":
+            self.failed += 1
+        if state == "error":
+            self.error += 1
+        if state == "notExecuted":
+            self.not_executed += 1
 
-        if state != "notExecuted": self.executed += 1
+        if state != "notExecuted":
+            self.executed += 1
 
         self.total += 1
+
 
 @dataclass
 class ConnectionDescription:
@@ -34,6 +41,7 @@ class ConnectionDescription:
     def __init__(self, connector, connection):
         self.connector = connector
         self.connection = connection
+
 
 @dataclass
 class Duration:
@@ -47,6 +55,7 @@ class Duration:
         if self.end is not None:
             duration = self.end - self.start
             self.duration = duration.seconds + (duration.microseconds / 1000000)
+
 
 class CaseItem:
     """Structure of case item (source or expected)"""
@@ -62,6 +71,7 @@ class CaseItem:
         self.connector = connector
         self.connection = connection
         self.configuration = configuration
+
 
 class Case:
     """Test case item"""
@@ -125,7 +135,7 @@ class Case:
                 obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
             obj.count = len(obj.df_data)
         else:
-            # TODO: Add object re-cast for Spark mode 
+            # TODO: Add object re-cast for Spark mode
             obj.count = obj.df_data.count()
         obj.duration.end = datetime.now()
 
@@ -150,7 +160,9 @@ class Case:
 
         if count_source != count_expected:
             self.error_type = "count"
-            self.error_message = f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
+            self.error_message = (
+                f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
+            )
 
         if self.error_message is None and count_source != 0:
             # Ignore specified columns
@@ -214,7 +226,9 @@ class Case:
 
         if count_source != count_expected:
             self.error_type = "count"
-            self.error_message = f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
+            self.error_message = (
+                f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
+            )
 
         if self.error_message is None and count_source != 0:
             # Ignore specified columns
@@ -260,9 +274,12 @@ class Case:
         self.compare_duration.calculate_duration()
 
         ends = []
-        if self.source.duration.end is not None: ends.append(self.source.duration.end)
-        if self.expected.duration.end is not None: ends.append(self.expected.duration.end)
-        if self.compare_duration.end is not None: ends.append(self.compare_duration.end)
+        if self.source.duration.end is not None:
+            ends.append(self.source.duration.end)
+        if self.expected.duration.end is not None:
+            ends.append(self.expected.duration.end)
+        if self.compare_duration.end is not None:
+            ends.append(self.compare_duration.end)
 
         if len(ends) == 0:
             self.global_duration.duration = 0

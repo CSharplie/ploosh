@@ -1,6 +1,7 @@
 # pylint: disable=R0903,W0613
 """Connector to access to remote data"""
 
+
 class Connector:
     """Connector to access to remote data"""
     name = None  # Name of the connector

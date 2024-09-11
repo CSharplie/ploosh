@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 import urllib
 from connectors.connector import Connector
 
+
 class ConnectorMSSQL(Connector):
     """Connector to read MSSQL database"""
 
@@ -15,50 +16,50 @@ class ConnectorMSSQL(Connector):
         self.connection_definition = [
             {
                 "name": "mode",
-                "default" : "password",
-                "validset": ["password", "connection_string"]
-            },    
+                "default": "password",
+                "validset": ["password", "connection_string"],
+            },
             {
                 "name": "hostname",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "database",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "username",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "password",
-                "default" : None
+                "default": None,
             },
             {
                 "name": "port",
                 "default": 1433,
-                "type": "integer"
+                "type": "integer",
             },
             {
                 "name": "encrypt",
                 "default": True,
-                "type": "boolean"
+                "type": "boolean",
             },
             {
                 "name": "trust_server_certificate",
                 "default": False,
-                "type": "boolean"
+                "type": "boolean",
             },
             {
                 "name": "driver",
                 "default": "ODBC Driver 18 for SQL Server",
             },
             {
-                "name":"connection_string",
-                "default": None
-            }
+                "name": "connection_string",
+                "default": None,
+            },
         ]
-        self.configuration_definition = [{ "name": "query" }, { "name": "connection" }]
+        self.configuration_definition = [{"name": "query"}, {"name": "connection"}]
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
@@ -73,14 +74,16 @@ class ConnectorMSSQL(Connector):
             username = connection["username"]
             password = connection["password"]
             database = connection["database"]
-            trust_server_certificate = "yes" if connection["trust_server_certificate"] else "no"
+            trust_server_certificate = (
+                "yes" if connection["trust_server_certificate"] else "no"
+            )
             encrypt = "yes" if connection["encrypt"] else "no"
 
             # Create the ODBC connection string
             odbc_connect = urllib.parse.quote_plus(
                 f"Driver={driver};Server={hostname};Database={database};Uid={username};Pwd={password};Encrypt={encrypt};TrustServerCertificate={trust_server_certificate};"
             )
-            connection_string = f'mssql+pyodbc:///?odbc_connect={odbc_connect}'
+            connection_string = f"mssql+pyodbc:///?odbc_connect={odbc_connect}"
 
         # Create a SQLAlchemy engine using the connection string
         sql_connection = create_engine(connection_string, echo=False)

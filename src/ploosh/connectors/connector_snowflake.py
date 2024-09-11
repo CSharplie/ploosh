@@ -5,6 +5,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from connectors.connector import Connector
 
+
 class ConnectorSnowflake(Connector):
     """Connector to read Snowflake database"""
 
@@ -13,32 +14,32 @@ class ConnectorSnowflake(Connector):
         self.name = "SNOWFLAKE"
         self.connection_definition = [
             {
-                "name": "account_identifier"  # Snowflake account identifier
+                "name": "account_identifier",  # Snowflake account identifier
             },
             {
-                "name": "username"  # Username for authentication
+                "name": "username",  # Username for authentication
             },
             {
-                "name": "password"  # Password for authentication
+                "name": "password",  # Password for authentication
             },
             {
                 "name": "database",  # Database name (optional)
-                "default": None
+                "default": None,
             },
             {
                 "name": "schema",  # Schema name (optional)
-                "default": None
+                "default": None,
             },
             {
                 "name": "warehouse",  # Warehouse name (optional)
-                "default": None
+                "default": None,
             },
             {
                 "name": "role",  # Role name (optional)
-                "default": None
-            }
+                "default": None,
+            },
         ]
-        self.configuration_definition = [{ "name": "query" }, { "name": "connection" }]
+        self.configuration_definition = [{"name": "query"}, {"name": "connection"}]
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""

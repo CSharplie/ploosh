@@ -4,8 +4,8 @@
 import warnings
 import pandas as pd
 import pyodbc
-from sqlalchemy import create_engine
 from connectors.connector import Connector
+
 
 class ConnectorODCB(Connector):
     """Connector to read ODBC connection"""
@@ -15,7 +15,7 @@ class ConnectorODCB(Connector):
         self.name = "ODBC"
         self.connection_definition = [
             {
-                "name": "DSN"  # Data Source Name for the ODBC connection
+                "name": "DSN",  # Data Source Name for the ODBC connection
             },
             {
                 "name": "auto_commit",
@@ -37,10 +37,10 @@ class ConnectorODCB(Connector):
             },
             {
                 "name": "encoding",
-                "default": "UTF-8"  # Encoding to use for the connection
-            }
+                "default": "UTF-8",  # Encoding to use for the connection
+            },
         ]
-        self.configuration_definition = [{ "name": "query" }, { "name": "connection" }]
+        self.configuration_definition = [{"name": "query"}, {"name": "connection"}]
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
@@ -48,24 +48,27 @@ class ConnectorODCB(Connector):
         # Establish the ODBC connection using the provided DSN and optional credentials
         if connection["use_credentials"]:
             odbc_connection = pyodbc.connect(
-                f"DSN={connection['DSN']}", 
-                user=connection["user"], 
-                password=connection["password"], 
-                autocommit=connection["auto_commit"]
+                f"DSN={connection['DSN']}",
+                user=connection["user"],
+                password=connection["password"],
+                autocommit=connection["auto_commit"],
             )
         else:
             odbc_connection = pyodbc.connect(
-                f"DSN={connection['DSN']}", 
-                autocommit=connection["auto_commit"]
+                f"DSN={connection['DSN']}", autocommit=connection["auto_commit"]
             )
 
         # Suppress warnings related to encoding settings
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
-            
+
             # Set the encoding for the ODBC connection
-            odbc_connection.setdecoding(pyodbc.SQL_CHAR, encoding=connection["encoding"])
-            odbc_connection.setdecoding(pyodbc.SQL_WCHAR, encoding=connection["encoding"])
+            odbc_connection.setdecoding(
+                pyodbc.SQL_CHAR, encoding=connection["encoding"]
+            )
+            odbc_connection.setdecoding(
+                pyodbc.SQL_WCHAR, encoding=connection["encoding"]
+            )
             odbc_connection.setencoding(encoding=connection["encoding"])
 
             # Execute the SQL query and read the data into a pandas DataFrame

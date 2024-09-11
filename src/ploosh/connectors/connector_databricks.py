@@ -5,6 +5,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from connectors.connector import Connector
 
+
 class ConnectorDatabricks(Connector):
     """Connector to read Databricks database"""
 
@@ -13,26 +14,26 @@ class ConnectorDatabricks(Connector):
         self.name = "DATABRICKS"
         self.connection_definition = [
             {
-                "name": "token"  # Token for authentication
-            },    
-            {
-                "name": "hostname"  # Hostname of the Databricks instance
+                "name": "token",  # Token for authentication
             },
             {
-                "name": "database"  # Database name
+                "name": "hostname",  # Hostname of the Databricks instance
             },
             {
-                "name": "http_path"  # HTTP path for the Databricks cluster
+                "name": "database",  # Database name
             },
             {
-                "name":"port",  # Port number (default is 443)
+                "name": "http_path",  # HTTP path for the Databricks cluster
+            },
+            {
+                "name": "port",  # Port number (default is 443)
                 "default": 443,
-                "type": "integer"
-            }
+                "type": "integer",
+            },
         ]
         self.configuration_definition = [
-            { "name": "query" },  # SQL query to execute
-            { "name": "connection" }  # Connection name
+            {"name": "query"},  # SQL query to execute
+            {"name": "connection"},  # Connection name
         ]
 
     def get_data(self, configuration: dict, connection: dict):
@@ -46,7 +47,9 @@ class ConnectorDatabricks(Connector):
         http_path = connection["http_path"]
 
         # Create the connection string for Databricks
-        connection_string = f"databricks://token:{token}@{hostname}:{port}/{database}?http_path={http_path}"
+        connection_string = (
+            f"databricks://token:{token}@{hostname}:{port}/{database}?http_path={http_path}"
+        )
 
         # Create a SQLAlchemy engine using the connection string
         sql_connection = create_engine(connection_string, echo=False)

@@ -10,6 +10,7 @@ from exporters import get_exporters
 from parameters import Parameters
 from configuration import Configuration
 
+
 def load_data(current_case, process_type, statistics):
     """Load data from source or expected"""
     try:
@@ -23,6 +24,7 @@ def load_data(current_case, process_type, statistics):
         statistics.add_state(current_case.state)
         Log.print_error(str(e))
     return False
+
 
 def compare_data(current_case, statistics, spark_session):
     """Compare data between source and expected"""
@@ -42,6 +44,7 @@ def compare_data(current_case, statistics, spark_session):
         statistics.add_state(current_case.state)
         Log.print_error(str(e))
     return False
+
 
 def execute(args=None, spark_session=None):
     """Main function to execute test cases"""
@@ -84,7 +87,7 @@ def execute(args=None, spark_session=None):
     Log.print(f"{Fore.CYAN}Start processing tests cases[...]")
     for i, case_name in enumerate(cases):
         current_case = cases[case_name]
-        
+
         # Skip disabled test cases
         if current_case.disabled:
             Log.print(f"{Fore.MAGENTA}{case_name} [...] ({i + 1}/{len(cases)}) - Skipped")

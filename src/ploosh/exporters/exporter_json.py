@@ -4,6 +4,7 @@ import json
 import os
 from exporters.exporter import Exporter
 
+
 class ExporterJSON(Exporter):
     """Export test case result to JSON format"""
 
@@ -32,18 +33,18 @@ class ExporterJSON(Exporter):
             if case.source.duration.start is not None:
                 case_data["source"] = {
                     "start": Exporter.date_to_string(case.source.duration.start),
-                    "end":  Exporter.date_to_string(case.source.duration.end),
-                    "duration":  case.source.duration.duration,
-                    "count":  case.source.count,
+                    "end": Exporter.date_to_string(case.source.duration.end),
+                    "duration": case.source.duration.duration,
+                    "count": case.source.count,
                 }
 
             # Collect expected data if available
             if case.expected.duration.start is not None:
                 case_data["expected"] = {
                     "start": Exporter.date_to_string(case.expected.duration.start),
-                    "end":  Exporter.date_to_string(case.expected.duration.end),
-                    "duration":  case.expected.duration.duration,
-                    "count":  case.expected.count,
+                    "end": Exporter.date_to_string(case.expected.duration.end),
+                    "duration": case.expected.duration.duration,
+                    "count": case.expected.count,
                 }
 
             # Collect comparison data if available
@@ -52,14 +53,14 @@ class ExporterJSON(Exporter):
                     "start": Exporter.date_to_string(case.compare_duration.start),
                     "end": Exporter.date_to_string(case.compare_duration.end),
                     "duration": case.compare_duration.duration,
-                    "success_rate": case.success_rate
+                    "success_rate": case.success_rate,
                 }
 
             # Collect error data if the test case failed or encountered an error
             if case.state in ["error", "failed"]:
                 case_data["error"] = {
                     "type": case.error_type,
-                    "message": case.error_message
+                    "message": case.error_message,
                 }
 
             # Append the collected data to the data list

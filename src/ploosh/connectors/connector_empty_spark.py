@@ -1,13 +1,13 @@
 # pylint: disable=R0903
 """Connector to return empty"""
 
-import pandas as pd
 from pyspark.sql.types import StructType
 from connectors.connector import Connector
 
-class ConnectorEmpty(Connector):
+
+class ConnectorEmptySpark(Connector):
     """Connector to return empty"""
-    
+
     def __init__(self):
         # Initialize the connector with its name and indicate it uses Spark
         self.name = "EMPTY_SPARK"
@@ -17,14 +17,14 @@ class ConnectorEmpty(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Return empty value"""
-        
+
         # Create an empty RDD (Resilient Distributed Dataset)
-        empty_RDD = self.spark.sparkContext.emptyRDD()
-        
+        empty_rdd = self.spark.sparkContext.emptyRDD()
+
         # Define an empty schema (no columns)
         columns = StructType([])
-        
+
         # Create an empty DataFrame using the empty RDD and schema
-        df = self.spark.createDataFrame(data=empty_RDD, schema=columns)
+        df = self.spark.createDataFrame(data=empty_rdd, schema=columns)
 
         return df

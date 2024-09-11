@@ -6,6 +6,7 @@ import pandas_gbq
 from sqlalchemy import create_engine
 from connectors.connector import Connector
 
+
 class ConnectorBigQuery(Connector):
     """Connector to read BigQuery database"""
 
@@ -15,21 +16,21 @@ class ConnectorBigQuery(Connector):
         self.connection_definition = [
             {
                 "name": "credentials",  # Credentials for authentication
-                "default": None
+                "default": None,
             },
             {
                 "name": "credentials_type",  # Type of credentials (service account or current user)
                 "validset": ["service_account", "current_user"],
-                "default": "service_account"
+                "default": "service_account",
             },
             {
                 "name": "project_id",  # Project ID for BigQuery
-                "default": None
-            }
+                "default": None,
+            },
         ]
         self.configuration_definition = [
-            { "name": "query" },  # SQL query to execute
-            { "name": "connection" }  # Connection name
+            {"name": "query"},  # SQL query to execute
+            {"name": "connection"},  # Connection name
         ]
 
     def get_data(self, configuration: dict, connection: dict):
@@ -45,6 +46,8 @@ class ConnectorBigQuery(Connector):
             df = pd.read_sql(configuration["query"], sql_connection)
         # If using current user credentials, use pandas_gbq to read the data
         elif credentials_type == "current_user":
-            df = pandas_gbq.read_gbq(configuration["query"], connection["project_id"], progress_bar_type=None)
+            df = pandas_gbq.read_gbq(
+                configuration["query"], connection["project_id"], progress_bar_type=None
+            )
 
         return df
