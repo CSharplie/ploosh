@@ -9,31 +9,32 @@ class ConnectorSnowflake(Connector):
     """Connector to read Snowflake database"""
 
     def __init__(self):
+        # Initialize the connector with its name and connection definitions
         self.name = "SNOWFLAKE"
         self.connection_definition = [
             {
-                "name": "account_identifier"
+                "name": "account_identifier"  # Snowflake account identifier
             },
             {
-                "name": "username"
+                "name": "username"  # Username for authentication
             },
             {
-                "name": "password"
+                "name": "password"  # Password for authentication
             },
             {
-                "name": "database",
+                "name": "database",  # Database name (optional)
                 "default": None
             },
             {
-                "name": "schema",
+                "name": "schema",  # Schema name (optional)
                 "default": None
             },
             {
-                "name": "warehouse",
+                "name": "warehouse",  # Warehouse name (optional)
                 "default": None
             },
             {
-                "name": "role",
+                "name": "role",  # Role name (optional)
                 "default": None
             }
         ]
@@ -42,23 +43,31 @@ class ConnectorSnowflake(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
-
+        # Extract connection parameters
         account_identifier = connection["account_identifier"]
         username = connection["username"]
         password = connection["password"]
+
+        # Create the base connection string for Snowflake
         connection_string = f"snowflake://{username}:{password}@{account_identifier}/"
 
+        # Append database and schema to the connection string if provided
+        if connection["database"] is not None:
+            connection_string += f"{connection['database']}/"
+        if connection["schema"] is not None:
+            connection_string += f"{connection['schema']}"
 
-        if connection["database"] is not None: connection_string += f"{connection['database']}/"
-        if connection["schema"] is not None: connection_string += f"{connection['schema']}"
-
+        # Add query parameters to the connection string
         connection_string += "?1=1"
+        if connection["warehouse"] is not None:
+            connection_string += f"&warehouse={connection['warehouse']}"
+        if connection["role"] is not None:
+            connection_string += f"&role={connection['role']}"
 
-        if connection["warehouse"] is not None: connection_string += f"&warehouse={connection['warehouse']}"
-        if connection["role"] is not None: connection_string += f"&role={connection['role']}"
-
+        # Create a SQLAlchemy engine using the connection string
         sql_connection = create_engine(connection_string, echo=False)
 
+        # Execute the SQL query and read the data into a pandas DataFrame
         df = pd.read_sql(configuration["query"], sql_connection)
 
         return df

@@ -10,6 +10,7 @@ class ConnectorMSSQL(Connector):
     """Connector to read MSSQL database"""
 
     def __init__(self):
+        # Initialize the connector with its name and connection definitions
         self.name = "MSSQL"
         self.connection_definition = [
             {
@@ -62,8 +63,10 @@ class ConnectorMSSQL(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        # Use the provided connection string if mode is "connection_string"
         connection_string = connection["connection_string"]
         if connection["mode"] == "password":
+            # Extract connection parameters
             driver = connection["driver"]
             port = connection["port"]
             hostname = connection["hostname"]
@@ -73,11 +76,16 @@ class ConnectorMSSQL(Connector):
             trust_server_certificate = "yes" if connection["trust_server_certificate"] else "no"
             encrypt = "yes" if connection["encrypt"] else "no"
 
-            odbc_connect = urllib.parse.quote_plus(f"Driver={driver};Server={hostname};Database={database};Uid={username};Pwd={password};Encrypt={encrypt};TrustServerCertificate={trust_server_certificate};")
+            # Create the ODBC connection string
+            odbc_connect = urllib.parse.quote_plus(
+                f"Driver={driver};Server={hostname};Database={database};Uid={username};Pwd={password};Encrypt={encrypt};TrustServerCertificate={trust_server_certificate};"
+            )
             connection_string = f'mssql+pyodbc:///?odbc_connect={odbc_connect}'
 
+        # Create a SQLAlchemy engine using the connection string
         sql_connection = create_engine(connection_string, echo=False)
 
+        # Execute the SQL query and read the data into a pandas DataFrame
         df = pd.read_sql(configuration["query"], sql_connection)
 
         return df
