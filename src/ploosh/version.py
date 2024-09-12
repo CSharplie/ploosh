@@ -1,1 +1,3 @@
-PLOOSH_VERSION = "0.2.20"
+"""Current version of ploosh"""
+
+PLOOSH_VERSION = "0.2.23"
