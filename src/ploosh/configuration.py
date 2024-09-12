@@ -29,6 +29,7 @@ class Configuration:
             "validset": ["float", "int", "datetime", "string"],
         },
         {"name": "options.pass_rate", "type": "decimal", "default": 1},
+        {"name": "options.allow_no_rows", "type": "boolean", "default": True},
         {"name": "source", "type": "dict"},
         {"name": "source.type"},
         {"name": "source.connection", "default": None},
