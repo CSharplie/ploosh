@@ -167,8 +167,11 @@ class Case:
         if self.error_message is None and count_source != 0:
             # Ignore specified columns
             if self.options is not None and self.options["ignore"] is not None:
-                self.source.df_data = self.source.df_data.drop(columns=self.options["ignore"], axis=1, errors="ignore")
-                self.expected.df_data = self.expected.df_data.drop(columns=self.options["ignore"], axis=1, errors="ignore")
+                ignore_columns_source = [self.get_insensitive_item(column, self.source.df_data.columns) for column in self.options["ignore"]]
+                ignore_columns_expected = [self.get_insensitive_item(column, self.expected.df_data.columns) for column in self.options["ignore"]]
+
+                self.source.df_data = self.source.df_data.drop(columns=ignore_columns_source, axis=1, errors="ignore")
+                self.expected.df_data = self.expected.df_data.drop(columns=ignore_columns_expected, axis=1, errors="ignore")
 
             # Normalize column names to lowercase
             self.source.df_data.columns = map(str.lower, self.source.df_data.columns)
