@@ -210,6 +210,11 @@ class Case:
 
                 self.df_compare_gap = df_compare
 
+        # Set error if no rows are allowed
+        if self.error_message is None and count_source == 0 and not self.options["allow_no_rows"]:
+            self.error_message = "Source and exptected datasets are empty but no allow_no_rows option is set to False"
+            self.error_type = "data"
+
         self.compare_duration.end = datetime.now()
 
         if self.error_message is None:
