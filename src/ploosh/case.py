@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import numpy as np
 import pandas as pd
-
+import pyspark.sql.functions as F
 
 @dataclass
 class StateStatistics:
@@ -134,9 +134,20 @@ class Case:
             for date_column in date_columns:
                 obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
             obj.count = len(obj.df_data)
+
+            # trim columns
+            if self.options["trim"]:
+                obj.df_data = obj.df_data.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+
         else:
             # TODO: Add object re-cast for Spark mode
             obj.count = obj.df_data.count()
+
+            # trim columns
+            if self.options["trim"]:
+                for column in obj.df_data.columns:
+                    obj.df_data = obj.df_data.withColumn(column, F.trim(F.col(column)))
+
         obj.duration.end = datetime.now()
 
     def load_data_error(self, obj_type: str, message: str):
