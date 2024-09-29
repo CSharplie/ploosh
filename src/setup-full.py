@@ -8,6 +8,8 @@ install_requires = [
     "databricks-sql-connector==2.9.3",
     "sqlalchemy-bigquery==1.9.0",
     "google-cloud-bigquery-storage==2.24.0",
+    "pandas-gbq==0.23.0",
+    "pydata-google-auth==1.8.2"
 ]
 
 setup_ploosh("ploosh", install_requires)

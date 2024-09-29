@@ -6,7 +6,7 @@ Ploosh is yaml based framework used to automatized the testing process in data p
 Go to the [ploosh wiki](https://github.com/CSharplie/ploosh/wiki) to find the get started tutorial.
 
 ## Steps
-1. Install PyJeb package
+1. Install ploosh package
 2. Run tests
 3. Analyse results
 
