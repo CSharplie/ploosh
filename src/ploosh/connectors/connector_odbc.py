@@ -15,7 +15,17 @@ class ConnectorODCB(Connector):
         self.name = "ODBC"
         self.connection_definition = [
             {
+                "name": "mode",
+                "default": "DSN",
+                "validset": ["DSN", "connection_string"],
+            },
+            {
                 "name": "DSN",  # Data Source Name for the ODBC connection
+                "default": None
+            },
+            {
+                "name": "connection_string",
+                "default": None
             },
             {
                 "name": "auto_commit",
@@ -45,17 +55,22 @@ class ConnectorODCB(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
-        # Establish the ODBC connection using the provided DSN and optional credentials
-        if connection["use_credentials"]:
-            odbc_connection = pyodbc.connect(
-                f"DSN={connection['DSN']}",
-                user=connection["user"],
-                password=connection["password"],
-                autocommit=connection["auto_commit"],
-            )
+        if connection["mode"] == "DSN":
+            # Establish the ODBC connection using the provided DSN and optional credentials
+            if connection["use_credentials"]:
+                odbc_connection = pyodbc.connect(
+                    f"DSN={connection['DSN']}",
+                    user=connection["user"],
+                    password=connection["password"],
+                    autocommit=connection["auto_commit"],
+                )
+            else:
+                odbc_connection = pyodbc.connect(
+                    f"DSN={connection['DSN']};", autocommit=connection["auto_commit"]
+                )
         else:
             odbc_connection = pyodbc.connect(
-                f"DSN={connection['DSN']}", autocommit=connection["auto_commit"]
+                connection["connection_string"], autocommit=connection["auto_commit"]
             )
 
         # Suppress warnings related to encoding settings
