@@ -30,6 +30,7 @@ def setup_ploosh(name, install_requires):
         long_description_content_type="text/markdown",
         url="https://github.com/CSharplie/ploosh/",
         project_urls={
+            "Say Thanks!": "https://ploosh.io",
             "Bug Tracker": "https://github.com/CSharplie/ploosh/issues",
             "CI": "https://github.com/CSharplie/ploosh/actions",
             "Documentation": "https://github.com/CSharplie/ploosh",
