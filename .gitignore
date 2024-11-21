@@ -13,3 +13,4 @@ __pycache__
 /connections.yml
 
 src/debug.py
+setup_env.sh
