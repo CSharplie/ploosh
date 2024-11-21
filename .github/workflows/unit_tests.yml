@@ -50,9 +50,9 @@ jobs:
       run: | 
         sleep 30 # wait until all services are up
 
-        mysql -h 127.0.0.1 -u ploosh -p${{ secrets.TEST_LOCAL_DB_PASSWORD }} < tests/env/mysql/setup.sql
+        mysql -h 127.0.0.1 -u ploosh -p${{ secrets.TEST_LOCAL_DB_PASSWORD }} < tests/.env/mysql/setup.sql
 
         export PGPASSWORD='${{ secrets.TEST_LOCAL_DB_PASSWORD }}';
-        psql -h 127.0.0.1 -U ploosh -d ploosh -f tests/env/postgresql/setup.sql
+        psql -h 127.0.0.1 -U ploosh -d ploosh -f tests/.env/postgresql/setup.sql
 
-        /opt/mssql-tools/bin/sqlcmd  -S localhost -U sa -P ${{ secrets.TEST_LOCAL_DB_PASSWORD }} -i tests/env/mssql/setup.sql
+        /opt/mssql-tools/bin/sqlcmd  -S localhost -U sa -P ${{ secrets.TEST_LOCAL_DB_PASSWORD }} -i tests/.env/mssql/setup.sql
