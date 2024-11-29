@@ -56,3 +56,9 @@ jobs:
         psql -h 127.0.0.1 -U ploosh -d ploosh -f tests/.env/postgresql/setup.sql
 
         /opt/mssql-tools/bin/sqlcmd  -S localhost -U sa -P ${{ secrets.TEST_LOCAL_DB_PASSWORD }} -i tests/.env/mssql/setup.sql
+
+    - name: Feed databases
+      run: | 
+        export TEST_DB_PASSWORD=${{ secrets.TEST_LOCAL_DB_PASSWORD }}
+        pytest -rxs ./tests
+
