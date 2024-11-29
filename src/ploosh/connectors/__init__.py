@@ -1,5 +1,6 @@
 """Data connectors"""
 from importlib import import_module
+from logs import Log
 import inspect
 import os
 
@@ -19,16 +20,21 @@ def get_connectors(spark_session):
     for file in files:
         module_name = file[:-3]  # Remove the ".py" extension to get the module name
 
-        # Import the module dynamically
-        for name, obj in inspect.getmembers(import_module(f"connectors.{module_name}")):
-            if inspect.isclass(obj) and name.startswith("Connector"):
-                current_connector = obj()  # Instantiate the connector class
+        try:
+            # Import the module dynamically
+            for name, obj in inspect.getmembers(import_module(f"connectors.{module_name}")):
+                if inspect.isclass(obj) and name.startswith("Connector"):
+                    current_connector = obj()  # Instantiate the connector class
 
-                # If a Spark session is provided and the connector is Spark-based, set the Spark session
-                if spark_session is not None and current_connector.is_spark:
-                    current_connector.spark = spark_session
+                    # If a Spark session is provided and the connector is Spark-based, set the Spark session
+                    if spark_session is not None and current_connector.is_spark:
+                        current_connector.spark = spark_session
 
-                # Add the connector to the connectors dictionary
-                connectors[current_connector.name] = current_connector
+                    # Add the connector to the connectors dictionary
+                    connectors[current_connector.name] = current_connector
+        except Exception as e:
+            Log.print_warning(f"Could not load connector {module_name}")
+            Log.print_warning(str(e))
+
 
     return connectors
