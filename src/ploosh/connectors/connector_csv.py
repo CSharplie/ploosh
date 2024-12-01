@@ -15,15 +15,44 @@ class ConnectorCSV(Connector):
         self.configuration_definition = [
             {"name": "path"},  # Path to the CSV file
             {"name": "delimiter", "default": ","},  # Delimiter used in the CSV file
+            {"name": "names", "type": 'list', "default": None},  # Sequence of column labels to apply
+            {"name": "usecols", "type": 'list', "default": None},  # Subset of columns to select
+            {"name": "skipfooter", "type": 'integer', "default": 0},  # Number of lines at bottom of file to skip (Unsupported with engine='c')
+            {"name": "nrows", "type": 'integer', "default": None},  # Number of rows of file to read. Useful for reading pieces of large files.
+            {"name": "lineterminator", "type": 'string', "default": None},  # Character used to denote a line break.
+            {"name": "quotechar", "type": 'string', "default": '"'},  # Character used to denote the start and end of a quoted item.
+            {"name": "encoding", "type": 'string', "default": 'utf-8'},  # Encoding to use for UTF when reading/writing.
+            {"name": "engine", "type": 'string', "default": None},  # Parser engine to use.
         ]
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
-
+ 
         # Extract the path and delimiter from the configuration
         path = configuration["path"]
         delimiter = configuration["delimiter"]
+        header = configuration.get("header", "infer")
+        names = configuration["names"]
+        usecols = configuration["usecols"]
+        skiprows = configuration.get("skiprows", None)
+        skipfooter = configuration["skipfooter"]
+        nrows = configuration["nrows"]
+        lineterminator = configuration["lineterminator"]
+        quotechar = configuration["quotechar"]
+        encoding = configuration["encoding"]
+        engine = configuration["engine"]
 
         # Read the CSV file using pandas with the specified delimiter
-        df = pd.read_csv(path, delimiter=delimiter)
+        df = pd.read_csv(path,
+                         delimiter = delimiter,
+                         header = header,
+                         names = names,
+                         usecols = usecols,
+                         skiprows = skiprows,
+                         skipfooter = skipfooter,
+                         nrows = nrows,
+                         lineterminator = lineterminator,
+                         quotechar = quotechar,
+                         engine = engine,
+                         encoding = encoding)
         return df
