@@ -15,6 +15,7 @@ class ConnectorCSV(Connector):
         self.configuration_definition = [
             {"name": "path"},  # Path to the CSV file
             {"name": "delimiter", "default": ","},  # Delimiter used in the CSV file
+            {"name": "infer", "type": "boolean", "default": True},  # Infer the column names
             {"name": "names", "type": 'list', "default": None},  # Sequence of column labels to apply
             {"name": "usecols", "type": 'list', "default": None},  # Subset of columns to select
             {"name": "skipfooter", "type": 'integer', "default": 0},  # Number of lines at bottom of file to skip (Unsupported with engine='c')
@@ -31,7 +32,7 @@ class ConnectorCSV(Connector):
         # Extract the path and delimiter from the configuration
         path = configuration["path"]
         delimiter = configuration["delimiter"]
-        header = configuration.get("header", "infer")
+        header = None if configuration["infer"] is False else 'infer'
         names = configuration["names"]
         usecols = configuration["usecols"]
         skiprows = configuration.get("skiprows", None)
