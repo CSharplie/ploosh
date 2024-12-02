@@ -24,7 +24,7 @@ class ConnectorCSV(Connector):
             {"name": "nrows", "type": "integer", "default": None},  # Number of rows of file to read. Useful for reading pieces of large files.
             {"name": "lineterminator", "type": "string", "default": None},  # Character used to denote a line break.
             {"name": "quotechar", "type": "string", "default": '"'},  # Character used to denote the start and end of a quoted item.
-            {"name": "encoding", "type": "string", "default": 'utf-8'},  # Encoding to use for UTF when reading/writing.
+            {"name": "encoding", "type": "string", "default": "utf-8"},  # Encoding to use for UTF when reading/writing.
             {"name": "engine", "type": "string", "default": None},  # Parser engine to use.
         ]
 
@@ -34,7 +34,7 @@ class ConnectorCSV(Connector):
         # Extract the path and delimiter from the configuration
         path = configuration["path"]
         delimiter = configuration["delimiter"]
-        header = None if configuration["infer"] is False else 'infer'
+        header = None if configuration["infer"] is False else "infer"
         names = configuration["names"]
         usecols = configuration["usecols"]
         skiprows = None
