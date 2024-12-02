@@ -1,7 +1,7 @@
 # pylint: disable=R0903
 """Connector to read CSV file"""
 
-import ast
+import json
 import pandas as pd
 from connectors.connector import Connector
 
@@ -47,8 +47,8 @@ class ConnectorCSV(Connector):
 
         if configuration["skiprows"] is not None:
             try:
-                skiprows = ast.literal_eval(configuration["skiprows"])
-            except SyntaxError:
+                skiprows = json.loads(configuration["skiprows"])
+            except json.JSONDecodeError:
                 raise ValueError("The variable is neither a list nor an integer.")
 
         if skiprows is not None and not isinstance(skiprows, (list, int)):
