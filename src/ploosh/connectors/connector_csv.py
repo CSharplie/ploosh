@@ -17,15 +17,15 @@ class ConnectorCSV(Connector):
             {"name": "path"},  # Path to the CSV file
             {"name": "delimiter", "default": ","},  # Delimiter used in the CSV file
             {"name": "infer", "type": "boolean", "default": True},  # Infer the column names
-            {"name": "names", "type": 'list', "default": None},  # Sequence of column labels to apply
-            {"name": "usecols", "type": 'list', "default": None},  # Subset of columns to select
-            {"name": "skiprows", "type": 'string', "default": None},  # Line numbers to skip (0-indexed) or number of lines to skip (int) at the start of the file
-            {"name": "skipfooter", "type": 'integer', "default": 0},  # Number of lines at bottom of file to skip (Unsupported with engine='c')
-            {"name": "nrows", "type": 'integer', "default": None},  # Number of rows of file to read. Useful for reading pieces of large files.
-            {"name": "lineterminator", "type": 'string', "default": None},  # Character used to denote a line break.
-            {"name": "quotechar", "type": 'string', "default": '"'},  # Character used to denote the start and end of a quoted item.
-            {"name": "encoding", "type": 'string', "default": 'utf-8'},  # Encoding to use for UTF when reading/writing.
-            {"name": "engine", "type": 'string', "default": None},  # Parser engine to use.
+            {"name": "names", "type": "list", "default": None},  # Sequence of column labels to apply
+            {"name": "usecols", "type": "list", "default": None},  # Subset of columns to select
+            {"name": "skiprows", "type": "string", "default": None},  # Line numbers to skip (0-indexed) or number of lines to skip (int) at the start of the file
+            {"name": "skipfooter", "type": "integer", "default": 0},  # Number of lines at bottom of file to skip (Unsupported with engine='c')
+            {"name": "nrows", "type": "integer", "default": None},  # Number of rows of file to read. Useful for reading pieces of large files.
+            {"name": "lineterminator", "type": "string", "default": None},  # Character used to denote a line break.
+            {"name": "quotechar", "type": "string", "default": '"'},  # Character used to denote the start and end of a quoted item.
+            {"name": "encoding", "type": "string", "default": 'utf-8'},  # Encoding to use for UTF when reading/writing.
+            {"name": "engine", "type": "string", "default": None},  # Parser engine to use.
         ]
 
     def get_data(self, configuration: dict, connection: dict):
