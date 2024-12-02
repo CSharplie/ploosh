@@ -1,6 +1,7 @@
 # pylint: disable=R0903
 """Connector to read CSV file"""
 
+import ast
 import pandas as pd
 from connectors.connector import Connector
 
@@ -18,6 +19,7 @@ class ConnectorCSV(Connector):
             {"name": "infer", "type": "boolean", "default": True},  # Infer the column names
             {"name": "names", "type": 'list', "default": None},  # Sequence of column labels to apply
             {"name": "usecols", "type": 'list', "default": None},  # Subset of columns to select
+            {"name": "skiprows", "type": 'string', "default": None},  # Line numbers to skip (0-indexed) or number of lines to skip (int) at the start of the file
             {"name": "skipfooter", "type": 'integer', "default": 0},  # Number of lines at bottom of file to skip (Unsupported with engine='c')
             {"name": "nrows", "type": 'integer', "default": None},  # Number of rows of file to read. Useful for reading pieces of large files.
             {"name": "lineterminator", "type": 'string', "default": None},  # Character used to denote a line break.
@@ -35,13 +37,23 @@ class ConnectorCSV(Connector):
         header = None if configuration["infer"] is False else 'infer'
         names = configuration["names"]
         usecols = configuration["usecols"]
-        skiprows = configuration.get("skiprows", None)
+        skiprows = None
         skipfooter = configuration["skipfooter"]
         nrows = configuration["nrows"]
         lineterminator = configuration["lineterminator"]
         quotechar = configuration["quotechar"]
         encoding = configuration["encoding"]
         engine = configuration["engine"]
+
+        if configuration["skiprows"] is not None:
+            try:
+                skiprows = ast.literal_eval(configuration["skiprows"])
+            except SyntaxError:
+                raise ValueError("The variable is neither a list nor an integer.")
+
+        if skiprows is not None and not isinstance(skiprows, (list, int)):
+            raise ValueError("The variable is neither a list nor an integer.")
+
 
         # Read the CSV file using pandas with the specified delimiter
         df = pd.read_csv(path,
