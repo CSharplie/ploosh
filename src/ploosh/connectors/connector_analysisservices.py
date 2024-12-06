@@ -63,7 +63,7 @@ class ConnectorAnalysisServices(Connector):
                 "name": "dataset_id"
             },
             {
-                "name": "hostname"
+                "name": "server"
             }
         ]
         self.configuration_definition = [
@@ -77,7 +77,7 @@ class ConnectorAnalysisServices(Connector):
 
         mode = connection["mode"]
         
-        hostname = connection["hostname"]
+        server = connection["server"]
         dataset_id = connection["dataset_id"] # For local .pbix --> Dataset ID: in DAX Studio, right click to model name and choose "copy Database ID"
 
         query = configuration["query"] # DAX Query
@@ -85,12 +85,12 @@ class ConnectorAnalysisServices(Connector):
 
         # will open a login page in browser (if local AS instance, will connect automatically)
         if mode == "oauth":
-            connection_string = f'Provider=MSOLAP;Data Source={hostname};Catalog={dataset_id};'
+            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};'
         
         # uses the token provided in the connection_definition
         elif mode == "token":
             token = connection["token"]
-            connection_string = f'Provider=MSOLAP;Data Source={hostname};Catalog={dataset_id};User Id=;Password={token};Impersonation Level=Impersonate;'
+            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id=;Password={token};Impersonation Level=Impersonate;'
         
         # get a token from a registered azure app
         elif mode == "spn":
@@ -102,13 +102,13 @@ class ConnectorAnalysisServices(Connector):
             credential = ClientSecretCredential(tenant_id, client_id, client_secret)#, authority=authority)
             token = credential.get_token(scope)
             token_string = token.token
-            connection_string = f'Provider=MSOLAP;Data Source={hostname};Catalog={dataset_id};User Id=;Password={token_string};Impersonation Level=Impersonate;'
+            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id=;Password={token_string};Impersonation Level=Impersonate;'
         
         # uses username and password
         elif mode == "credentials":
             username = connection["username"]
             password = connection["password"]
-            connection_string = f'Provider=MSOLAP;Data Source={hostname};Catalog={dataset_id};User Id={username};Password={password};'
+            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id={username};Password={password};'
 
 
         # Create and open connection to AS instance
