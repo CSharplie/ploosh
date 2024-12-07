@@ -48,7 +48,7 @@ class ConnectorParquet(Connector):
 
         # Read the Parquet file using pandas
         df = pd.read_parquet(path,
-                             columns=columns,
-                             engine=engine,
-                             filters=filters)
+                             columns = columns,
+                             engine  = engine,
+                             filters = filters)
         return df
