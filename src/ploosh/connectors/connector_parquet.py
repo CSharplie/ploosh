@@ -15,7 +15,7 @@ class ConnectorParquet(Connector):
         self.configuration_definition = [
             {"name": "path"},  # Path to the Parquet file
             {"name": "columns", "type": "list", "default": None},  # Subset of columns to load
-            {"name": "engine", "type": "string", "default": "auto"},  # Parquet engine to use ('auto', 'pyarrow', 'fastparquet')
+            {"name": "engine", "type": "string", "validset": ["auto", "pyarrow", "fastparquet"], "default": "auto"},  # Parquet engine to use ('auto', 'pyarrow', 'fastparquet')
             {"name": "filters", "type": "list", "default": None},  # Row group filters to apply (for 'pyarrow')
         ]
 
