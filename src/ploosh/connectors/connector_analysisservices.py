@@ -113,16 +113,25 @@ class ConnectorAnalysisServices(Connector):
 
         # Create and open connection to AS instance
         con = Pyadomd(connection_string)
-        con.open()  # Open the connection
-
+        try:
+            con.open()  # Open the connection
+        except:
+            raise ValueError("Can't connect to the AS Instance")
+        
         # execute DAX query
-        result = con.cursor().execute(query)
+        with con.cursor() as cur:
+            try:
+                cur.execute(query)
+                result = cur.fetchone()
+                column_name=[i.name for i in cur.description]
+                df = pd.DataFrame(result, columns = column_name)
 
-        # Load result into a Dataframe
-        column_name=[i.name for i in result.description]
-        df = pd.DataFrame(result.fetchone(), columns = column_name)
+                # Proactively close connection to AS instance
+                con.close()  
 
-        # Proactively close connection to AS instance
-        con.close()  
-
-        return df
+                return df
+            except Exception as query_error:
+                error_message = str(query_error)
+                # Keep only error message without Technical Details
+                error_summary = error_message.split("Technical Details")[0].strip()
+                raise Exception(f"Erreur lors de l'exécution de la requête :\n{str(error_summary)}")

@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 from azure.identity import ClientSecretCredential, InteractiveBrowserCredential, UsernamePasswordCredential
 from connectors.connector import Connector
+import json
 
 class ConnectorSemanticModel(Connector):
     """Connector to read Semantic Model using Fabric XMLA endpoint"""
@@ -95,6 +96,16 @@ class ConnectorSemanticModel(Connector):
 
 
         post_r = requests.post(url=post_query,data=body, headers=header)
+
+        if post_r.status_code == 400:
+            response = json.loads(post_r.text)
+            error_code = response['error']['code'] + "\n"
+            error_message = response['error']['pbi.error']['details'][0]['detail']['value']
+            raise ValueError("DAX Execution Error : " + error_code + "\n" + error_message)
+
+        if post_r.status_code == 404:
+            raise ValueError("Connection issue: PowerBIEntityNotFound")
+
 
         output = post_r.json()
         dfResults = pd.DataFrame(output)
