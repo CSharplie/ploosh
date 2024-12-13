@@ -29,7 +29,7 @@ class ConnectorAnalysisServices(Connector):
             {
                 "name": "mode",
                 "default" : "oauth",
-                "validset": ["oauth"] #, "token", "credentials", "spn"]
+                "validset": ["oauth", "pbix"] #, "token", "credentials", "spn"]
             },
             {
                 "name": "token",
@@ -87,6 +87,10 @@ class ConnectorAnalysisServices(Connector):
         if mode == "oauth":
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};'
         
+        # will open a login page in browser (if local AS instance, will connect automatically)
+        elif mode == "pbix":
+            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};'
+        
         # uses the token provided in the connection_definition
         elif mode == "token":
             token = connection["token"]
@@ -133,5 +137,5 @@ class ConnectorAnalysisServices(Connector):
             except Exception as query_error:
                 error_message = str(query_error)
                 # Keep only error message without Technical Details
-                error_summary = error_message.split("Technical Details")[0].strip()
+                error_summary = error_message.split("Technical Details")[0].strip().split("\r\n   at")[0].strip()
                 raise Exception(f"Erreur lors de l'exécution de la requête :\n{str(error_summary)}")
