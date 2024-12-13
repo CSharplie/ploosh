@@ -29,8 +29,8 @@ class ConnectorAnalysisServices(Connector):
             {
                 "name": "mode",
                 "default" : "oauth",
-                "validset": ["oauth", "token", "credentials", "spn"]
-            }, 
+                "validset": ["oauth"] #, "token", "credentials", "spn"]
+            },
             {
                 "name": "token",
                 "default" : None
