@@ -16,7 +16,7 @@ class ConnectorSemanticModel(Connector):
             {
                 "name": "mode",
                 "default" : "oauth",
-                "validset": ["oauth", "token", "spn"]
+                "validset": ["oauth"] #, "token", "spn"] To add once tested
             }, 
             {
                 "name": "token",
@@ -58,10 +58,14 @@ class ConnectorSemanticModel(Connector):
 
 
         if mode == "oauth":
-            interactive_browser_credential_class = InteractiveBrowserCredential()
-            scope = 'https://analysis.windows.net/powerbi/api/.default'
-            access_token_class = interactive_browser_credential_class.get_token(scope)
-            token_string = access_token_class.token
+            try:
+                interactive_browser_credential_class = InteractiveBrowserCredential()
+                scope = 'https://analysis.windows.net/powerbi/api/.default'
+                access_token_class = interactive_browser_credential_class.get_token(scope)
+                token_string = access_token_class.token
+            except Exception as connection_error:
+                raise ValueError(connection_error)
+            
 
         # uses the token provided in the connection_definition
         elif mode == "token":
@@ -97,21 +101,24 @@ class ConnectorSemanticModel(Connector):
 
         post_r = requests.post(url=post_query,data=body, headers=header)
 
-        if post_r.status_code == 400:
-            response = json.loads(post_r.text)
-            error_code = response['error']['code'] + "\n"
-            error_message = response['error']['pbi.error']['details'][0]['detail']['value']
-            raise ValueError("DAX Execution Error : " + error_code + "\n" + error_message)
+        if post_r.status_code == 200:
+            output = post_r.json()
+            dfResults = pd.DataFrame(output)
+            dfTables = pd.DataFrame(dfResults["results"][0])
+            dfRows = pd.DataFrame(dfTables["tables"][0])
+            flattenData = dfRows.values.flatten()
+            df = pd.json_normalize(flattenData) # type: ignore
 
-        if post_r.status_code == 404:
+            return df
+
+        elif post_r.status_code == 400:
+            response = json.loads(post_r.text)
+            error_code = response['error']['code']
+            error_message = response['error']['pbi.error']['details'][0]['detail']['value']
+            raise ValueError(f"DAX Execution Error : {error_code}\n{error_message}")
+
+        elif post_r.status_code == 404:
             raise ValueError("Connection issue: PowerBIEntityNotFound")
 
-
-        output = post_r.json()
-        dfResults = pd.DataFrame(output)
-        dfTables = pd.DataFrame(dfResults["results"][0])
-        dfRows = pd.DataFrame(dfTables["tables"][0])
-        flattenData = dfRows.values.flatten()
-        df = pd.json_normalize(flattenData) # type: ignore
-
-        return df
+        else:
+            raise ValueError("Execution Error")
