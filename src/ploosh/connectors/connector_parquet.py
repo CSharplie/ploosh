@@ -17,6 +17,9 @@ class ConnectorParquet(Connector):
             {"name": "columns", "type": "list", "default": None},  # Subset of columns to load
             {"name": "engine", "type": "string", "validset": ["auto", "pyarrow", "fastparquet"], "default": "auto"},  # Parquet engine to use ('auto', 'pyarrow', 'fastparquet')
             {"name": "filters", "type": "list", "default": None},  # Row group filters to apply (for 'pyarrow')
+            {"name": "filters.column", "type": "string"},  # The name of the column to filter
+            {"name": "filters.operator", "type": "string", "validset" : ["==", "=", ">", ">=", "<", "<=", "!="]},  # The operator to be used
+            {"name": "filters.value", "type": "integer"},  # The value to be used to filter the column
         ]
 
     def get_data(self, configuration: dict, connection: dict):
@@ -27,28 +30,16 @@ class ConnectorParquet(Connector):
         columns = configuration["columns"]
         engine = configuration["engine"]
         filters = configuration["filters"]
-
-        # Check if the variable is a list
-        if not isinstance(filters, list):
-            raise ValueError("The variable must be a list.")
-
-        # Check if the list is empty
-        if not filters:
-            raise ValueError("The list must not be empty.")
-
-        # Check and convert each element into a tuple
-        check_filters = []
-        for element in filters:
-            if not isinstance(element, list) or len(element) != 3:
-                raise ValueError(
-                    "Each element of the list must be a list containing exactly 3 elements: [column, op, val]."
-                )
-            # Convert the element into a tuple
-            check_filters.append(tuple(element))
+        list_filters = None
+        if filters is not None:
+            list_filters = (
+                [(filter_spec["column"], filter_spec["operator"], filter_spec["value"]) for filter_spec in filters]
+                if filters else None
+            )
 
         # Read the Parquet file using pandas
         df = pd.read_parquet(path,
                              columns = columns,
                              engine  = engine,
-                             filters = filters)
+                             filters = list_filters)
         return df
