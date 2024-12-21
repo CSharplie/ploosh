@@ -24,7 +24,7 @@ class Connector_Analysis_Services(Connector):
         from pyadomd import Pyadomd
         ## ADOMD.dll -- END ##
 
-        self.name = "ANALYSISSERVICES"
+        self.name = "ANALYSIS_SERVICES"
         self.connection_definition = [
             {
                 "name": "mode",

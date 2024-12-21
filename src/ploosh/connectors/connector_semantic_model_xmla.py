@@ -11,7 +11,7 @@ class Connector_Semantic_Model(Connector):
     """Connector to read Semantic Model using Fabric XMLA endpoint"""
 
     def __init__(self):
-        self.name = "SEMANTICMODEL"
+        self.name = "SEMANTIC_MODEL"
         self.connection_definition = [
             {
                 "name": "mode",
