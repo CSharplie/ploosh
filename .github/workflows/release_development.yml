@@ -18,12 +18,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12.8"
     - name: Install requirements
       run: | 
         pip install -r requirements.txt
-        pip install wheel==0.42.0
-        pip install twine==4.0.2
-        pip install setuptools==65.5.0
+        pip install wheel==0.44.0
+        pip install twine==6.0.1
+        pip install setuptools==75.1.0
     - name: Build package (full)
       run: python setup-full.py sdist bdist_wheel
     - name: Build package (core)
