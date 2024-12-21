@@ -1,4 +1,4 @@
-name: 'Release on PyPi (Production)'
+name: 'Release on PyPi'
 
 on:
   push:
@@ -6,6 +6,9 @@ on:
       - develop
     tags:
       - '*'
+    paths:
+      - '/src'
+      - '/tests'
   workflow_dispatch:
 
 jobs:
