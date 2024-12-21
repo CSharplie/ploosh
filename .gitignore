@@ -11,6 +11,3 @@ __pycache__
 /test_cases
 /output
 /connections.yml
-
-src/debug.py
-setup_env.sh
