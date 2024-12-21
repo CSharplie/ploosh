@@ -5,7 +5,7 @@ from sys import path
 from pathlib import Path
 import os
 
-class ConnectorAnalysisServices(Connector):
+class Connector_Analysis_Services(Connector):
     """Connector to read Analysis Services Model using ADOMD"""
 
     def __init__(self):
