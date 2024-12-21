@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-   publish:
+  publish:
     name: 'Publish on PyPi'
     runs-on: ubuntu-latest
     defaults:
