@@ -24,16 +24,16 @@ jobs:
         uses: actions/checkout@v3
       - name: Set environment for deployment
         run: |
-          if [[ $GITHUB_REF == refs/heads/develop ]]; then
-            echo "Deploying to test environment"
-            export PYPI_URL="https://test.pypi.org/legacy/"
-            export PYPI_USER="${{ secrets.PYPI_TEST_USER }}"
-            export PYPI_PASSWORD="${{ secrets.PYPI_TEST_PASSWORD }}"
-          elif [[ $GITHUB_REF == refs/tags/* ]]; then
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo "Deploying to production environment"
             export PYPI_URL="https://upload.pypi.org/legacy/"
             export PYPI_USER="${{ secrets.PYPI_USER }}"
             export PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}"
+          else 
+            echo "Deploying to test environment"
+            export PYPI_URL="https://test.pypi.org/legacy/"
+            export PYPI_USER="${{ secrets.PYPI_TEST_USER }}"
+            export PYPI_PASSWORD="${{ secrets.PYPI_TEST_PASSWORD }}"
           fi
       - name: Set up Python
         uses: actions/setup-python@v5
