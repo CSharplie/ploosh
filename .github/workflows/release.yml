@@ -1,4 +1,4 @@
-name: 'Release on PyPi (Production)'
+name: 'Release on PyPi'
 
 on:
   push:
@@ -6,10 +6,13 @@ on:
       - develop
     tags:
       - '*'
+    paths:
+      - '/src'
+      - '/tests'
   workflow_dispatch:
 
 jobs:
-   publish:
+  publish:
     name: 'Publish on PyPi'
     runs-on: ubuntu-latest
     defaults:
@@ -30,23 +33,23 @@ jobs:
             export PYPI_USER="${{ secrets.PYPI_USER }}"
             export PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}"
           fi
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12.8"
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Install requirements
-      run: | 
-        pip install -r requirements.txt
-        pip install wheel==0.44.0
-        pip install twine==6.0.1
-        pip install setuptools==75.1.0
-    - name: Build package (full)
-      run: python setup-full.py sdist bdist_wheel
-    - name: Build package (core)
-      run: python setup-core.py sdist bdist_wheel
-    - name: Check package
-      run: twine check dist/*
-    - name: Publish
-      run: twine upload --repository-url $PYPI_URL dist/* -u $PYPI_USER -p $PYPI_PASSWORD
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.8"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install requirements
+        run: | 
+          pip install -r requirements.txt
+          pip install wheel==0.44.0
+          pip install twine==6.0.1
+          pip install setuptools==75.1.0
+      - name: Build package (full)
+        run: python setup-full.py sdist bdist_wheel
+      - name: Build package (core)
+        run: python setup-core.py sdist bdist_wheel
+      - name: Check package
+        run: twine check dist/*
+      - name: Publish
+        run: twine upload --repository-url $PYPI_URL dist/* -u $PYPI_USER -p $PYPI_PASSWORD
