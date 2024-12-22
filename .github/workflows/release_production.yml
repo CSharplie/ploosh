@@ -34,3 +34,4 @@ jobs:
       run: twine check dist/*
     - name: Publish
       run: twine upload --repository-url https://upload.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_USER }} -p '${{ secrets.PYPI_PASSWORD }}'
+
