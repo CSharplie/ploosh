@@ -7,7 +7,7 @@ from azure.identity import ClientSecretCredential, InteractiveBrowserCredential,
 from connectors.connector import Connector
 import json
 
-class Connector_Semantic_Model(Connector):
+class ConnectorSemanticModel(Connector):
     """Connector to read Semantic Model using Fabric XMLA endpoint"""
 
     def __init__(self):
