@@ -9,7 +9,9 @@ install_requires = [
     "sqlalchemy-bigquery==1.9.0",
     "google-cloud-bigquery-storage==2.24.0",
     "pandas-gbq==0.23.0",
-    "pydata-google-auth==1.8.2"
+    "pydata-google-auth==1.8.2",
+    "azure-identity==1.19.0",
+    "pyadomd==0.1.1"
 ]
 
 setup_ploosh("ploosh", install_requires)
