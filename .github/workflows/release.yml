@@ -29,7 +29,7 @@ jobs:
             export PYPI_URL="https://upload.pypi.org/legacy/"
             export PYPI_USER="${{ secrets.PYPI_USER }}"
             export PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}"
-          else 
+          else; then
             echo "Deploying to test environment"
             export PYPI_URL="https://test.pypi.org/legacy/"
             export PYPI_USER="${{ secrets.PYPI_TEST_USER }}"
