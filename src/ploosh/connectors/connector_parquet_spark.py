@@ -1,7 +1,6 @@
 # pylint: disable=R0903
 """Connector to read Parquet file"""
 
-import pandas as pd
 from connectors.connector import Connector
 
 
