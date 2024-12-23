@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import pytest
+import urllib
 from pyjeb import control_and_setup
 from ploosh.connectors.connector_mssql import ConnectorMSSQL
 
@@ -39,9 +40,10 @@ def test_connection_with_connection_string(connector, df_sales):
         "connection": "debug"
     }
 
+    password = urllib.parse.quote_plus(os.environ.get('TEST_DB_PASSWORD'))
     connection = {
         "mode": "connection_string",
-        "connection_string": f"mssql+pyodbc://sa:{os.environ.get('TEST_DB_PASSWORD')}@localhost/ploosh?driver=ODBC+Driver+17+for+SQL+Server"
+        "connection_string": f"mssql+pyodbc://sa:{password}@localhost/ploosh?driver=ODBC+Driver+17+for+SQL+Server"
     }
 
     connection = control_and_setup(connection, connector.connection_definition)
