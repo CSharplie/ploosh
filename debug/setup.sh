@@ -37,3 +37,10 @@ docker run --name ploosh_mssql \
     -p 1433:1433 \
     -d \
     mcr.microsoft.com/mssql/server:2022-latest
+
+mysql -h 127.0.0.1 -u ploosh -p$db_password < tests/.env/mysql/setup.sql
+
+export PGPASSWORD=$db_password;
+psql -h 127.0.0.1 -U ploosh -d ploosh -f tests/.env/postgresql/setup.sql
+
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $db_password -i tests/.env/mssql/setup.sql
