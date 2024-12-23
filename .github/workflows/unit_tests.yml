@@ -61,5 +61,5 @@ jobs:
     - name: Feed databases
       run: | 
         export TEST_DB_PASSWORD=${{ secrets.TEST_LOCAL_DB_PASSWORD }}
-        pytest -rxs ./tests
+        pytest  -rA ./tests
 
