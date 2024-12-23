@@ -18,6 +18,7 @@ jobs:
         python-version: "3.12.8"
     - name: Install requirements
       run: | 
+        pip install -r src/requirements.txt
         pip install pytest==8.3.3
     - name: Run MySQL container
       run: | 
