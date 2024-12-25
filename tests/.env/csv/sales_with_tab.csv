@@ -1,0 +1,75 @@
+sale_id	seller_name	card_name	card_rarity	card_condition	price	quantity	sale_date	card_set	buyer_name	transaction_status
+1	John Doe	Charizard	Rare	Mint	250.00	1	2024-11-01	Base Set	Jane Smith	Completed
+2	Jane Smith	Blastoise	Holo Rare	Excellent	180.00	1	2024-11-02	Base Set	Alex Johnson	Completed
+3	Alex Johnson	Pikachu	Common	Near Mint	15.00	4	2024-11-03	Jungle	Chris Brown	Completed
+4	Chris Brown	Dragonite	Ultra Rare	Good	300.00	1	2024-11-04	Fossil	Emma Green	Pending
+5	Emma Green	Zapdos	Holo Rare	Mint	150.00	1	2024-11-05	Fossil	Sarah White	Completed
+6	Sarah White	Venusaur	Rare	Good	120.00	2	2024-11-06	Base Set	John Doe	Completed
+7	Liam Brown	Moltres	Rare	Near Mint	140.00	1	2024-11-07	Fossil	Jane Smith	Completed
+8	Olivia Taylor	Articuno	Rare	Excellent	100.00	1	2024-11-08	Fossil	Alex Johnson	Cancelled
+9	Sophia Wilson	Eevee	Common	Mint	20.00	3	2024-11-09	Jungle	Chris Brown	Completed
+10	Mason Martinez	Jolteon	Rare	Near Mint	80.00	1	2024-11-10	Jungle	Emma Green	Completed
+11	Ethan White	Flareon	Rare	Excellent	85.00	1	2024-11-11	Jungle	Sarah White	Completed
+12	Lucas Harris	Vaporeon	Rare	Mint	100.00	1	2024-11-12	Jungle	Liam Brown	Completed
+13	Amelia Clark	Machamp	Holo Rare	Mint	75.00	1	2024-11-13	Base Set	Olivia Taylor	Completed
+14	Harper Lewis	Gengar	Rare	Mint	80.00	1	2024-11-14	Fossil	Sophia Wilson	Completed
+15	Evelyn Walker	Snorlax	Rare	Mint	90.00	1	2024-11-15	Jungle	Mason Martinez	Completed
+16	Henry King	Charizard	Rare	Excellent	250.00	1	2024-11-16	Base Set	Ethan White	Completed
+17	Isabella Moore	Mewtwo	Holo Rare	Near Mint	220.00	1	2024-11-17	Fossil	Lucas Harris	Completed
+18	Sophia Wilson	Articuno	Rare	Mint	120.00	1	2024-11-18	Fossil	Amelia Clark	Completed
+19	Liam Brown	Pikachu	Common	Good	10.00	5	2024-11-19	Jungle	Harper Lewis	Pending
+20	Emma Green	Moltres	Rare	Excellent	140.00	1	2024-11-20	Fossil	Evelyn Walker	Completed
+21	Chris Brown	Blastoise	Holo Rare	Mint	180.00	1	2024-11-21	Base Set	Henry King	Completed
+22	Alex Johnson	Eevee	Common	Mint	25.00	2	2024-11-22	Jungle	Isabella Moore	Completed
+23	John Doe	Dragonite	Ultra Rare	Near Mint	320.00	1	2024-11-23	Base Set	Jane Smith	Pending
+24	Jane Smith	Machamp	Holo Rare	Good	70.00	1	2024-11-24	Base Set	Alex Johnson	Completed
+25	Sarah White	Vaporeon	Rare	Excellent	100.00	1	2024-11-25	Jungle	Chris Brown	Cancelled
+26	Olivia Taylor	Jolteon	Rare	Mint	85.00	1	2024-11-26	Jungle	Emma Green	Completed
+27	Henry King	Zapdos	Holo Rare	Good	140.00	1	2024-11-27	Fossil	Sophia Wilson	Completed
+28	Ethan White	Gengar	Rare	Excellent	75.00	1	2024-11-28	Fossil	Mason Martinez	Completed
+29	Amelia Clark	Mewtwo	Holo Rare	Mint	230.00	1	2024-11-29	Fossil	Ethan White	Completed
+30	Lucas Harris	Charizard	Rare	Near Mint	250.00	1	2024-11-30	Base Set	Lucas Harris	Completed
+31	Harper Lewis	Snorlax	Rare	Excellent	90.00	1	2024-12-01	Jungle	Liam Brown	Completed
+32	Sophia Wilson	Flareon	Rare	Good	85.00	1	2024-12-02	Jungle	Isabella Moore	Pending
+33	Mason Martinez	Articuno	Rare	Mint	120.00	1	2024-12-03	Fossil	Harper Lewis	Completed
+34	Emma Green	Moltres	Holo Rare	Mint	140.00	1	2024-12-04	Fossil	Henry King	Completed
+35	John Doe	Pikachu	Common	Mint	15.00	3	2024-12-05	Jungle	Chris Brown	Completed
+36	Jane Smith	Dragonite	Ultra Rare	Excellent	300.00	1	2024-12-06	Base Set	Sophia Wilson	Completed
+37	Alex Johnson	Machamp	Holo Rare	Mint	75.00	1	2024-12-07	Base Set	Emma Green	Completed
+38	Chris Brown	Vaporeon	Rare	Good	90.00	1	2024-12-08	Jungle	John Doe	Completed
+39	Olivia Taylor	Jolteon	Rare	Near Mint	80.00	1	2024-12-09	Jungle	Jane Smith	Pending
+40	Ethan White	Gengar	Rare	Mint	85.00	1	2024-12-10	Fossil	Liam Brown	Completed
+41	Amelia Clark	Eevee	Common	Excellent	25.00	3	2024-12-11	Jungle	Olivia Taylor	Completed
+42	Sophia Wilson	Charizard	Rare	Good	220.00	1	2024-12-12	Base Set	Alex Johnson	Cancelled
+43	Lucas Harris	Zapdos	Holo Rare	Mint	150.00	1	2024-12-13	Fossil	Emma Green	Completed
+44	Harper Lewis	Mewtwo	Ultra Rare	Near Mint	200.00	1	2024-12-14	Fossil	Sarah White	Completed
+45	Henry King	Lapras	Rare	Mint	95.00	1	2024-12-16	Fossil	Sophia Wilson	Completed
+46	Ethan White	Ditto	Rare	Excellent	85.00	1	2024-12-17	Fossil	Amelia Clark	Completed
+47	Sarah White	Bulbasaur	Common	Near Mint	12.00	5	2024-12-18	Base Set	Lucas Harris	Completed
+48	Emma Green	Charmander	Common	Mint	15.00	4	2024-12-19	Base Set	Chris Brown	Pending
+49	Jane Smith	Squirtle	Common	Good	10.00	6	2024-12-20	Base Set	Mason Martinez	Completed
+50	John Doe	Jigglypuff	Common	Excellent	8.00	10	2024-12-21	Jungle	Liam Brown	Completed
+51	Olivia Taylor	Clefairy	Rare	Mint	50.00	1	2024-12-22	Base Set	Ethan White	Completed
+52	Lucas Harris	Nidoking	Holo Rare	Good	125.00	1	2024-12-23	Base Set	John Doe	Cancelled
+53	Alex Johnson	Hitmonchan	Holo Rare	Near Mint	100.00	1	2024-12-24	Base Set	Jane Smith	Completed
+54	Sophia Wilson	Kangaskhan	Rare	Excellent	80.00	1	2024-12-25	Jungle	Henry King	Completed
+55	Chris Brown	Scyther	Rare	Mint	85.00	1	2024-12-26	Jungle	Emma Green	Completed
+56	Harper Lewis	Pinsir	Rare	Near Mint	70.00	1	2024-12-27	Jungle	Olivia Taylor	Completed
+57	Mason Martinez	Aerodactyl	Rare	Good	100.00	1	2024-12-28	Fossil	Sarah White	Completed
+58	Liam Brown	Kabutops	Rare	Mint	105.00	1	2024-12-29	Fossil	Alex Johnson	Completed
+59	Evelyn Walker	Magikarp	Common	Excellent	5.00	20	2024-12-30	Base Set	Lucas Harris	Completed
+60	Amelia Clark	Gyarados	Holo Rare	Near Mint	150.00	1	2024-12-31	Base Set	Sophia Wilson	Pending
+61	Sarah White	Ditto	Rare	Mint	90.00	1	2025-01-01	Fossil	Henry King	Completed
+62	Emma Green	Pidgeot	Rare	Good	70.00	1	2025-01-02	Jungle	Chris Brown	Completed
+63	John Doe	Electabuzz	Rare	Excellent	60.00	2	2025-01-03	Base Set	Liam Brown	Completed
+64	Jane Smith	Magmar	Rare	Mint	55.00	1	2025-01-04	Fossil	Mason Martinez	Completed
+65	Olivia Taylor	Jynx	Common	Excellent	30.00	3	2025-01-05	Base Set	Ethan White	Completed
+66	Alex Johnson	Alakazam	Holo Rare	Mint	175.00	1	2025-01-06	Base Set	Jane Smith	Completed
+67	Sophia Wilson	Chansey	Holo Rare	Good	100.00	1	2025-01-07	Base Set	Olivia Taylor	Completed
+68	Chris Brown	Geodude	Common	Near Mint	5.00	12	2025-01-08	Base Set	John Doe	Completed
+69	Henry King	Grimer	Common	Excellent	7.00	8	2025-01-09	Fossil	Emma Green	Completed
+70	Ethan White	Muk	Rare	Mint	85.00	1	2025-01-10	Fossil	Sophia Wilson	Completed
+71	Harper Lewis	Rhydon	Rare	Good	75.00	1	2025-01-11	Jungle	Chris Brown	Cancelled
+72	Mason Martinez	Tauros	Common	Near Mint	10.00	10	2025-01-12	Jungle	Alex Johnson	Completed
+73	Evelyn Walker	Exeggutor	Rare	Mint	65.00	1	2025-01-13	Jungle	Sarah White	Completed
+74	Lucas Harris	Venonat	Common	Excellent	5.00	15	2025-01-14	Jungle	Harper Lewis	Pending

@@ -80,9 +80,8 @@ class ConnectorMSSQL(Connector):
             encrypt = "yes" if connection["encrypt"] else "no"
 
             # Create the ODBC connection string
-            odbc_connect = urllib.parse.quote_plus(
-                f"Driver={driver};Server={hostname};Database={database};Uid={username};Pwd={password};Encrypt={encrypt};TrustServerCertificate={trust_server_certificate};"
-            )
+            password = urllib.parse.quote_plus(password)
+            odbc_connect = f"Driver={driver};Server={hostname};Database={database};Uid={username};Pwd={password};Encrypt={encrypt};TrustServerCertificate={trust_server_certificate};"
             connection_string = f"mssql+pyodbc:///?odbc_connect={odbc_connect}"
 
         # Create a SQLAlchemy engine using the connection string

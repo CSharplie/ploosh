@@ -3,6 +3,7 @@
 
 import pandas as pd
 from sqlalchemy import create_engine
+import urllib
 from connectors.connector import Connector
 
 
@@ -64,9 +65,12 @@ class ConnectorPostgreSQL(Connector):
             password = connection["password"]
             database = connection["database"]
             # Create the connection string for PostgreSQL
+            password = urllib.parse.quote_plus(password)
             connection_string = (
                 f"postgresql+pg8000://{username}:{password}@{hostname}:{port}/{database}"
             )
+
+            print(f"\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n=====================>{connection_string}")
 
         # Additional connection arguments
         connect_args = {}
