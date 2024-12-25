@@ -3,6 +3,7 @@
 
 import pandas as pd
 from sqlalchemy import create_engine
+import urllib
 from connectors.connector import Connector
 
 
@@ -64,6 +65,8 @@ class ConnectorMYSQL(Connector):
             password = connection["password"]
             database = connection["database"]
             # Create the connection string for MySQL
+
+            password = urllib.parse.quote_plus(password)
             connection_string = (
                 f"mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}"
             )

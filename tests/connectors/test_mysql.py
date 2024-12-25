@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import pytest
 from pyjeb import control_and_setup
+import urllib
 from ploosh.connectors.connector_mysql import ConnectorMYSQL
 
 @pytest.fixture
@@ -36,9 +37,10 @@ def test_connection_with_connection_string(connector, df_sales):
         "connection": "debug"
     }
 
+    password = urllib.parse.quote_plus(os.environ.get('TEST_DB_PASSWORD'))
     connection = {
         "mode": "connection_string",
-        "connection_string": f"mysql+pymysql://ploosh:{os.environ.get('TEST_DB_PASSWORD')}@localhost/ploosh"
+        "connection_string": f"mysql+pymysql://ploosh:{password)}@localhost/ploosh"
     }
 
     connection = control_and_setup(connection, connector.connection_definition)
