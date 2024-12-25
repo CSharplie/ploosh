@@ -40,7 +40,7 @@ def test_connection_with_connection_string(connector, df_sales):
     password = urllib.parse.quote_plus(os.environ.get('TEST_DB_PASSWORD'))
     connection = {
         "mode": "connection_string",
-        "connection_string": f"mysql+pymysql://ploosh:{password)}@localhost/ploosh"
+        "connection_string": f"mysql+pymysql://ploosh:{password}@localhost/ploosh"
     }
 
     connection = control_and_setup(connection, connector.connection_definition)
