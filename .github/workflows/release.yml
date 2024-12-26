@@ -7,8 +7,8 @@ on:
     tags:
       - '*'
     paths:
-      - '/src'
-      - '/tests'
+      - '/src/**'
+      - '/tests/**'
   workflow_dispatch:
 jobs:
   tests:
@@ -71,6 +71,7 @@ jobs:
         export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
         pytest  -rA ./tests
   publish:
+    needs: tests
     name: 'Publish on PyPi'
     runs-on: ubuntu-latest
     defaults:
