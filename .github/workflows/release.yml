@@ -107,3 +107,27 @@ jobs:
             echo "Deploying to test environment"
             twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_TEST_USER }} -p '${{ secrets.PYPI_TEST_PASSWORD }}' --verbose
           fi
+  dry-run:
+    needs: publish
+    name: 'Execute a dry run'
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12.8"
+    - name: Install from PyPi
+      run: | 
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "Install from production environment"
+            pip install ploosh
+
+          else 
+            echo "Install from test environment"
+            pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ploosh
+          fi
+    - name: Execute
+      run: ploosh
