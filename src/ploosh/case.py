@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import pyspark.sql.functions as F
+from compare_engine_native import CompareEngineNative
 
 @dataclass
 class StateStatistics:
@@ -165,73 +166,18 @@ class Case:
     def compare_dataframes(self):
         """Compare source and expected dataframe"""
         self.compare_duration.start = datetime.now()
+        
+        compare_engine = CompareEngineNative(self.source.df_data, self.expected.df_data, self.options)
+        compare_state = compare_engine.compare()
 
-        count_source = len(self.source.df_data)
-        count_expected = len(self.expected.df_data)
-
-        if count_source != count_expected:
-            self.error_type = "count"
-            self.error_message = (
-                f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
-            )
-
-        if self.error_message is None and count_source != 0:
-            # Ignore specified columns
-            if self.options is not None and self.options["ignore"] is not None:
-                ignore_columns_source = [self.get_insensitive_item(column, self.source.df_data.columns) for column in self.options["ignore"]]
-                ignore_columns_expected = [self.get_insensitive_item(column, self.expected.df_data.columns) for column in self.options["ignore"]]
-
-                self.source.df_data = self.source.df_data.drop(columns=ignore_columns_source, axis=1, errors="ignore")
-                self.expected.df_data = self.expected.df_data.drop(columns=ignore_columns_expected, axis=1, errors="ignore")
-
-            # Normalize column names to lowercase
-            self.source.df_data.columns = map(str.lower, self.source.df_data.columns)
-            self.expected.df_data.columns = map(str.lower, self.expected.df_data.columns)
-
-            # Compare column headers
-            df_columns_source = pd.DataFrame({"columns": self.source.df_data.columns}).sort_values(by=["columns"]).reset_index(drop=True)
-            df_columns_expected = pd.DataFrame({"columns": self.expected.df_data.columns}).sort_values(by=["columns"]).reset_index(drop=True)
-
-            message = "The headers are different between source dataset and expected dataset"
-            if len(df_columns_source) != len(df_columns_expected):
-                self.error_message = message
-                self.error_type = "headers"
-            else:
-                df_compare = df_columns_source.compare(df_columns_expected, result_names=("source", "expected"))
-                if len(df_compare) != 0:
-                    self.error_message = message
-                    self.error_type = "headers"
-                    self.df_compare_gap = df_compare
-
-        if self.error_message is None and count_source != 0:
-            # Sort dataframes by specified columns
-            if self.options is not None and self.options["sort"] is not None:
-                sort_columns = self.options["sort"]
-
-                if len(self.options["sort"]) > 0 and self.options["sort"][0] == "*":
-                    sort_columns = list(df_columns_source["columns"])
-
-                self.source.df_data = self.source.df_data.sort_values(by=sort_columns).reset_index(drop=True)
-                self.expected.df_data = self.expected.df_data.sort_values(by=sort_columns).reset_index(drop=True)
-
-            # Compare dataframes
-            df_compare = self.source.df_data.compare(self.expected.df_data, result_names=("source", "expected"))
-            if len(df_compare) != 0:
-                self.success_rate = (len(self.source.df_data) - len(df_compare)) / len(self.source.df_data)
-                if self.success_rate < self.options["pass_rate"]:
-                    self.error_message = "Some rows are not equal between source dataset and expected dataset"
-                    self.error_type = "data"
-
-                self.df_compare_gap = df_compare
-
-        # Set error if no rows are allowed
-        if self.error_message is None and count_source == 0 and not self.options["allow_no_rows"]:
-            self.error_message = "Source and exptected datasets are empty but no allow_no_rows option is set to False"
-            self.error_type = "data"
+        self.error_message = compare_engine.error_message
+        self.error_type = compare_engine.error_type
+        self.df_compare_gap = compare_engine.df_compare_gap
+        self.success_rate = compare_engine.success_rate
 
         self.compare_duration.end = datetime.now()
 
-        if self.error_message is None:
+        if compare_state:
             self.state = "passed"
         else:
             self.state = "failed"

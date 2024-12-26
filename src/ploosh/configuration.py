@@ -19,6 +19,7 @@ class Configuration:
     case_definition = [
         {"name": "disabled", "type": "boolean", "default": False},
         {"name": "options", "type": "dict", "default": {}},
+        {"name": "options.compare_mode", "type": "string", "validset": ["order"], "default": "order"},
         {"name": "options.ignore", "type": "list", "default": None},
         {"name": "options.sort", "type": "list", "default": None},
         {"name": "options.cast", "type": "list", "default": []},
@@ -31,6 +32,8 @@ class Configuration:
         {"name": "options.pass_rate", "type": "decimal", "default": 1},
         {"name": "options.allow_no_rows", "type": "boolean", "default": True},
         {"name": "options.trim", "type": "boolean", "default": False},
+        {"name": "options.case_insensitive", "type": "boolean", "default": False},
+        {"name": "options.tolerance", "type": "decimal", "default": 0},
         {"name": "source", "type": "dict"},
         {"name": "source.type"},
         {"name": "source.connection", "default": None},
