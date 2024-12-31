@@ -54,7 +54,7 @@ jobs:
           -p 1433:1433 \
           -d \
           mcr.microsoft.com/mssql/server:2022-latest
-    - name: Run Spark containers
+    - name: Run Spark master container
       run: | 
         docker run -d --name ploosh-spark-master \
           -e SPARK_MODE=master \
@@ -63,7 +63,8 @@ jobs:
           -v $(pwd)/tests/.data:$(pwd)/tests/.data \
           --hostname ploosh-spark-master \
           bitnami/spark
-          
+    - name: Run Spark worker container
+      run: |         
         docker run -d --name ploosh-spark-worker \
           -e SPARK_MODE=worker \
           -e SPARK_MASTER_URL=spark://ploosh-spark-master:7077 \
