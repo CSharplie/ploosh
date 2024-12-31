@@ -2,13 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "Debug Native",
             "type": "python",
             "request": "launch",
             "program": "__main__.py",
             "cwd": "${workspaceFolder}/src/ploosh",
             "console": "integratedTerminal",
             "args": ["--cases", "../../test_cases", "--filter", "*.yaml"],
+            "justMyCode": true
+        },
+        {
+            "name": "Debug Spark",
+            "type": "python",
+            "request": "launch",
+            "program": "__main__.py",
+            "cwd": "${workspaceFolder}/src/ploosh",
+            "console": "integratedTerminal",
+            "args": ["--cases", "../../test_cases", "--filter", "*.yaml", "--spark", "True"],
             "justMyCode": true
         }
     ]

@@ -15,7 +15,7 @@ sudo apt-get install -y mysql-client
 sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
 
 # install connectors servers 
-docker run --name ploosh_mysql \
+docker run --name ploosh-mysql \
     -e MYSQL_ROOT_PASSWORD=$db_password \
     -e MYSQL_PASSWORD=$db_password \
     -e MYSQL_DATABASE=ploosh \
@@ -23,20 +23,35 @@ docker run --name ploosh_mysql \
     -p 3306:3306 \
     -d mysql
 
-docker run --name ploosh_postgresql \
+docker run --name ploosh-postgresql \
     -e POSTGRES_USER=ploosh \
     -e POSTGRES_PASSWORD=$db_password \
     -e POSTGRES_DB=ploosh \
     -p 5432:5432 \
     -d postgres
 
-docker run --name ploosh_mssql \
+docker run --name ploosh-mssql \
     -e "ACCEPT_EULA=Y" \
     -e "MSSQL_SA_PASSWORD=$db_password" \
     --hostname ploosh \
     -p 1433:1433 \
     -d \
     mcr.microsoft.com/mssql/server:2022-latest
+
+docker run -d --name ploosh-spark-master \
+  -e SPARK_MODE=master \
+  -e SPARK_MASTER_HOST=ploosh-spark-master \
+  -p 7077:7077 -p 8081:8080 \
+  -v $(pwd)/tests/.data:$(pwd)/tests/.data \
+  --hostname ploosh-spark-master \
+  bitnami/spark
+  
+docker run -d --name ploosh-spark-worker \
+  -e SPARK_MODE=worker \
+  -e SPARK_MASTER_URL=spark://ploosh-spark-master:7077 \
+  -v $(pwd)/tests/.data:$(pwd)/tests/.data \
+  --link ploosh-spark-master:ploosh-spark-master \
+  bitnami/spark
 
 mysql -h 127.0.0.1 -u ploosh -p$db_password < tests/.env/mysql/setup.sql
 

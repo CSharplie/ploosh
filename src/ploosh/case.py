@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pyspark.sql.functions as F
 from compare_engine_native import CompareEngineNative
+from compare_engine_spark import CompareEngineSpark
 
 @dataclass
 class StateStatistics:
@@ -186,43 +187,20 @@ class Case:
         """Compare source and expected dataframe using Spark"""
         self.compare_duration.start = datetime.now()
 
-        count_source = self.source.df_data.count()
-        count_expected = self.expected.df_data.count()
+        compare_engine = CompareEngineSpark(self.source.df_data, self.expected.df_data, self.options)
+        compare_state = compare_engine.compare()
 
-        if count_source != count_expected:
-            self.error_type = "count"
-            self.error_message = (
-                f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
-            )
-
-        if self.error_message is None and count_source != 0:
-            # Ignore specified columns
-            if self.options is not None and self.options["ignore"] is not None:
-                ignore_columns = self.options["ignore"]
-                self.source.df_data = self.source.df_data.drop(*ignore_columns)
-                self.expected.df_data = self.expected.df_data.drop(*ignore_columns)
-
-            # Compare column headers
-            source_columns = sorted(self.source.df_data.columns)
-            expected_columns = sorted(self.expected.df_data.columns)
-
-            if source_columns != expected_columns:
-                self.error_message = "The headers are different between source dataset and expected dataset"
-                self.error_type = "headers"
-
-            if self.error_message is None and count_source != 0:
-                # Compare dataframes using Spark
-                df_compare = self.source.df_data.exceptAll(self.expected.df_data)
-                if df_compare.count() != 0:
-                    self.error_message = "Some rows are not equal between source dataset and expected dataset"
-                    self.error_type = "data"
-                    self.df_compare_gap = df_compare.toPandas()
+        self.error_message = compare_engine.error_message
+        self.error_type = compare_engine.error_type
+        self.df_compare_gap = compare_engine.df_compare_gap
+        self.success_rate = compare_engine.success_rate
 
         self.compare_duration.end = datetime.now()
 
-        if self.error_message is None:
+        if compare_state:
             self.state = "passed"
         else:
+            self.state = "failed"
             self.state = "failed"
 
     def compare_dataframes_error(self, message):
