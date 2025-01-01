@@ -105,7 +105,7 @@ jobs:
 
     - name: Show Spark execution logs
       if: always()
-      run: docker exec -it ploosh-spark-worker find "/opt/bitnami/spark/work" -type f -exec cat {} +
+      run: docker exec ploosh-spark-worker find "/opt/bitnami/spark/work" -type f -exec cat {} +
   
 #  publish:
 #    needs: tests
