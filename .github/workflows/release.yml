@@ -110,6 +110,12 @@ jobs:
       if: always()
       run: docker exec ploosh-spark-worker find "/opt/bitnami/spark/work" -type f -exec cat {} +
   
+    - name: Debug SSH
+      uses: namespacelabs/breakpoint-action@v0
+      with:
+        duration: 60m
+        authorized-users: ${{ secrets.DEBUG_USERNAME }}
+
 #  publish:
 #    needs: tests
 #    name: 'Publish on PyPi'
