@@ -33,6 +33,17 @@ jobs:
       run: | 
         pip install -r src/requirements.txt
         pip install pytest==8.3.3
+        pip install pytest-timeout==2.3.1
+
+        # Fix host file to avoid issues with Spark
+        echo "127.0.0.1 localhost" | sudo tee /etc/hosts
+        echo "::1 localhost ip6-localhost ip6-loopback" | sudo tee -a /etc/hosts
+        echo "fe00::0 ip6-localnet" | sudo tee -a /etc/hosts
+        echo "ff00::0 ip6-mcastprefix" | sudo tee -a /etc/hosts
+        echo "ff02::1 ip6-allnodes" | sudo tee -a /etc/hosts
+        echo "ff02::2 ip6-allrouters" | sudo tee -a /etc/hosts
+        echo "ff02::3 ip6-allhosts" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 $(hostname)" | sudo tee -a /etc/hosts
     - name: Run MySQL container
       run: | 
         docker run --name ploosh_mysql \
@@ -73,6 +84,8 @@ jobs:
         docker run -d --name ploosh-spark-worker \
           -e SPARK_MODE=worker \
           -e SPARK_MASTER_URL=spark://ploosh-spark-master:7077 \
+          -e SPARK_WORKER_MEMORY=2g \
+          -e SPARK_WORKER_CORES=1 \
           -v $(pwd)/tests/.data:$(pwd)/tests/.data \
           --link ploosh-spark-master:ploosh-spark-master \
           bitnami/spark
@@ -91,7 +104,8 @@ jobs:
     - name: Execute tests
       run: | 
         export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
-        pytest  -rA ./tests
+        pytest --timeout=30 -rA ./tests 
+
   publish:
     needs: tests
     name: 'Publish on PyPi'
