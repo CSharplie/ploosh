@@ -106,24 +106,6 @@ jobs:
         export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
         pytest --timeout=30 -rA ./tests 
 
-    - name: Show Spark Master logs
-      if: always()
-      run: docker logs ploosh-spark-master
-    - name: Show Spark Worker logs
-      if: always()
-      run: docker logs ploosh-spark-worker
-
-    - name: Show Spark execution logs
-      if: always()
-      run: docker exec ploosh-spark-worker find "/opt/bitnami/spark/work" -type f -exec cat {} +
-  
-    - name: Breakpoint if tests failed
-      if: failure()
-      uses: namespacelabs/breakpoint-action@v0
-      with:
-        duration: 30m
-        authorized-users: csharplie
-
 #  publish:
 #    needs: tests
 #    name: 'Publish on PyPi'
