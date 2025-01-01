@@ -34,6 +34,9 @@ jobs:
         pip install -r src/requirements.txt
         pip install pytest==8.3.3
         pip install pytest-timeout==2.3.1
+
+        # Add local IP to /etc/hosts
+        echo "127.0.0.1       $(hostname)" | sudo tee -a /etc/hosts
     - name: Run MySQL container
       run: | 
         docker run --name ploosh_mysql \
