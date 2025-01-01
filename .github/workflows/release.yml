@@ -74,6 +74,8 @@ jobs:
         docker run -d --name ploosh-spark-worker \
           -e SPARK_MODE=worker \
           -e SPARK_MASTER_URL=spark://ploosh-spark-master:7077 \
+          -e SPARK_WORKER_MEMORY=2g \
+          -e SPARK_WORKER_CORES=1 \
           -v $(pwd)/tests/.data:$(pwd)/tests/.data \
           --link ploosh-spark-master:ploosh-spark-master \
           bitnami/spark
