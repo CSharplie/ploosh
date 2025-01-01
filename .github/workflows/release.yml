@@ -110,11 +110,12 @@ jobs:
       if: always()
       run: docker exec ploosh-spark-worker find "/opt/bitnami/spark/work" -type f -exec cat {} +
   
-    - name: Debug SSH
+    - name: Breakpoint if tests failed
+      if: failure()
       uses: namespacelabs/breakpoint-action@v0
       with:
-        duration: 60m
-        authorized-users: ${{ secrets.DEBUG_USERNAME }}
+        duration: 30m
+        authorized-users: csharplie
 
 #  publish:
 #    needs: tests
