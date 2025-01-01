@@ -77,6 +77,15 @@ jobs:
           --link ploosh-spark-master:ploosh-spark-master \
           bitnami/spark
 
+    - name: Debug wait
+      run: sleep 30
+
+    - name: Show Spark Master logs
+      run: docker logs ploosh-spark-master
+
+    - name: Show Spark Worker logs
+      run: docker logs ploosh-spark-worker
+
     - name: Feed databases
       run: | 
         sleep 30 # wait until all services are up
