@@ -92,41 +92,49 @@ jobs:
     - name: Execute tests
       run: | 
         export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
-        pytest --timeout=60 -rA ./tests 
-  publish:
-    needs: tests
-    name: 'Publish on PyPi'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: src/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12.8"
-      - name: Install requirements
-        run: | 
-          pip install -r requirements.txt
-          pip install wheel==0.44.0
-          pip install twine==6.0.1
-          pip install setuptools==75.1.0
-      - name: Build package (full)
-        run: python setup-full.py sdist bdist_wheel
-      - name: Build package (core)
-        run: python setup-core.py sdist bdist_wheel
-      - name: Check package
-        run: twine check dist/*
-      - name: Publish
-        run: | 
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            echo "Deploying to production environment"
-            twine upload --repository-url https://upload.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_USER }} -p '${{ secrets.PYPI_PASSWORD }}' --verbose
+        pytest --timeout=30 -rA ./tests 
 
-          else 
-            echo "Deploying to test environment"
-            twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_TEST_USER }} -p '${{ secrets.PYPI_TEST_PASSWORD }}' --verbose
-          fi
+    - name: Show Spark Master logs
+      if: always()
+      run: docker logs ploosh-spark-master
+    - name: Show Spark Worker logs
+      if: always()
+      run: docker logs ploosh-spark-worker
+  
+#  publish:
+#    needs: tests
+#    name: 'Publish on PyPi'
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: src/
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Set up Python
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.12.8"
+#      - name: Install requirements
+#        run: | 
+#          pip install -r requirements.txt
+#          pip install wheel==0.44.0
+#          pip install twine==6.0.1
+#          pip install setuptools==75.1.0
+#      - name: Build package (full)
+#        run: python setup-full.py sdist bdist_wheel
+#      - name: Build package (core)
+#        run: python setup-core.py sdist bdist_wheel
+#      - name: Check package
+#        run: twine check dist/*
+#      - name: Publish
+#        run: | 
+#          if [[ $GITHUB_REF == refs/tags/* ]]; then
+#            echo "Deploying to production environment"
+#            twine upload --repository-url https://upload.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_USER }} -p '${{ secrets.PYPI_PASSWORD }}' --verbose
+#
+#          else 
+#            echo "Deploying to test environment"
+#            twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_TEST_USER }} -p '${{ secrets.PYPI_TEST_PASSWORD }}' --verbose
+#          fi
