@@ -33,6 +33,7 @@ jobs:
       run: | 
         pip install -r src/requirements.txt
         pip install pytest==8.3.3
+        pip install pytest-timeout==2.3.1
     - name: Run MySQL container
       run: | 
         docker run --name ploosh_mysql \
@@ -77,15 +78,6 @@ jobs:
           --link ploosh-spark-master:ploosh-spark-master \
           bitnami/spark
 
-    - name: Debug wait
-      run: sleep 30
-
-    - name: Show Spark Master logs
-      run: docker logs ploosh-spark-master
-
-    - name: Show Spark Worker logs
-      run: docker logs ploosh-spark-worker
-
     - name: Feed databases
       run: | 
         sleep 30 # wait until all services are up
@@ -100,7 +92,7 @@ jobs:
     - name: Execute tests
       run: | 
         export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
-        pytest  -rA ./tests
+        pytest --timeout=60 -rA ./tests 
   publish:
     needs: tests
     name: 'Publish on PyPi'
