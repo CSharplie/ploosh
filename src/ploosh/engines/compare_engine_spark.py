@@ -2,13 +2,12 @@ from pyspark.sql import DataFrame, Window
 from pyspark.sql.functions import col, lower, trim, abs, when, lit, row_number
 from pyspark.sql.types import NumericType
 
-class CompareEngineSpark:
+from engines.compare_engine import CompareEngine
+
+
+class CompareEngineSpark(CompareEngine):
     def __init__(self, df_source: DataFrame, df_expected: DataFrame, options: dict):
         """Initialize the CompareEngineSpark class"""
-        self.success_rate = 1
-        self.error_type = None
-        self.error_message = None
-        self.df_compare_gap = None
 
         self.df_source = df_source
         self.df_expected = df_expected

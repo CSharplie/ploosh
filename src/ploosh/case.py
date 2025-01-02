@@ -4,8 +4,8 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import pyspark.sql.functions as F
-from compare_engine_native import CompareEngineNative
-from compare_engine_spark import CompareEngineSpark
+from engines.compare_engine_native import CompareEngineNative
+from engines.compare_engine_spark import CompareEngineSpark
 
 @dataclass
 class StateStatistics:

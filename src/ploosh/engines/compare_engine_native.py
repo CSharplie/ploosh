@@ -1,15 +1,12 @@
 import numpy as np
 import pandas as pd
 
-class CompareEngineNative:
+from engines.compare_engine import CompareEngine
+
+class CompareEngineNative(CompareEngine):
     def __init__(self, df_source, df_expected, options):
         """Initialize the CompareEngineNative class"""
         
-        self.success_rate = 1
-        self.error_type = None
-        self.error_message = None
-        self.df_compare_gap = None
-
         self.df_source = df_source
         self.df_expected = df_expected
         self.options = options

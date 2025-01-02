@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from pyjeb import control_and_setup
-from ploosh.compare_engine_native import CompareEngineNative
+from ploosh.engines.compare_engine_native import CompareEngineNative
 from ploosh.configuration import Configuration
 
 @pytest.fixture
