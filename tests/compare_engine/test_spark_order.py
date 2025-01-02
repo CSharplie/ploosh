@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, IntegerType
 import pytest
 from pyjeb import control_and_setup
-from ploosh.compare_engine_spark import CompareEngineSpark
+from ploosh.engines.compare_engine_spark import CompareEngineSpark
 from ploosh.configuration import Configuration
 
 @pytest.fixture
