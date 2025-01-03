@@ -1,11 +1,13 @@
+"""Comparison engine for spark connectors"""
+
 from pyspark.sql import DataFrame, Window
 from pyspark.sql.functions import col, lower, trim, abs, when, lit, row_number
 from pyspark.sql.types import NumericType
-
 from engines.compare_engine import CompareEngine
 
-
 class CompareEngineSpark(CompareEngine):
+    """Comparison engine for spark connectors"""
+
     def __init__(self, df_source: DataFrame, df_expected: DataFrame, options: dict):
         """Initialize the CompareEngineSpark class"""
 
@@ -36,7 +38,7 @@ class CompareEngineSpark(CompareEngine):
             self.error_type = "count"
             self.error_message = f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
             return False
-        
+
         return True
 
     def compare_structure(self) -> bool:
@@ -61,19 +63,18 @@ class CompareEngineSpark(CompareEngine):
             self.error_type = "headers"
             self.error_message = f"Missing columns: {', '.join(missing_columns)}"
             return False
-        
+
         extra_columns = source_cols - expected_cols
         # remove extra columns from source
         if extra_columns:
             self.df_source = self.df_source.drop(*extra_columns)
-        
+
         return True
 
     def compare_data_with_order(self) -> bool:
         """Compare the source and expected datasets with "order" mode"""
 
         # Sort the data based on the specified columns
-        
         if self.options is not None and self.options["sort"] is not None:
             sort_columns = self.options["sort"]
             sort_columns = [x.lower() for x in sort_columns]
@@ -103,16 +104,19 @@ class CompareEngineSpark(CompareEngine):
             for col_name in self.df_expected.columns:
                 self.df_expected = self.df_expected.withColumn(col_name, lower(col(col_name)))
 
-        
+        # Add a suffix to the column names to avoid conflicts
         df1 = self.df_source.select([col(c).alias(f"{c}_source") for c in self.df_source.columns])
         df2 = self.df_expected.select([col(c).alias(f"{c}_expected") for c in self.df_source.columns])
-        
-        df1 = df1.withColumnRenamed("__ploosh_order_key_source","__ploosh_order_key")
-        df2 = df2.withColumnRenamed("__ploosh_order_key_expected","__ploosh_order_key")
 
+        # Clean up the order key column
+        df1 = df1.withColumnRenamed("__ploosh_order_key_source", "__ploosh_order_key")
+        df2 = df2.withColumnRenamed("__ploosh_order_key_expected", "__ploosh_order_key")
+
+        # Join the two dataframes on the order key
         joined_df = df1.join(df2, on=["__ploosh_order_key"], how="inner")
         joined_df = joined_df.drop("__ploosh_order_key")
 
+        # Drop the order key column from the source and expected dataframes
         self.df_source = self.df_source.drop("__ploosh_order_key")
         self.df_expected = self.df_expected.drop("__ploosh_order_key")
 
@@ -120,27 +124,34 @@ class CompareEngineSpark(CompareEngine):
         for c in self.df_source.columns:
             source_col = f"{c}_source"
             expected_col = f"{c}_expected"
-            
+ 
             source_is_numeric = isinstance(df1.schema[source_col].dataType, NumericType)
             expected_is_numeric = isinstance(df2.schema[expected_col].dataType, NumericType)
 
+            # Check if the column is numeric and the tolerance is greater than 0
             if source_is_numeric and expected_is_numeric and tolerance > 0:
                 filters = (abs(col(source_col) - col(expected_col)) > tolerance)
             else:
                 filters = (col(source_col) != col(expected_col))
 
+            # Add state columns to show the differences
             diff_columns.append(when(filters, lit(False)).alias(f"{c}_state"))
+
+            # Add the source and expected columns to the diff_columns
             diff_columns.append(when(filters, col(source_col)).alias(source_col))
             diff_columns.append(when(filters, col(expected_col)).alias(expected_col))
 
-        # Filtrer uniquement les lignes avec des différences
+        # Filter the joined dataframe to get the differences
         result = joined_df.select(*diff_columns).filter(
             " OR ".join([f"{c}_state = FALSE" for c in self.df_source.columns])
         ).drop(*[f"{c}_state" for c in self.df_source.columns])
 
         datasource_count = self.df_source.count()
+
+        # Convert the result to a pandas dataframe for the output report
         df_differences = result.toPandas()
 
+        # Set the success rate and error message if there are differences
         if len(df_differences) > 0:
             self.success_rate = (datasource_count - len(df_differences)) / datasource_count
             if self.success_rate < self.options["pass_rate"]:

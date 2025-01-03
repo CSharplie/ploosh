@@ -1,14 +1,14 @@
 """Automatized Testing Framework"""
 
 import sys
-from colorama import Fore, Style
+from colorama import Fore
 from pyspark.sql import SparkSession
 from case import StateStatistics
-from logs import Log, print_compare_state, print_summary
 from connectors import get_connectors
 from exporters import get_exporters
 from parameters import Parameters
 from configuration import Configuration
+from logs import Log, print_compare_state, print_summary
 
 
 def load_data(current_case, process_type, statistics):
@@ -82,7 +82,7 @@ def execute(args=None, spark_session=None):
     except Exception as e:
         # Handle any errors that occur during initialization
         Log.print_error(str(e))
-        exit(1)
+        sys.exit(1)
 
     Log.print(f"{Fore.CYAN}Start processing tests cases[...]")
     for i, case_name in enumerate(cases):
@@ -124,4 +124,4 @@ def execute(args=None, spark_session=None):
 
     # Exit with error code if there were errors and failure_on_error is set
     if statistics.error > 0 and parameters.failure_on_error:
-        exit(1)
+        sys.exit(1)

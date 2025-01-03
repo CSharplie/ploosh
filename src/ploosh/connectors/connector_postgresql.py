@@ -70,8 +70,6 @@ class ConnectorPostgreSQL(Connector):
                 f"postgresql+pg8000://{username}:{password}@{hostname}:{port}/{database}"
             )
 
-            print(f"\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n=====================>{connection_string}")
-
         # Additional connection arguments
         connect_args = {}
         if connection["ssl_context"]:

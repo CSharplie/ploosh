@@ -18,7 +18,7 @@ class ConnectorParquet(Connector):
             {"name": "engine", "type": "string", "validset": ["auto", "pyarrow", "fastparquet"], "default": "auto"},  # Parquet engine to use ('auto', 'pyarrow', 'fastparquet')
             {"name": "filters", "type": "list", "default": None},  # Row group filters to apply (for 'pyarrow')
             {"name": "filters.column", "type": "string"},  # The name of the column to filter
-            {"name": "filters.operator", "type": "string", "validset" : ["==", "=", ">", ">=", "<", "<=", "!="]},  # The operator to be used
+            {"name": "filters.operator", "type": "string", "validset": ["==", "=", ">", ">=", "<", "<=", "!="]},  # The operator to be used
             {"name": "filters.value", "type": "integer"},  # The value to be used to filter the column
         ]
 
@@ -39,7 +39,7 @@ class ConnectorParquet(Connector):
 
         # Read the Parquet file using pandas
         df = pd.read_parquet(path,
-                             columns = columns,
-                             engine  = engine,
-                             filters = list_filters)
+                             columns=columns,
+                             engine=engine,
+                             filters=list_filters)
         return df

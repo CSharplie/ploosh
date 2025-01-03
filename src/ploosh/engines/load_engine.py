@@ -1,4 +1,9 @@
+# pylint: disable=R0903,W0613
+"""Base class for all load engines"""
+
 class LoadEngine:
+    """Base class for all load engines"""
+
     count = None
     configuration = None
     options = None
@@ -12,9 +17,6 @@ class LoadEngine:
                 return item
         return name
 
-
-    def load(self):
-        return None
-    
     def execute(self):
+        """Execute the load engine"""
         return None

@@ -4,12 +4,17 @@ import pandas as pd
 from engines.load_engine import LoadEngine
 
 class LoadEngineNative(LoadEngine):
+    """Load engine for native Pandas"""
     def __init__(self, configuration, options, connection):
+        """Initialize the LoadEngineNative class"""
+
         self.configuration = configuration
         self.options = options
         self.connection = connection
 
     def execute(self, df_data):
+        """Execute the load engine"""
+
         self.count = len(df_data)
 
         # Cast columns to specified types

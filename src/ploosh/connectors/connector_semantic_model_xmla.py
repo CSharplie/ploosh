@@ -15,33 +15,33 @@ class ConnectorSemanticModel(Connector):
         self.connection_definition = [
             {
                 "name": "mode",
-                "default" : "oauth",
-                "validset": ["oauth"] #, "token", "spn"] To add once tested
-            }, 
+                "default": "oauth",
+                "validset": ["oauth"]  # , "token", "spn"] To add once tested
+            },
             {
                 "name": "token",
-                "default" : None
-            }, 
+                "default": None
+            },
             {
                 "name": "tenant_id",
-                "default" : None
-            }, 
+                "default": None
+            },
             {
                 "name": "client_id",
-                "default" : None
-            }, 
+                "default": None
+            },
             {
                 "name": "client_secret",
-                "default" : None
+                "default": None
             },
-            { 
+            {
                 "name": "dataset_id"
             }
         ]
         self.configuration_definition = [
-            { 
-                "name": "query" 
-            }, 
+            {
+                "name": "query"
+            },
             {
                 "name": "body",
                 "default": None
@@ -51,11 +51,9 @@ class ConnectorSemanticModel(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
-
         mode = connection["mode"]
         dataset_id = connection["dataset_id"]
         query = configuration["query"]
-
 
         if mode == "oauth":
             try:
@@ -65,7 +63,6 @@ class ConnectorSemanticModel(Connector):
                 token_string = access_token_class.token
             except Exception as connection_error:
                 raise ValueError(connection_error)
-            
 
         # uses the token provided in the connection_definition
         elif mode == "token":
@@ -80,13 +77,11 @@ class ConnectorSemanticModel(Connector):
             authority = f'https://login.microsoftonline.com/'
             credential = ClientSecretCredential(tenant_id, client_id, client_secret, authority=authority)
             token = credential.get_token(scope)
-            token_string = token.token #need to define header
-        
-
+            token_string = token.token  # need to define header
 
         # Initialize query
         post_query = f'https://api.powerbi.com/v1.0/myorg/datasets/{dataset_id}/executeQueries'
-        header = {'Authorization': f'Bearer {token_string}','Content-Type' : 'application/json'}
+        header = {'Authorization': f'Bearer {token_string}', 'Content-Type': 'application/json'}
         body = '''{
         "queries": [
             {
@@ -98,16 +93,15 @@ class ConnectorSemanticModel(Connector):
         }
         }''' % (query)
 
-
-        post_r = requests.post(url=post_query,data=body, headers=header)
+        post_r = requests.post(url=post_query, data=body, headers=header)
 
         if post_r.status_code == 200:
             output = post_r.json()
-            dfResults = pd.DataFrame(output)
-            dfTables = pd.DataFrame(dfResults["results"][0])
-            dfRows = pd.DataFrame(dfTables["tables"][0])
-            flattenData = dfRows.values.flatten()
-            df = pd.json_normalize(flattenData) # type: ignore
+            df_results = pd.DataFrame(output)
+            df_tables = pd.DataFrame(df_results["results"][0])
+            df_rows = pd.DataFrame(df_tables["tables"][0])
+            flatten_data = df_rows.values.flatten()
+            df = pd.json_normalize(flatten_data)  # type: ignore
 
             return df
 
