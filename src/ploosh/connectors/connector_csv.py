@@ -30,7 +30,7 @@ class ConnectorCSV(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
- 
+
         # Extract the path and delimiter from the configuration
         path = configuration["path"]
         delimiter = configuration["delimiter"]
@@ -54,18 +54,17 @@ class ConnectorCSV(Connector):
         if skiprows is not None and not isinstance(skiprows, (list, int)):
             raise ValueError("The variable is neither a list nor an integer.")
 
-
         # Read the CSV file using pandas with the specified delimiter
         df = pd.read_csv(path,
-                         delimiter = delimiter,
-                         header = header,
-                         names = names,
-                         usecols = usecols,
-                         skiprows = skiprows,
-                         skipfooter = skipfooter,
-                         nrows = nrows,
-                         lineterminator = lineterminator,
-                         quotechar = quotechar,
-                         engine = engine,
-                         encoding = encoding)
+                         delimiter=delimiter,
+                         header=header,
+                         names=names,
+                         usecols=usecols,
+                         skiprows=skiprows,
+                         skipfooter=skipfooter,
+                         nrows=nrows,
+                         lineterminator=lineterminator,
+                         quotechar=quotechar,
+                         engine=engine,
+                         encoding=encoding)
         return df

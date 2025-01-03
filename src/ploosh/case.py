@@ -2,8 +2,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 import numpy as np
-import pandas as pd
-import pyspark.sql.functions as F
 from engines.compare_engine_native import CompareEngineNative
 from engines.compare_engine_spark import CompareEngineSpark
 from engines.load_engine_native import LoadEngineNative
@@ -61,6 +59,7 @@ class Duration:
             self.duration = duration.seconds + (duration.microseconds / 1000000)
 
 
+@dataclass
 class CaseItem:
     """Structure of case item (source or expected)"""
     connector = None
@@ -119,7 +118,7 @@ class Case:
             load_engine = LoadEngineNative(obj.configuration, self.options, obj.connection)
         else:
             load_engine = LoadEngineSpark(obj.configuration, self.options, obj.connection)
-            
+
         # Load data from connector
         obj.df_data = obj.connector.get_data(obj.configuration, obj.connection)
 
@@ -144,7 +143,7 @@ class Case:
     def compare_dataframes(self):
         """Compare source and expected dataframe"""
         self.compare_duration.start = datetime.now()
-        
+
         compare_engine = CompareEngineNative(self.source.df_data, self.expected.df_data, self.options)
         compare_state = compare_engine.compare()
 

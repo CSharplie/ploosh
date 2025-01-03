@@ -1,9 +1,8 @@
 import pandas as pd
 from connectors.connector import Connector
-from azure.identity import ClientSecretCredential, InteractiveBrowserCredential, UsernamePasswordCredential
+from azure.identity import ClientSecretCredential
 from sys import path
 from pathlib import Path
-import os
 
 class ConnectorAnalysisServices(Connector):
     """Connector to read Analysis Services Model using ADOMD"""
@@ -28,12 +27,12 @@ class ConnectorAnalysisServices(Connector):
         self.connection_definition = [
             {
                 "name": "mode",
-                "default" : "oauth",
-                "validset": ["oauth", "pbix"] #, "token", "credentials", "spn"]
+                "default": "oauth",
+                "validset": ["oauth", "pbix"]  # , "token", "credentials", "spn"]
             },
             {
                 "name": "token",
-                "default" : None
+                "default": None
             },
             {
                 "name": "username",
@@ -42,24 +41,24 @@ class ConnectorAnalysisServices(Connector):
             {
                 "name": "password",
                 "default": None
-            }, 
+            },
             {
                 "name": "tenant_id",
-                "default" : None
-            }, 
+                "default": None
+            },
             {
                 "name": "client_id",
-                "default" : None
-            }, 
+                "default": None
+            },
             {
                 "name": "client_secret",
-                "default" : None
+                "default": None
             },
             {
                 "name": "scope",
-                "default" : 'https://analysis.windows.net/powerbi/api/.default'
+                "default": 'https://analysis.windows.net/powerbi/api/.default'
             },
-            { 
+            {
                 "name": "dataset_id"
             },
             {
@@ -67,8 +66,8 @@ class ConnectorAnalysisServices(Connector):
             }
         ]
         self.configuration_definition = [
-            { 
-                "name": "query" 
+            {
+                "name": "query"
             }
         ]
 
@@ -76,26 +75,25 @@ class ConnectorAnalysisServices(Connector):
         """Get data from source"""
 
         mode = connection["mode"]
-        
+
         server = connection["server"]
-        dataset_id = connection["dataset_id"] # For local .pbix --> Dataset ID: in DAX Studio, right click to model name and choose "copy Database ID"
+        dataset_id = connection["dataset_id"]  # For local .pbix --> Dataset ID: in DAX Studio, right click to model name and choose "copy Database ID"
 
-        query = configuration["query"] # DAX Query
-
+        query = configuration["query"]  # DAX Query
 
         # will open a login page in browser (if local AS instance, will connect automatically)
         if mode == "oauth":
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};'
-        
+
         # will open a login page in browser (if local AS instance, will connect automatically)
         elif mode == "pbix":
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};'
-        
+
         # uses the token provided in the connection_definition
         elif mode == "token":
             token = connection["token"]
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id=;Password={token};Impersonation Level=Impersonate;'
-        
+
         # get a token from a registered azure app
         elif mode == "spn":
             scope = connection["scope"]
@@ -103,17 +101,16 @@ class ConnectorAnalysisServices(Connector):
             client_id = connection["client_id"]
             client_secret = connection["client_secret"]
             authority = f'https://login.microsoftonline.com/'
-            credential = ClientSecretCredential(tenant_id, client_id, client_secret)#, authority=authority)
+            credential = ClientSecretCredential(tenant_id, client_id, client_secret)  # , authority=authority)
             token = credential.get_token(scope)
             token_string = token.token
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id=;Password={token_string};Impersonation Level=Impersonate;'
-        
+
         # uses username and password
         elif mode == "credentials":
             username = connection["username"]
             password = connection["password"]
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id={username};Password={password};'
-
 
         # Create and open connection to AS instance
         con = Pyadomd(connection_string)
@@ -121,17 +118,17 @@ class ConnectorAnalysisServices(Connector):
             con.open()  # Open the connection
         except:
             raise ValueError("Can't connect to the AS Instance")
-        
+
         # execute DAX query
         with con.cursor() as cur:
             try:
                 cur.execute(query)
                 result = cur.fetchone()
-                column_name=[i.name for i in cur.description]
-                df = pd.DataFrame(result, columns = column_name)
+                column_name = [i.name for i in cur.description]
+                df = pd.DataFrame(result, columns=column_name)
 
                 # Proactively close connection to AS instance
-                con.close()  
+                con.close()
 
                 return df
             except Exception as query_error:

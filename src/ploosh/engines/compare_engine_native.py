@@ -1,12 +1,16 @@
+"""Comparison engine for native connectors"""
+
 import numpy as np
 import pandas as pd
 
 from engines.compare_engine import CompareEngine
 
 class CompareEngineNative(CompareEngine):
+    """Comparison engine for native connectors"""
+
     def __init__(self, df_source, df_expected, options):
         """Initialize the CompareEngineNative class"""
-        
+
         self.df_source = df_source
         self.df_expected = df_expected
         self.options = options
@@ -18,7 +22,7 @@ class CompareEngineNative(CompareEngine):
         if self.mode == "ORDER":
             if len(self.df_source) == 0 and len(self.df_expected) == 0 and self.options["allow_no_rows"]:
                 return True
-            if not self.compare_stucture():
+            if not self.compare_structure():
                 return False
             if not self.compare_length():
                 return False
@@ -36,10 +40,10 @@ class CompareEngineNative(CompareEngine):
             self.error_type = "count"
             self.error_message = f"The count in source dataset ({count_source}) is different than the count in the expected dataset ({count_expected})"
             return False
-        
+
         return True
 
-    def compare_stucture(self) -> bool:
+    def compare_structure(self) -> bool:
         """Compare the structure of the source and expected datasets"""
 
         # Normalize column names to lowercase
@@ -70,9 +74,8 @@ class CompareEngineNative(CompareEngine):
 
         # Remove columns that are not in the expected dataframe
         self.df_source = self.df_source[df_columns_expected["columns"]]
-        
-        return True
 
+        return True
 
     def compare_data_with_order(self) -> bool:
         """Compare the source and expected datasets with "order" mode"""
@@ -94,38 +97,38 @@ class CompareEngineNative(CompareEngine):
         df_expected_preprocessed = self.df_expected.copy()
 
         datasource_count = len(self.df_source)
-        
+
         # Trim the data if the trim option is specified
         if self.options["trim"]:
             df_source_preprocessed = df_source_preprocessed.applymap(lambda x: x.strip() if isinstance(x, str) else x)
             df_expected_preprocessed = df_expected_preprocessed.applymap(lambda x: x.strip() if isinstance(x, str) else x)
-        
+
         # Convert all string values to lowercase if the case_insensitive option is specified
         if self.options["case_insensitive"]:
             df_source_preprocessed = df_source_preprocessed.applymap(lambda x: x.lower() if isinstance(x, str) else x)
             df_expected_preprocessed = df_expected_preprocessed.applymap(lambda x: x.lower() if isinstance(x, str) else x)
-        
+
         def compare_with_tolerance(val1, val2):
             """Compare two values with tolerance"""
             if str(val1.dtype) in ("float64", "Int64") and str(val2.dtype) in ("float64", "Int64"):
                 return abs(val1 - val2) > tolerance
-            return val1 != val2 
-        
+            return val1 != val2
+
         # Compare the source and expected datasets with tolerance
         diff_with_tol = df_source_preprocessed.combine(df_expected_preprocessed, compare_with_tolerance)
-        
+
         # Get the indices of the differences
         diff_indices = np.where(diff_with_tol)
-        
+
         # Create a dataframe to store the differences
         df_differences = pd.DataFrame(index=self.df_source.index, columns=pd.MultiIndex.from_tuples([(col, "source") for col in self.df_source.columns] + [(col, "expected") for col in self.df_source.columns]))
-        
+
         # Fill the differences dataframe with the values from the source and expected datasets
         for i, j in zip(*diff_indices):
             col = self.df_source.columns[j]
             df_differences.loc[self.df_source.index[i], (col, "source")] = self.df_source.iat[i, j]
             df_differences.loc[self.df_source.index[i], (col, "expected")] = self.df_expected.iat[i, j]
-        
+
         # Drop rows and columns with all NaN values
         df_differences = df_differences.dropna(axis=1, how="all").dropna(axis=0, how="all")
 
@@ -142,13 +145,9 @@ class CompareEngineNative(CompareEngine):
 
         # Set the error message if the source and expected datasets are empty
         if self.error_message is None and datasource_count == 0 and not self.options["allow_no_rows"]:
-            self.error_message = "Source and exptected datasets are empty but no allow_no_rows option is set to False"
+            self.error_message = "Source and expected datasets are empty but no allow_no_rows option is set to False"
             self.error_type = "data"
 
             return False
 
         return True
-            
-
-
-

@@ -78,7 +78,7 @@ class ConnectorMYSQL(Connector):
 
         # Create a SQLAlchemy engine using the connection string and additional arguments
         sql_connection = create_engine(
-            connection_string, echo=False, connect_args=connect_args
+            connection_string, echo = False, connect_args = connect_args
         )
 
         # Execute the SQL query and read the data into a pandas DataFrame

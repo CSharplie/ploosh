@@ -25,6 +25,6 @@ class ConnectorEmptySpark(Connector):
         columns = StructType([])
 
         # Create an empty DataFrame using the empty RDD and schema
-        df = self.spark.createDataFrame(data=empty_rdd, schema=columns)
+        df = self.spark.createDataFrame(data = empty_rdd, schema = columns)
 
         return df

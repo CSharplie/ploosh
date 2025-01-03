@@ -1,10 +1,12 @@
 """Setup PyPi module"""
 # pylint: disable=C0103
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from ploosh.version import PLOOSH_VERSION
 
 def setup_ploosh(name, install_requires):
+    """Setup Ploosh module"""
+
     with open("../readme.md", encoding="UTF-8") as f:
         long_description = "".join(f.readlines())
 
