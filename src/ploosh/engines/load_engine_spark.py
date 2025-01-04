@@ -14,6 +14,13 @@ class LoadEngineSpark(LoadEngine):
         """Execute the load engine"""
         self.count = df_data.count()
 
-        # TODO: Implement Spark specific data transformations
+        # Cast columns to specified types
+        for column in self.options["cast"]:
+            column_name = self.get_insensitive_item(column["name"], df_data.columns)
+            column_type = column["type"]
+            if column_type == "datetime":
+                column_type = "timestamp"
+                
+            df_data = df_data.withColumn(column_name, df_data[column_name].cast(column_type))
 
         return df_data
