@@ -124,6 +124,10 @@ jobs:
 
         /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${{ secrets.TEST_LOCAL_DB_PASSWORD }}" -i tests/.env/mssql/setup.sql
 
+        spark_setup_file=$(pwd)/tests/.env/spark/setup.sql
+        spark_setup_file_tmp=$(pwd)/tests/.env/spark/setup_tmp.sql
+        sed "s|{{pwd}}|$(pwd)|g" $spark_setup_file > $spark_setup_file_tmp
+        spark-sql -f$spark_setup_file_tmp
     - name: Execute tests
       run: | 
         export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
