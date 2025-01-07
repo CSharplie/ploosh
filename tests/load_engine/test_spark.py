@@ -15,7 +15,7 @@ def controls():
 @pytest.fixture
 def spark():
     return SparkSession.builder \
-        .appName("CSV_to_Table") \
+        .appName("ploosh") \
         .master("spark://localhost:7077") \
         .config("spark.executor.memory", "1g") \
         .config("spark.driver.memory", "1g") \

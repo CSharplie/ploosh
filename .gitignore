@@ -12,4 +12,7 @@ __pycache__
 /logs
 /test_cases
 /output
+/metastore_db
 /connections.yml
+spark_setup_file_tmp
+*.log
