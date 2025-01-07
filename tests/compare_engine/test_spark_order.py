@@ -71,11 +71,7 @@ def test_column_sort(spark, controls):
     df_source = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], ["A", "B"])
     df_expected = spark.createDataFrame([(4, 1), (5, 2), (6, 3)], ["B", "A"])
 
-    parameters = {
-        "options": {
-            "ignore": ["C"]
-        }
-    }
+    parameters = {}
     options = control_and_setup(parameters, controls)["options"]
 
     compare_engine = CompareEngineSpark(df_source, df_expected, options)
