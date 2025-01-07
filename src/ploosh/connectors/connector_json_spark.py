@@ -25,6 +25,7 @@ class ConnectorJSONSpark(Connector):
         # Read the JSON file using Spark with the specified configuration options
         df = self.spark.read.option("multiline", configuration["multiline"])    \
                             .option("encoding", configuration["encoding"])      \
+                            .option("lineSep", configuration["lineSep"])        \
                             .json(configuration["path"])
 
         return df
