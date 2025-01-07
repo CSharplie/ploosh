@@ -67,6 +67,20 @@ def test_header_ignore(spark, controls):
     assert compare_engine.compare()
     assert compare_engine.error_type is None
 
+def test_column_sort(spark, controls):
+    df_source = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], ["A", "B"])
+    df_expected = spark.createDataFrame([(4, 1), (5, 2), (6, 3)], ["B", "A"])
+
+    parameters = {
+        "options": {
+            "ignore": ["C"]
+        }
+    }
+    options = control_and_setup(parameters, controls)["options"]
+
+    compare_engine = CompareEngineSpark(df_source, df_expected, options)
+    assert compare_engine.compare()
+
 def test_count_failure(spark, controls):
     df_source = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], ["A", "B"])
     df_expected = spark.createDataFrame([(1, 4), (2, 5)], ["A", "B"])
