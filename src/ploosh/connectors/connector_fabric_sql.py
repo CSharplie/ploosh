@@ -1,15 +1,11 @@
+import struct
+import pyodbc
 import pandas as pd
 from connectors.connector import Connector
 from azure.identity import ClientSecretCredential, InteractiveBrowserCredential, UsernamePasswordCredential
-from sys import path
-from pathlib import Path
-import pyodbc
-import os
-
 from itertools import chain, repeat
-import struct
 
-class ConnectorFabricSql(Connector):
+class ConnectorFabricSQL(Connector):
     """Connector to read Analysis Services Model using ADOMD"""
 
     def __init__(self):
@@ -49,9 +45,6 @@ class ConnectorFabricSql(Connector):
                 "name": "scope",
                 "default" : 'https://analysis.windows.net/powerbi/api/.default'
             },
-            { 
-                "name": "database_name"
-            },
             {
                 "name": "server"
             }
@@ -66,78 +59,73 @@ class ConnectorFabricSql(Connector):
         """Get data from source"""
 
         mode = connection["mode"]
-        
         server = connection["server"]
-        database_name = connection["database_name"] # For local .pbix --> Dataset ID: in DAX Studio, right click to model name and choose "copy Database ID"
+        query = configuration["query"] # SQL Query
 
-        query = configuration["query"] # DAX Query
+        # Determine the connection mode and set up the connection string accordingly
 
-
-        # will open a login page in browser (if local AS instance, will connect automatically)
+        # If using OAuth for authentication, opens a login page in the browser
         if mode == "oauth":
-            #connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};'
+            # Define the connection string for ODBC Driver 18 for SQL Server
+            connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server={server},1433;Encrypt=Yes;TrustServerCertificate=No"
 
-            connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server={server},1433;Database={database_name};Encrypt=Yes;TrustServerCertificate=No"
-
+            # Retrieve an access token using InteractiveBrowserCredential
             credential = InteractiveBrowserCredential()
-            token_object = credential.get_token("https://database.windows.net//.default") # Retrieve an access token valid to connect to SQL databases
-            token_as_bytes = bytes(token_object.token, "UTF-8") # Convert the token to a UTF-8 byte string
-            encoded_bytes = bytes(chain.from_iterable(zip(token_as_bytes, repeat(0)))) # Encode the bytes to a Windows byte string
-            token_bytes = struct.pack("<i", len(encoded_bytes)) + encoded_bytes # Package the token into a bytes object
+            token_object = credential.get_token("https://database.windows.net//.default")  # Retrieve an access token valid to connect to SQL databases
+            token_as_bytes = bytes(token_object.token, "UTF-8")  # Convert the token to a UTF-8 byte string
+            encoded_bytes = bytes(chain.from_iterable(zip(token_as_bytes, repeat(0))))  # Encode the bytes to a Windows byte string
+            token_bytes = struct.pack("<i", len(encoded_bytes)) + encoded_bytes  # Package the token into a bytes object
             attrs_before = {1256: token_bytes}
 
-        # uses the token provided in the connection_definition
+        # If using a provided token for authentication
         elif mode == "token":
-            token = connection["token"]
-            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={database_name};User Id=;Password={token};Impersonation Level=Impersonate;'
+            token = connection["token"]  # Retrieve the token from the connection definition
+            # Define the connection string for ODBC Driver 18 for SQL Server using the provided token
+            connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server={server},1433;User Id=;Password={token};Encrypt=Yes;TrustServerCertificate=No"
         
-        # get a token from a registered azure app
+        # If using a service principal name (SPN) for authentication
         elif mode == "spn":
-            scope = connection["scope"]
-            tenant_id = connection["tenant_id"]
-            client_id = connection["client_id"]
-            client_secret = connection["client_secret"]
-            authority = f'https://login.microsoftonline.com/'
+            scope = connection["scope"]  # Retrieve the scope from the connection definition
+            tenant_id = connection["tenant_id"]  # Retrieve the tenant ID from the connection definition
+            client_id = connection["client_id"]  # Retrieve the client ID from the connection definition
+            client_secret = connection["client_secret"]  # Retrieve the client secret from the connection definition
+            authority = f'https://login.microsoftonline.com/'  # Define the authority URL
+            # Retrieve an access token using ClientSecretCredential
             credential = ClientSecretCredential(tenant_id, client_id, client_secret)#, authority=authority)
-            token = credential.get_token(scope)
-            token_string = token.token
-            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={database_name};User Id=;Password={token_string};Impersonation Level=Impersonate;'
+            token = credential.get_token(scope)  # Retrieve the token
+            token_string = token.token   # Extract the token string
+            # Define the connection string for ODBC Driver 18 for SQL Server using the token string
+            connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server={server},1433;User Id=;Password={token_string};Encrypt=Yes;TrustServerCertificate=No"
         
-        # uses username and password
+        # If using username and password for authentication
         elif mode == "credentials":
-            username = connection["username"]
-            password = connection["password"]
-            connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={database_name};User Id={username};Password={password};'
+            username = connection["username"]  # Retrieve the username from the connection definition
+            password = connection["password"]  # Retrieve the password from the connection definition
+            # Define the connection string for ODBC Driver 18 for SQL Server using the username and password
+            connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server={server},1433;User Id={username};Password={password};Encrypt=Yes;TrustServerCertificate=No"
 
-
-        # Create and open connection to AS instance
-        con = pyodbc.connect(connection_string, attrs_before=attrs_before)
-
-        # df = pd.read_sql(query, con)
-
-        """
         try:
-            con.open()  # Open the connection
-        except:
-            raise ValueError("Can't connect to the AS Instance")
-        """
+            # Create and open connection to AS instance
+            con = pyodbc.connect(connection_string, attrs_before=attrs_before)
+        except Exception as conection_error:
+            error_message = str(conection_error)
+            raise Exception(f"Error connecting to source:\n{str(error_message)}")
+        
+        try:
+            with con.cursor() as cur:
+                cur.execute(query)  # Execute the query
+                result = cur.fetchall()  # Fetch all results
+                column_name=[i[0] for i in cur.description]  # Get column names from cursor description
+                df = pd.DataFrame.from_records(result, columns = column_name)  # Create a DataFrame with column names
+            
+            # Proactively close connection
+            cur.close()
+            con.close()
 
-        # execute DAX query
-        with con.cursor() as cur:
-            try:
-                cur.execute(query)
-                result = cur.fetchall()
-                dfTest = pd.DataFrame(result)
-                column_name=[i[0] for i in cur.description]
-                df = pd.DataFrame.from_records(result, columns = column_name)
-                print(df)
-
-                # Proactively close connection to AS instance
-                # con.close()  
-
-                return df
-            except Exception as query_error:
-                error_message = str(query_error)
-                # Keep only error message without Technical Details
-                error_summary = error_message.split("Technical Details")[0].strip().split("\r\n   at")[0].strip()
-                raise Exception(f"Erreur lors de l'exécution de la requête :\n{str(error_summary)}")
+            return df
+        except Exception as query_error:
+            # Ensure the cursor and connection are closed in case of an error
+            cur.close()
+            con.close()
+            error_message = str(query_error)
+            raise Exception(f"Error executing query:\n{str(error_message)}")
