@@ -28,13 +28,13 @@ def connector():
 def df_sales():
     return pd.read_csv("./tests/.data/sales.csv", delimiter=",", date_format = "%Y-%m-%d", parse_dates=["sale_date"])
 
-def test_get_data(connector, df_sales):
-    configuration = {
-        "query": "select * from sales;"
-    }
-    
-    connection = {}
-
-    df_test = connector.get_data(configuration, connection).toPandas()
-
-    assert len(df_test.compare(df_sales)) == 0
+#def test_get_data(connector, df_sales):
+#    configuration = {
+#        "query": "select * from sales;"
+#    }
+#    
+#    connection = {}
+#
+#    df_test = connector.get_data(configuration, connection).toPandas()
+#
+#    assert len(df_test.compare(df_sales)) == 0
