@@ -23,7 +23,6 @@ class ConnectorExcel(Connector):
         df = pd.read_excel(
             configuration["path"],
             sheet_name=configuration["sheet_name"],
-            header=configuration["headers"],
             skiprows=configuration["skiprows"],
         )
         return df
