@@ -28,4 +28,4 @@ jobs:
         pip install pylint==3.3.3
     - name: Lint code
       run: | 
-        pylint --fail-under=9 src/
+        pylint --fail-under=9.3 src/
