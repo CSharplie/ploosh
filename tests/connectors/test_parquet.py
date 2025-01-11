@@ -11,17 +11,17 @@ def connector():
 
 @pytest.fixture
 def df_sales():
-    return pd.read_csv("./tests/.data/sales.csv", delimiter=",")
+    return pd.read_csv(f"{os.getcwd()}/tests/.data/sales.csv", delimiter=",")
 
 @pytest.fixture
 def df_sales_with_specific_columns():
-    df = pd.read_csv("./tests/.data/sales.csv", delimiter=",")
+    df = pd.read_csv(f"{os.getcwd()}/tests/.data/sales.csv", delimiter=",")
     df_selected_columns = df[["sale_id", "seller_name", "card_name", "quantity"]]
     return df_selected_columns
 
 @pytest.fixture
 def df_sales_with_filters():
-    df = pd.read_csv("./tests/.data/sales.csv", delimiter=",")
+    df = pd.read_csv(f"{os.getcwd()}/tests/.data/sales.csv", delimiter=",")
     df_filtered = df[(df["sale_id"] > 10) & (df['quantity'] == 1)]
     df_filtered = df_filtered.reset_index(drop=True)
     return df_filtered
