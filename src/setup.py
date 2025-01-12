@@ -22,6 +22,8 @@ def setup_ploosh(name, install_requires):
             "openpyxl==3.1.2",
             "sqlalchemy==1.4.51",
             "pyspark==3.5.4",
+            "deltalake==0.23.2"
+            "delta-spark==3.3.0",
         ]
 
     setup (

@@ -55,6 +55,10 @@ docker run -d --name ploosh-spark-worker \
   --link ploosh-spark-master:ploosh-spark-master \
   bitnami/spark
 
+
+docker exec -it ploosh-spark-master pip install delta-spark==3.3.0
+docker exec -it ploosh-spark-worker pip install delta-spark==3.3.0
+
 mysql -h 127.0.0.1 -u ploosh -p$db_password < tests/.env/mysql/setup.sql
 
 export PGPASSWORD=$db_password;

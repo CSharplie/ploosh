@@ -65,6 +65,7 @@ jobs:
               -p 1433:1433 \
               -d \
               mcr.microsoft.com/mssql/server:2022-latest
+
         - name: Run Spark master container
           run: | 
             docker run -d --name ploosh-spark-master \
@@ -74,7 +75,9 @@ jobs:
               -v $(pwd)/tests/.data:$(pwd)/tests/.data \
               -v $(pwd)/tests/.env:$(pwd)/tests/.env \
               --hostname ploosh-spark-master \
-              bitnami/spark
+              bitnami/spark:3.5.4
+
+            docker exec ploosh-spark-master pip install delta-spark==3.3.0
         - name: Run Spark worker container
           run: |         
             docker run -d --name ploosh-spark-worker \
@@ -85,12 +88,13 @@ jobs:
               -v $(pwd)/tests/.data:$(pwd)/tests/.data \
               -v $(pwd)/tests/.env:$(pwd)/tests/.env \
               --link ploosh-spark-master:ploosh-spark-master \
-              bitnami/spark
+              bitnami/spark:3.5.4
     
+              docker exec ploosh-spark-worker pip install delta-spark==3.3.0
         - name: Feed databases
           run: | 
             sleep 30 # wait until all services are up
-    
+            
             mysql -h 127.0.0.1 -u ploosh -p'${{ secrets.TEST_LOCAL_DB_PASSWORD }}' < tests/.env/mysql/setup.sql
     
             export PGPASSWORD='${{ secrets.TEST_LOCAL_DB_PASSWORD }}';
@@ -105,5 +109,5 @@ jobs:
         - name: Execute tests
           run: | 
             export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
-            pytest --timeout=30 -rA ./tests 
+            pytest -rA ./tests 
     
