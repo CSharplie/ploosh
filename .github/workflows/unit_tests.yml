@@ -75,7 +75,7 @@ jobs:
               -v $(pwd)/tests/.data:$(pwd)/tests/.data \
               -v $(pwd)/tests/.env:$(pwd)/tests/.env \
               --hostname ploosh-spark-master \
-              bitnami/spark
+              bitnami/spark:3.5.4
 
             docker exec ploosh-spark-master pip install delta-spark==3.3.0
         - name: Run Spark worker container
@@ -88,7 +88,7 @@ jobs:
               -v $(pwd)/tests/.data:$(pwd)/tests/.data \
               -v $(pwd)/tests/.env:$(pwd)/tests/.env \
               --link ploosh-spark-master:ploosh-spark-master \
-              bitnami/spark
+              bitnami/spark:3.5.4
     
               docker exec ploosh-spark-worker pip install delta-spark==3.3.0
         - name: Feed databases
