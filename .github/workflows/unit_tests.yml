@@ -76,6 +76,8 @@ jobs:
               -v $(pwd)/tests/.env:$(pwd)/tests/.env \
               --hostname ploosh-spark-master \
               bitnami/spark
+
+            docker exec ploosh-spark-master pip install delta-spark==3.3.0
         - name: Run Spark worker container
           run: |         
             docker run -d --name ploosh-spark-worker \
@@ -88,13 +90,11 @@ jobs:
               --link ploosh-spark-master:ploosh-spark-master \
               bitnami/spark
     
+              docker exec ploosh-spark-worker pip install delta-spark==3.3.0
         - name: Feed databases
           run: | 
             sleep 30 # wait until all services are up
             
-            docker exec -it ploosh-spark-master pip install delta-spark==3.3.0
-            docker exec -it ploosh-spark-worker pip install delta-spark==3.3.0
-
             mysql -h 127.0.0.1 -u ploosh -p'${{ secrets.TEST_LOCAL_DB_PASSWORD }}' < tests/.env/mysql/setup.sql
     
             export PGPASSWORD='${{ secrets.TEST_LOCAL_DB_PASSWORD }}';
