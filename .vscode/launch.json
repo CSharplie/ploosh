@@ -10,6 +10,16 @@
             "console": "integratedTerminal",
             "args": ["--cases", "../../test_cases", "--filter", "*.yaml"],
             "justMyCode": true
+        }, 
+        {
+            "name": "Debug Native with connection file",
+            "type": "python",
+            "request": "launch",
+            "program": "__main__.py",
+            "cwd": "${workspaceFolder}/src/ploosh",
+            "console": "integratedTerminal",
+            "args": ["--cases", "../../test_cases", "--filter", "*.yaml", "--connections", "connections.yml"],
+            "justMyCode": true
         },
         {
             "name": "Debug Spark",

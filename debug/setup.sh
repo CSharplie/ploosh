@@ -43,6 +43,7 @@ docker run -d --name ploosh-spark-master \
   -e SPARK_MASTER_HOST=ploosh-spark-master \
   -p 7077:7077 -p 8081:8080 \
   -v $(pwd)/tests/.data:$(pwd)/tests/.data \
+  -v $(pwd)/tests/.env:$(pwd)/tests/.env \
   --hostname ploosh-spark-master \
   bitnami/spark
   
@@ -50,8 +51,13 @@ docker run -d --name ploosh-spark-worker \
   -e SPARK_MODE=worker \
   -e SPARK_MASTER_URL=spark://ploosh-spark-master:7077 \
   -v $(pwd)/tests/.data:$(pwd)/tests/.data \
+  -v $(pwd)/tests/.env:$(pwd)/tests/.env \
   --link ploosh-spark-master:ploosh-spark-master \
   bitnami/spark
+
+
+docker exec -it ploosh-spark-master pip install delta-spark==3.3.0
+docker exec -it ploosh-spark-worker pip install delta-spark==3.3.0
 
 mysql -h 127.0.0.1 -u ploosh -p$db_password < tests/.env/mysql/setup.sql
 
@@ -59,3 +65,8 @@ export PGPASSWORD=$db_password;
 psql -h 127.0.0.1 -U ploosh -d ploosh -f tests/.env/postgresql/setup.sql
 
 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $db_password -i tests/.env/mssql/setup.sql
+
+spark_setup_file=$(pwd)/tests/.env/spark/setup.sql
+spark_setup_file_tmp=$(pwd)/tests/.env/spark/setup_tmp.sql
+sed "s|{{pwd}}|$(pwd)|g" $spark_setup_file > $spark_setup_file_tmp
+spark-sql -f$spark_setup_file_tmp

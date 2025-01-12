@@ -74,6 +74,7 @@ class CompareEngineNative(CompareEngine):
 
         # Remove columns that are not in the expected dataframe
         self.df_source = self.df_source[df_columns_expected["columns"]]
+        self.df_expected = self.df_expected[df_columns_expected["columns"]]
 
         return True
 

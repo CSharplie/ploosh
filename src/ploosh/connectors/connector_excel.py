@@ -14,7 +14,7 @@ class ConnectorExcel(Connector):
         self.configuration_definition = [
             {"name": "path"},  # Path to the Excel file
             {"name": "sheet_name"},  # Sheet name
-            {"name": "skiprows", "type": "int", "default": 0},  # Number of rows to skip
+            {"name": "skiprows", "type": "integer", "default": 0},  # Number of rows to skip
         ]
 
     def get_data(self, configuration: dict, connection: dict):
@@ -23,7 +23,6 @@ class ConnectorExcel(Connector):
         df = pd.read_excel(
             configuration["path"],
             sheet_name=configuration["sheet_name"],
-            header=configuration["headers"],
             skiprows=configuration["skiprows"],
         )
         return df
