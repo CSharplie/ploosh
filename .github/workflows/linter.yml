@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - develop
+    paths:
+      - 'src/**'
+      - 'tests/**'
 jobs:
   lint:
     name: 'Lint code'
