@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - develop
+    paths:
+      - 'src/**'
+      - 'tests/**'
 jobs:
     tests:
         name: 'Execute unit tests'
