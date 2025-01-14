@@ -33,7 +33,7 @@ def setup_ploosh(name, install_requires):
             "Say Thanks!": "https://ploosh.io",
             "Bug Tracker": "https://github.com/CSharplie/ploosh/issues",
             "CI": "https://github.com/CSharplie/ploosh/actions",
-            "Documentation": "https://github.com/CSharplie/ploosh",
+            "Documentation": "https://ploosh.io/docs/ploosh/",
             "Source Code": "https://github.com/CSharplie/ploosh",
         },
         download_url="https://pypi.org/project/ploosh/",
