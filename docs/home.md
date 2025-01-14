@@ -74,7 +74,7 @@ Test invalid data:
 ploosh --connections "connections.yml" --cases "test_cases" --export "JSON" --p_my_sql_server_password "mypassword"
 ```
 
-![Execution result]([images/execution.png](http://ploosh.io/wp-content/uploads/2024/09/image.png))
+![Execution result](http://ploosh.io/wp-content/uploads/2024/09/image.png)
 
 ## Test results
 
