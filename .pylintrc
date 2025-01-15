@@ -67,7 +67,8 @@ ignored-modules=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-#init-hook=
+init-hook='import sys;from distutils.sysconfig import get_python_lib;sys.path.append(get_python_lib());'
+source-roots=src/ploosh,src/connectors,src/exporters,src/ploosh/engines,src
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use, and will cap the count on Windows to
@@ -282,7 +283,7 @@ ignored-parents=
 max-args=10
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=7
+max-attributes=15
 
 # Maximum number of boolean expressions in an if statement (see R0916).
 max-bool-expr=5
@@ -291,7 +292,7 @@ max-bool-expr=5
 max-branches=20
 
 # Maximum number of locals for function / method body.
-max-locals=20
+max-locals=30
 
 # Maximum number of parents for a class (see R0901).
 max-parents=7
@@ -331,7 +332,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=200
+max-line-length=250
 
 # Maximum number of lines in a module.
 max-module-lines=1000
@@ -422,7 +423,8 @@ disable=raw-checker-failed,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
-        use-symbolic-message-instead
+        use-symbolic-message-instead,
+        R0801
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -623,3 +625,5 @@ init-import=no
 # List of qualified module names which can have objects that can redefine
 # builtins.
 redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io
+
+

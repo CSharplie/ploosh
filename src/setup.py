@@ -1,10 +1,12 @@
 """Setup PyPi module"""
 # pylint: disable=C0103
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from ploosh.version import PLOOSH_VERSION
 
 def setup_ploosh(name, install_requires):
+    """Setup Ploosh module"""
+
     with open("../readme.md", encoding="UTF-8") as f:
         long_description = "".join(f.readlines())
 
@@ -20,6 +22,8 @@ def setup_ploosh(name, install_requires):
             "openpyxl==3.1.2",
             "sqlalchemy==1.4.51",
             "pyspark==3.5.4",
+            "deltalake==0.23.2",
+            "delta-spark==3.3.0",
         ]
 
     setup (
@@ -33,7 +37,7 @@ def setup_ploosh(name, install_requires):
             "Say Thanks!": "https://ploosh.io",
             "Bug Tracker": "https://github.com/CSharplie/ploosh/issues",
             "CI": "https://github.com/CSharplie/ploosh/actions",
-            "Documentation": "https://github.com/CSharplie/ploosh",
+            "Documentation": "https://ploosh.io/docs/ploosh/",
             "Source Code": "https://github.com/CSharplie/ploosh",
         },
         download_url="https://pypi.org/project/ploosh/",

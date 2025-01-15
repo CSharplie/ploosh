@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from pyjeb import control_and_setup
-from ploosh.compare_engine_native import CompareEngineNative
+from ploosh.engines.compare_engine_native import CompareEngineNative
 from ploosh.configuration import Configuration
 
 @pytest.fixture
@@ -53,6 +53,15 @@ def test_header_ignore(controls):
     compare_engine = CompareEngineNative(df_source, df_expected, options)
     assert compare_engine.compare()
     assert compare_engine.error_type is None
+
+def test_column_sort(controls):
+    df_source = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+    df_expected = pd.DataFrame({"B": [4, 5, 6], "A": [1, 2, 3]})
+    parameters = {}
+    options = control_and_setup(parameters, controls)["options"]
+
+    compare_engine = CompareEngineNative(df_source, df_expected, options)
+    assert compare_engine.compare()
 
 
 def test_count_failure(controls):

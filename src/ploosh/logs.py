@@ -5,11 +5,8 @@ import os
 import re
 import shutil
 from datetime import datetime
-
 from colorama import Fore, Style
-
 from version import PLOOSH_VERSION
-
 
 class Log:
     """Log class contain all functions to log"""
@@ -99,17 +96,17 @@ class Log:
     @staticmethod
     def print_logo():
         """Print the ATF logo"""
-        Log.print("[...]", filler="~")
-        Log.print("[...]       .__                      .__     [...]", filler=" ")
-        Log.print("[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
-        Log.print("[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
-        Log.print("[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
-        Log.print("[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
-        Log.print("[...]|__|                          \/     \/ [...]", filler=" ")
+        Log.print(r"[...]", filler="~")
+        Log.print(r"[...]       .__                      .__     [...]", filler=" ")
+        Log.print(r"[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
+        Log.print(r"[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
+        Log.print(r"[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
+        Log.print(r"[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
+        Log.print(r"[...]|__|                          \/     \/ [...]", filler=" ")
         Log.print(f"[...]Automatized Testing Framework (v {PLOOSH_VERSION})[...]", filler=" ")
-        Log.print("[...]", filler=" ")
-        Log.print("[...]https://github.com/CSharplie/ploosh", filler=" ")
-        Log.print("[...]", filler="~")
+        Log.print(r"[...]", filler=" ")
+        Log.print(r"[...]https://github.com/CSharplie/ploosh", filler=" ")
+        Log.print(r"[...]", filler="~")
 
 
 def print_compare_state(current_case):

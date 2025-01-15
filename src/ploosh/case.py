@@ -2,10 +2,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 import numpy as np
-import pandas as pd
-import pyspark.sql.functions as F
-from compare_engine_native import CompareEngineNative
-from compare_engine_spark import CompareEngineSpark
+from engines.compare_engine_native import CompareEngineNative
+from engines.compare_engine_spark import CompareEngineSpark
+from engines.load_engine_native import LoadEngineNative
+from engines.load_engine_spark import LoadEngineSpark
 
 @dataclass
 class StateStatistics:
@@ -59,6 +59,7 @@ class Duration:
             self.duration = duration.seconds + (duration.microseconds / 1000000)
 
 
+@dataclass
 class CaseItem:
     """Structure of case item (source or expected)"""
     connector = None
@@ -112,43 +113,18 @@ class Case:
             obj = self.expected
 
         obj.duration.start = datetime.now()
-        obj.df_data = obj.connector.get_data(obj.configuration, obj.connection)
 
         if not self.source.connector.is_spark:
-            # Cast columns to specified types
-            for column in self.options["cast"]:
-                column_name = self.get_insensitive_item(column["name"], obj.df_data.columns)
-                column_type = column["type"]
-                if column_type == "datetime":
-                    column_type = "datetime64[ns]"
-                obj.df_data[column_name] = obj.df_data[column_name].astype(column_type, errors="ignore")
-
-            # Remap bad columns type
-            for column in obj.df_data.select_dtypes(include=["object"]).columns:
-                if len(obj.df_data) == 0:
-                    continue
-
-                if type(obj.df_data[column][0]).__name__ == "Decimal":
-                    obj.df_data[column] = obj.df_data[column].astype(float, errors="ignore")
-
-            # Remove time zones
-            date_columns = obj.df_data.select_dtypes(include=["datetime64[ns, UTC]"]).columns
-            for date_column in date_columns:
-                obj.df_data[date_column] = obj.df_data[date_column].dt.tz_localize(None)
-            obj.count = len(obj.df_data)
-
-            # trim columns
-            if self.options["trim"]:
-                obj.df_data = obj.df_data.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
-
+            load_engine = LoadEngineNative(obj.configuration, self.options, obj.connection)
         else:
-            # TODO: Add object re-cast for Spark mode
-            obj.count = obj.df_data.count()
+            load_engine = LoadEngineSpark(obj.configuration, self.options, obj.connection)
 
-            # trim columns
-            if self.options["trim"]:
-                for column in obj.df_data.columns:
-                    obj.df_data = obj.df_data.withColumn(column, F.trim(F.col(column)))
+        # Load data from connector
+        obj.df_data = obj.connector.get_data(obj.configuration, obj.connection)
+
+        # Execute load engine
+        obj.df_data = load_engine.execute(obj.df_data)
+        obj.count = load_engine.count
 
         obj.duration.end = datetime.now()
 
@@ -167,7 +143,7 @@ class Case:
     def compare_dataframes(self):
         """Compare source and expected dataframe"""
         self.compare_duration.start = datetime.now()
-        
+
         compare_engine = CompareEngineNative(self.source.df_data, self.expected.df_data, self.options)
         compare_state = compare_engine.compare()
 

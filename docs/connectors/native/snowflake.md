@@ -12,7 +12,7 @@ This connector allows to connect to a Snowflake instance and execute SQL queries
 | warehouse                | no        | null       | Target warehouse name
 | role                     | no        | null       | Target role name
 
-:warning: it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
 
 ## Example
 ``` yaml

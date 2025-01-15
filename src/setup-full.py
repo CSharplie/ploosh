@@ -1,3 +1,5 @@
+"""Setup script for ploosh package"""
+
 from setup import setup_ploosh
 
 install_requires = [
