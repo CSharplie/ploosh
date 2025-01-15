@@ -22,7 +22,7 @@ ODBC Driver 18 must be installed on the executing computer.
 | encrypt                    | no        | yes                           | Encrypt the connection
 | driver                     | no        | ODBC Driver 18 for SQL Server | Driver to use by the connection
 
-:warning: it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
 
 ### Example
 ``` yaml

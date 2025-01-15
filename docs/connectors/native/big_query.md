@@ -6,7 +6,7 @@ This connector allows you to connect to a bigquery instance and execute SQL quer
 |--------------------------|:---------:|:----------:|-------------|
 | credentials              | yes       |            | The authentication use a [google keyfile](https://googleapis.dev/python/google-api-core/latest/auth.html) encoded in base 64
 
-:warning: it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the credentials value
+⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the credentials value
 
 ## Example
 ``` yaml

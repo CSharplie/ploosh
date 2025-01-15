@@ -11,7 +11,7 @@ This connector allows to connect to a ODBC datasource and execute SQL queries.
 | driver                   | no        | null       | ODBC driver name
 | encoding                 | no        | UTF-8      | Encoding to use for the connection
 
-:warning: it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
 
 ## Example
 ``` yaml

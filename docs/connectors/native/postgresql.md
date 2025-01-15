@@ -13,7 +13,7 @@ This connector allows to connect to a PostgreSQL database and execute SQL querie
 | port          | no        | 3306       | Port to use by the connection
 | ssl_context   | No        | False      | Set True if the server require a secure transport
 
-:warning: it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
 
 ### Example
 ``` yaml
