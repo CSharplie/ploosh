@@ -1,6 +1,6 @@
 This connector is used to read CSV files using Spark. 
 
-:warning: A spark connector can be use only with another spark connector. It is not possible to use a spark connector with a non spark connector.
+⚠️ A spark connector can be use only with another spark connector. It is not possible to use a spark connector with a non spark connector.
 
 See [Spark documentation](/docs/configuration-spark-mode/) for more information.
 

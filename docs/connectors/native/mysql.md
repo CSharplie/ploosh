@@ -13,7 +13,7 @@ This connector allows to connect to a MySQL database and execute SQL queries.
 | port                     | no        | 3306       | Port to use by the connection
 | require_secure_transport | No        | False      | Set True if the server require a secure transport
 
-:warning: it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
 
 ### Example
 ``` yaml

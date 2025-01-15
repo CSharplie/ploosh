@@ -36,7 +36,7 @@ Example:
     query: select * from my_table
 ```
 
-:warning: The best practice is to sort the dataset in the source and the expected query to ensure the comparison is done on the same order and provide a better performance.
+⚠️ The best practice is to sort the dataset in the source and the expected query to ensure the comparison is done on the same order and provide a better performance.
 
 # Cast
 The `cast` option allow to cast the column type before the comparison. The `cast` option is a list of name and type to cast the column. The column name is defined by their name and the type.
