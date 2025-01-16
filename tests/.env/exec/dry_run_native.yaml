@@ -1,0 +1,39 @@
+Example CSV - With success:
+  source:
+    type: csv
+    path: tests/.env/exec/sales.csv
+  expected:
+    type: csv
+    path: tests/.env/exec/sales.csv
+
+Example CSV - With fail header:
+  source:
+    type: csv
+    path: tests/.env/exec/sales_with_headers_gap.csv
+  expected:
+    type: csv
+    path: tests/.env/exec/sales.csv
+
+Example CSV - With fail count:
+  source:
+    type: csv
+    path: tests/.env/exec/sales_with_count_gap.csv
+  expected:
+    type: csv
+    path: tests/.env/exec/sales.csv
+
+Example CSV - With fail data:
+  source:
+    type: csv
+    path: tests/.env/exec/sales_with_data_gap.csv
+  expected:
+    type: csv
+    path: tests/.env/exec/sales.csv
+
+Example CSV - With errror:
+  source:
+    type: csv
+    path: tests/.env/exec/sales_with_toto.csv
+  expected:
+    type: csv
+    path: tests/.env/exec/sales.csv

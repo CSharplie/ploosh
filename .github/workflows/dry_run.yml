@@ -1,0 +1,49 @@
+name: 'Dry run'
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'src/**'
+      - 'tests/**'
+  workflow_dispatch:
+jobs:
+  dry_run:
+    name: 'Execute dry run'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: src/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.8"
+      - name: Init environment 
+        run: | 
+          conda create -n ".build" python=3.12.8 ipython
+          conda create -n ".dryrun" python=3.12.8 ipython
+      - name: Build package
+        run: | 
+          conda activate .build
+
+          pip install -r requirements.txt
+          pip install wheel==0.44.0
+          pip install twine==6.0.1
+          pip install setuptools==75.1.0
+
+          python setup-full.py sdist bdist_wheel
+          twine check dist/*
+      - name: Execute ploosh
+        run: | 
+          conda activate .dryrun
+
+          package_path=`ls src/dist/* | grep .whl`
+          pip install $package_path
+
+          ploosh --cases "tests/.env/exec/" -filter "dry_run_native.yaml"
