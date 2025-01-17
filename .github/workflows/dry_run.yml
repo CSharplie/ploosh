@@ -26,14 +26,11 @@ jobs:
           python-version: "3.12.8"
       - name: Init environment 
         run: |        
-          conda create -n ".build" python=3.12.8 ipython
-          conda create -n ".dryrun" python=3.12.8 ipython
+          python -m venv .build
+          python -m venv .dryrun
       - name: Build package
         run: |
-          conda init
-          source ~/.bashrc
-
-          conda activate .build
+          .build/bin/activate
 
           pip install -r requirements.txt
           pip install wheel==0.44.0
@@ -44,10 +41,7 @@ jobs:
           twine check dist/*
       - name: Execute ploosh
         run: | 
-          conda init
-          source ~/.bashrc
-
-          conda activate .dryrun
+          .dryrun/bin/activate
 
           package_path=`ls src/dist/* | grep .whl`
           pip install $package_path
