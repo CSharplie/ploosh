@@ -28,11 +28,11 @@ jobs:
         run: |        
           conda create -n ".build" python=3.12.8 ipython
           conda create -n ".dryrun" python=3.12.8 ipython
-
+      - name: Build package
+        run: |
           conda init
           source ~/.bashrc
-      - name: Build package
-        run: |         
+
           conda activate .build
 
           pip install -r requirements.txt
@@ -44,6 +44,9 @@ jobs:
           twine check dist/*
       - name: Execute ploosh
         run: | 
+          conda init
+          source ~/.bashrc
+
           conda activate .dryrun
 
           package_path=`ls src/dist/* | grep .whl`
