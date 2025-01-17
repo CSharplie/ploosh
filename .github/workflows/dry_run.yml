@@ -26,6 +26,8 @@ jobs:
           python-version: "3.12.8"
       - name: Init environment 
         run: | 
+          conda init
+        
           conda create -n ".build" python=3.12.8 ipython
           conda create -n ".dryrun" python=3.12.8 ipython
       - name: Build package
