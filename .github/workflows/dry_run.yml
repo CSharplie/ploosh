@@ -46,4 +46,4 @@ jobs:
           package_path=`ls dist/* | grep .whl`
           pip install $package_path
 
-          ploosh --cases "../tests/.env/exec/" -filter "dry_run_native.yaml"
+          ploosh --cases "../tests/.env/exec/" -filter "dry_run_native.yaml" --
