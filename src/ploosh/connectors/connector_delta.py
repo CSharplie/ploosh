@@ -5,7 +5,7 @@ from deltalake import DeltaTable
 from connectors.connector import Connector
 
 
-class ConnectorJSON(Connector):
+class ConnectorDELTA(Connector):
     """Connector to read DELTA file"""
 
     def __init__(self):
