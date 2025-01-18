@@ -17,7 +17,7 @@ def df_sales():
 
 def test_default(connector, df_sales):
     configuration = {
-       "path": f"./tests/.env/delta/sales"
+       "path": "./tests/.env/delta/sales"
     }
     configuration = control_and_setup(configuration, connector.configuration_definition)
     df_test = connector.get_data(configuration, None)
