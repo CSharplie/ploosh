@@ -75,6 +75,31 @@ def execute(args=None, spark_session=None):
         Log.print("Load exporters")
         exporters = get_exporters()
 
+        ##
+        import pathlib
+        import yaml
+
+        spark_config_list = list(
+            pathlib.Path(parameters.spark_config).rglob(
+                parameters.spark_config_filter
+            )
+        )
+        test = {}
+        for file_path in spark_config_list:
+            with open(file_path, encoding="UTF-8") as file:
+                configurations = yaml.load(file, Loader=yaml.loader.SafeLoader)
+                for case_name in configurations.keys():
+                    test[case_name] = configurations[case_name]
+        
+        conf = test["delta_spark"]
+
+        from pyspark.sql import SparkSession
+        spark_test = SparkSession.builder.appName("MyDeltaApp")
+        for key, value in conf.items():
+            spark_v2 = spark_test.config(key, value)
+        
+        spark_v2 = spark_v2.getOrCreate()
+        ##
         # Load configuration and test cases
         Log.print("Load configuration")
         configuration = Configuration(parameters, connectors, exporters)
