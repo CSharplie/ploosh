@@ -7,6 +7,7 @@ from case import StateStatistics
 from connectors import get_connectors
 from exporters import get_exporters
 from parameters import Parameters
+from spark_configurations import sparkConfiguration
 from configuration import Configuration
 from logs import Log, print_compare_state, print_summary
 
@@ -61,45 +62,21 @@ def execute(args=None, spark_session=None):
         else:
             parameters = Parameters(args)
 
-        # Initialize Spark session if needed
-        if parameters.spark_mode is True and spark_session is None:
-            Log.print("Start spark session")
-            spark_session = SparkSession.builder \
-                .master("local") \
-                .appName("ploosh") \
-                .getOrCreate()
-
         # Load connectors and exporters
         Log.print("Load connectors")
-        connectors = get_connectors(spark_session)
+        connectors = get_connectors()
         Log.print("Load exporters")
         exporters = get_exporters()
 
-        ##
-        import pathlib
-        import yaml
+        #############
+        # Initialize Spark session if needed
+        if parameters.spark_mode is True:
+            spark_sessions_config = sparkConfiguration(connectors,
+                                                    parameters.spark_config,
+                                                    parameters.spark_config_filter)
+            connectors = spark_sessions_config.add_spark_sessions()
+        #############
 
-        spark_config_list = list(
-            pathlib.Path(parameters.spark_config).rglob(
-                parameters.spark_config_filter
-            )
-        )
-        test = {}
-        for file_path in spark_config_list:
-            with open(file_path, encoding="UTF-8") as file:
-                configurations = yaml.load(file, Loader=yaml.loader.SafeLoader)
-                for case_name in configurations.keys():
-                    test[case_name] = configurations[case_name]
-        
-        conf = test["delta_spark"]
-
-        from pyspark.sql import SparkSession
-        spark_test = SparkSession.builder.appName("MyDeltaApp")
-        for key, value in conf.items():
-            spark_v2 = spark_test.config(key, value)
-        
-        spark_v2 = spark_v2.getOrCreate()
-        ##
         # Load configuration and test cases
         Log.print("Load configuration")
         configuration = Configuration(parameters, connectors, exporters)

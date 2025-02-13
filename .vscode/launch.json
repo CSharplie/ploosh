@@ -2,33 +2,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Native",
+            "name": "Debug",
             "type": "python",
             "request": "launch",
             "program": "__main__.py",
             "cwd": "${workspaceFolder}/src/ploosh",
             "console": "integratedTerminal",
-            "args": ["--cases", "../../test_cases", "--filter", "*.yaml"],
-            "justMyCode": true
-        }, 
-        {
-            "name": "Debug Native with connection file",
-            "type": "python",
-            "request": "launch",
-            "program": "__main__.py",
-            "cwd": "${workspaceFolder}/src/ploosh",
-            "console": "integratedTerminal",
-            "args": ["--cases", "../../test_cases", "--filter", "*.yaml", "--connections", "connections.yml"],
-            "justMyCode": true
-        },
-        {
-            "name": "Debug Spark",
-            "type": "python",
-            "request": "launch",
-            "program": "__main__.py",
-            "cwd": "${workspaceFolder}/src/ploosh",
-            "console": "integratedTerminal",
-            "args": ["--cases", "../../test_cases", "--filter", "*.yaml", "--spark", "True"],
+            "args": [
+                "--cases",
+                "../../test_cases",
+                "--filter",
+                "*.yml",
+                "--spark_configuration",
+                "../../test_sc",
+                "--spark_filter",
+                "*.yaml",
+                "--spark",
+                "True"
+            ],
             "justMyCode": true
         }
     ]

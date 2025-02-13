@@ -1,0 +1,3 @@
+delta_spark:
+  spark.sql.catalog.spark_catalog: org.apache.spark.sql.delta.catalog.DeltaCatalog
+  spark.jars.packages: io.delta:delta-spark_2.12:3.2.0
