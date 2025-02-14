@@ -20,34 +20,35 @@ class sparkConfiguration:
     spark_sessions_configuration = {}
 
 
-    def __init__(self, connectors: dict, spark_config_path: str, spark_config_filter: str)-> None:
+    def __init__(self, connectors: dict, spark_configuration_path: str, spark_configuration_filter: str)-> None:
         """
         Initialize SparkConfiguration with connectors and configuration file details.
 
         connectors                : dict: Dictionary containing connector objects
-        :param spark_config_path  : str : Path to Spark configuration files
-        :param spark_config_filter: str : File filter pattern for configuration files
+        :param spark_configuration_path  : str : Path to Spark configuration files
+        :param spark_configuration_filter: str : File filter pattern for configuration files
         """
         self.connectors = connectors
-        self.spark_configuration_path = spark_config_path
-        self.spark_configuration_filter = spark_config_filter
+        self.spark_configuration_path = spark_configuration_path
+        self.spark_configuration_filter = spark_configuration_filter
 
 
     def get_config_files(self) -> None:
         """
         Reads YAML configuration files and stores Spark session configurations.
         """
-        spark_config_list = list(
-                    pathlib.Path(self.spark_configuration_path).rglob(
-                        self.spark_configuration_filter
+        if self.spark_configuration_path is not None:
+            spark_config_list = list(
+                        pathlib.Path(self.spark_configuration_path).rglob(
+                            self.spark_configuration_filter
+                        )
                     )
-                )
 
-        for file_path in spark_config_list:
-            with open(file_path, encoding="UTF-8") as file:
-                configurations = yaml.load(file, Loader=yaml.loader.SafeLoader)
-                for connector_name, config in configurations.items():
-                    self.spark_sessions_configuration[connector_name.upper()] = config
+            for file_path in spark_config_list:
+                with open(file_path, encoding="UTF-8") as file:
+                    configurations = yaml.load(file, Loader=yaml.loader.SafeLoader)
+                    for connector_name, config in configurations.items():
+                        self.spark_sessions_configuration[connector_name.upper()] = config
 
 
     def create_spark_sessions(self) -> None:
@@ -61,6 +62,7 @@ class sparkConfiguration:
                 spark_builder = spark_builder.config(key, value)
             spark = spark_builder.getOrCreate()
             self.spark_sessions[connector_name] = spark
+            spark = None
 
 
     def add_spark_sessions(self) -> dict:
@@ -81,6 +83,9 @@ class sparkConfiguration:
         if self.connectors:
             for connector_name in self.connectors.keys():
                 if self.connectors[connector_name].is_spark:
-                        self.connectors[connector_name].spark = self.spark_sessions.get(connector_name, default_spark_session)
+                        if connector_name in self.spark_sessions.keys():
+                            self.connectors[connector_name].spark = self.spark_sessions.get(connector_name)
+                        else:
+                            self.connectors[connector_name].spark = default_spark_session
 
         return self.connectors

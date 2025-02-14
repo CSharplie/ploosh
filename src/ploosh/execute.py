@@ -72,8 +72,8 @@ def execute(args=None, spark_session=None):
         # Initialize Spark session if needed
         if parameters.spark_mode is True:
             spark_sessions_config = sparkConfiguration(connectors,
-                                                    parameters.spark_config,
-                                                    parameters.spark_config_filter)
+                                                    parameters.spark_configuration_path,
+                                                    parameters.spark_configuration_filter)
             connectors = spark_sessions_config.add_spark_sessions()
         #############
 
