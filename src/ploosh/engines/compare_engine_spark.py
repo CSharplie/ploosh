@@ -25,7 +25,15 @@ class CompareEngineSpark(CompareEngine):
                 return False
             if not self.compare_length():
                 return False
-            if not self.compare_data_with_order():
+            if not self.compare_data():
+                return False
+            return True
+        elif self.mode == "JOIN":
+            if self.df_source.count() == 0 and self.df_expected.count() == 0 and self.options["allow_no_rows"]:
+                return True
+            if not self.compare_structure():
+                return False
+            if not self.compare_data():
                 return False
             return True
 
@@ -71,7 +79,7 @@ class CompareEngineSpark(CompareEngine):
 
         return True
 
-    def compare_data_with_order(self) -> bool:
+    def compare_data(self) -> bool:
         """Compare the source and expected datasets with "order" mode"""
 
         # Sort the data based on the specified columns
@@ -84,11 +92,13 @@ class CompareEngineSpark(CompareEngine):
         else:
             sort_columns = self.df_expected.columns
 
-        df_window = Window.orderBy(*sort_columns)
-        self.df_source = self.df_source.withColumn("__ploosh_order_key", row_number().over(df_window))
-        self.df_expected = self.df_expected.withColumn("__ploosh_order_key", row_number().over(df_window))
+        if self.mode == "ORDER":
+            df_window = Window.orderBy(*sort_columns)
+            self.df_source = self.df_source.withColumn("__ploosh_order_key", row_number().over(df_window))
+            self.df_expected = self.df_expected.withColumn("__ploosh_order_key", row_number().over(df_window))
 
         tolerance = self.options["tolerance"]
+        join_keys = self.options["join_keys"]
 
         # Trim the data if the trim option is specified
         if self.options["trim"]:
@@ -109,16 +119,20 @@ class CompareEngineSpark(CompareEngine):
         df2 = self.df_expected.select([col(c).alias(f"{c}_expected") for c in self.df_source.columns])
 
         # Clean up the order key column
-        df1 = df1.withColumnRenamed("__ploosh_order_key_source", "__ploosh_order_key")
-        df2 = df2.withColumnRenamed("__ploosh_order_key_expected", "__ploosh_order_key")
+        if self.mode == "ORDER":
+            df1 = df1.withColumnRenamed("__ploosh_order_key_source", "__ploosh_order_key")
+            df2 = df2.withColumnRenamed("__ploosh_order_key_expected", "__ploosh_order_key")
 
-        # Join the two dataframes on the order key
-        joined_df = df1.join(df2, on=["__ploosh_order_key"], how="inner")
-        joined_df = joined_df.drop("__ploosh_order_key")
+            # Join the two dataframes on the order key
+            joined_df = df1.join(df2, on=["__ploosh_order_key"], how="inner")
+            joined_df = joined_df.drop("__ploosh_order_key")
 
-        # Drop the order key column from the source and expected dataframes
-        self.df_source = self.df_source.drop("__ploosh_order_key")
-        self.df_expected = self.df_expected.drop("__ploosh_order_key")
+            # Drop the order key column from the source and expected dataframes
+            self.df_source = self.df_source.drop("__ploosh_order_key")
+            self.df_expected = self.df_expected.drop("__ploosh_order_key")
+        elif self.mode == "JOIN":
+            # Join the two dataframes on the columns
+            joined_df = df1.join(df2, on=[col(f"{c.lower()}_source") == col(f"{c.lower()}_expected") for c in join_keys], how="inner")
 
         diff_columns = []
         for c in self.df_source.columns:
@@ -148,11 +162,11 @@ class CompareEngineSpark(CompareEngine):
 
         datasource_count = self.df_source.count()
 
-        # Convert the result to a pandas dataframe for the output report
-        df_differences = result.toPandas()
-
         # Set the success rate and error message if there are differences
-        if len(df_differences) > 0:
+        if result.count() > 0:
+            # Convert the result to a pandas dataframe for the output report
+            df_differences = result.toPandas()
+
             self.success_rate = (datasource_count - len(df_differences)) / datasource_count
             if self.success_rate < self.options["pass_rate"]:
                 self.error_message = "Some rows are not equal between source dataset and expected dataset"

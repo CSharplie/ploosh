@@ -19,7 +19,8 @@ class Configuration:
     case_definition = [
         {"name": "disabled", "type": "boolean", "default": False},
         {"name": "options", "type": "dict", "default": {}},
-        {"name": "options.compare_mode", "type": "string", "validset": ["order"], "default": "order"},
+        {"name": "options.compare_mode", "type": "string", "validset": ["order", "join"], "default": "order"},
+        {"name": "options.join_keys", "type": "list", "default": []},
         {"name": "options.ignore", "type": "list", "default": None},
         {"name": "options.sort", "type": "list", "default": None},
         {"name": "options.cast", "type": "list", "default": []},
