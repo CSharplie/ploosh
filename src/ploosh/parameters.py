@@ -8,6 +8,8 @@ class Parameters:
     path_connection = None
     path_cases = None
     path_cases_filter = None
+    spark_configuration_path = None
+    spark_configuration_filter = None
     path_output = None
     export = None
     failure_on_error = None
@@ -27,6 +29,8 @@ class Parameters:
         self.export = self.get_value("export", "JSON").upper()
         self.failure_on_error = self.get_value("failure", True)
         self.spark_mode = self.get_value("spark", False)
+        self.spark_configuration_path = self.get_value("spark_configuration_path", None)
+        self.spark_configuration_filter = self.get_value("spark_configuration_filter", "*.yml")
 
     def set_args(self, args):
         """Set dictionary of args with cleaned name"""

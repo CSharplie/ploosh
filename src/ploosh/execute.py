@@ -7,6 +7,7 @@ from case import StateStatistics
 from connectors import get_connectors
 from exporters import get_exporters
 from parameters import Parameters
+from spark_configurations import sparkConfiguration
 from configuration import Configuration
 from logs import Log, print_compare_state, print_summary
 
@@ -61,19 +62,23 @@ def execute(args=None, spark_session=None):
         else:
             parameters = Parameters(args)
 
-        # Initialize Spark session if needed
-        if parameters.spark_mode is True and spark_session is None:
-            Log.print("Start spark session")
-            spark_session = SparkSession.builder \
-                .master("local") \
-                .appName("ploosh") \
-                .getOrCreate()
-
         # Load connectors and exporters
         Log.print("Load connectors")
-        connectors = get_connectors(spark_session)
+        connectors = get_connectors()
         Log.print("Load exporters")
         exporters = get_exporters()
+
+        #############
+        default_spark_session = None
+        # Initialize Spark session if needed
+        if parameters.spark_mode is True:
+            spark_sessions_config = sparkConfiguration(spark_session,
+                                                    connectors,
+                                                    parameters.spark_configuration_path,
+                                                    parameters.spark_configuration_filter)
+            connectors = spark_sessions_config.add_spark_sessions()
+            default_spark_session = spark_sessions_config.default_spark_session
+        #############
 
         # Load configuration and test cases
         Log.print("Load configuration")
@@ -108,7 +113,7 @@ def execute(args=None, spark_session=None):
 
         # Compare source and expected data
         Log.print("Compare source and expected data")
-        if not compare_data(current_case, statistics, spark_session):
+        if not compare_data(current_case, statistics, default_spark_session):
             continue
 
         # Print comparison state and calculate durations

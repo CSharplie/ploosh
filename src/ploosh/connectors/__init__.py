@@ -5,7 +5,7 @@ import inspect
 import os
 
 
-def get_connectors(spark_session):
+def get_connectors():
     """Get all existing connectors"""
 
     connectors = {}
@@ -26,9 +26,6 @@ def get_connectors(spark_session):
                 if inspect.isclass(obj) and name.startswith("Connector"):
                     current_connector = obj()  # Instantiate the connector class
 
-                    # If a Spark session is provided and the connector is Spark-based, set the Spark session
-                    if spark_session is not None and current_connector.is_spark:
-                        current_connector.spark = spark_session
 
                     # Add the connector to the connectors dictionary
                     connectors[current_connector.name] = current_connector
