@@ -16,11 +16,12 @@ class sparkConfiguration:
     connectors = None
     spark_configuration_path = None
     spark_configuration_filter = None
+    default_spark_session = None
     spark_sessions = {}
     spark_sessions_configuration = {}
 
 
-    def __init__(self, connectors: dict, spark_configuration_path: str, spark_configuration_filter: str)-> None:
+    def __init__(self, provider_spark_session, connectors: dict, spark_configuration_path: str, spark_configuration_filter: str)-> None:
         """
         Initialize SparkConfiguration with connectors and configuration file details.
 
@@ -28,6 +29,7 @@ class sparkConfiguration:
         :param spark_configuration_path  : str : Path to Spark configuration files
         :param spark_configuration_filter: str : File filter pattern for configuration files
         """
+        self.default_spark_session = provider_spark_session
         self.connectors = connectors
         self.spark_configuration_path = spark_configuration_path
         self.spark_configuration_filter = spark_configuration_filter
@@ -47,8 +49,9 @@ class sparkConfiguration:
             for file_path in spark_config_list:
                 with open(file_path, encoding="UTF-8") as file:
                     configurations = yaml.load(file, Loader=yaml.loader.SafeLoader)
-                    for connector_name, config in configurations.items():
-                        self.spark_sessions_configuration[connector_name.upper()] = config
+                    if configurations is not None:
+                        for connector_name, config in configurations.items():
+                            self.spark_sessions_configuration[connector_name.upper()] = config
 
 
     def create_spark_sessions(self) -> None:
@@ -73,10 +76,11 @@ class sparkConfiguration:
         """
         # Default spark session
         # Assigned to the spark connector if no spark configuration is mentioned by the user
-        default_spark_session = SparkSession.builder \
-                .master("local") \
-                .appName("ploosh") \
-                .getOrCreate()
+        if self.default_spark_session is None:
+            self.default_spark_session = SparkSession.builder \
+                    .master("local") \
+                    .appName("ploosh") \
+                    .getOrCreate()
 
         self.create_spark_sessions()
 
@@ -86,6 +90,6 @@ class sparkConfiguration:
                         if connector_name in self.spark_sessions.keys():
                             self.connectors[connector_name].spark = self.spark_sessions.get(connector_name)
                         else:
-                            self.connectors[connector_name].spark = default_spark_session
+                            self.connectors[connector_name].spark = self.default_spark_session
 
         return self.connectors
