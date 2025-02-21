@@ -69,12 +69,15 @@ def execute(args=None, spark_session=None):
         exporters = get_exporters()
 
         #############
+        default_spark_session = None
         # Initialize Spark session if needed
         if parameters.spark_mode is True:
-            spark_sessions_config = sparkConfiguration(connectors,
+            spark_sessions_config = sparkConfiguration(spark_session,
+                                                    connectors,
                                                     parameters.spark_configuration_path,
                                                     parameters.spark_configuration_filter)
             connectors = spark_sessions_config.add_spark_sessions()
+            default_spark_session = spark_sessions_config.default_spark_session
         #############
 
         # Load configuration and test cases
@@ -110,7 +113,7 @@ def execute(args=None, spark_session=None):
 
         # Compare source and expected data
         Log.print("Compare source and expected data")
-        if not compare_data(current_case, statistics, spark_session):
+        if not compare_data(current_case, statistics, default_spark_session):
             continue
 
         # Print comparison state and calculate durations
