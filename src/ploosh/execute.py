@@ -68,6 +68,8 @@ def execute(args=None, spark_session=None):
         Log.print("Load exporters")
         exporters = get_exporters()
 
+        default_spark_session = None
+
         # Initialize Spark session if needed
         if parameters.spark_mode is True:
             spark_sessions_config = sparkConfiguration(spark_session,
@@ -75,6 +77,8 @@ def execute(args=None, spark_session=None):
                                                     parameters.spark_configuration_path,
                                                     parameters.spark_configuration_filter)
             connectors = spark_sessions_config.add_spark_sessions()
+
+            default_spark_session = spark_sessions_config.default_spark_session
 
         # Load configuration and test cases
         Log.print("Load configuration")
