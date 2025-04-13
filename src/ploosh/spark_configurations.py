@@ -3,13 +3,12 @@ This module provides the SparkConfiguration class, which manages the creation an
 of Spark sessions based on YAML configuration files. It allows loading configurations, creating Spark
 sessions, and assigning them to connectors.
 """
-
-from pyspark.sql import SparkSession
 import pathlib
+from pyspark.sql import SparkSession
 import yaml
 
 
-class sparkConfiguration:
+class SparkConfiguration:
     """
     Class to manage Spark session configurations and creation based on YAML configuration files.
     """
@@ -87,9 +86,9 @@ class sparkConfiguration:
         if self.connectors:
             for connector_name in self.connectors.keys():
                 if self.connectors[connector_name].is_spark:
-                        if connector_name in self.spark_sessions.keys():
-                            self.connectors[connector_name].spark = self.spark_sessions.get(connector_name)
-                        else:
-                            self.connectors[connector_name].spark = self.default_spark_session
+                    if connector_name in self.spark_sessions.keys():
+                        self.connectors[connector_name].spark = self.spark_sessions.get(connector_name)
+                    else:
+                        self.connectors[connector_name].spark = self.default_spark_session
 
         return self.connectors

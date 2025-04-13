@@ -2,12 +2,11 @@
 
 import sys
 from colorama import Fore
-from pyspark.sql import SparkSession
 from case import StateStatistics
 from connectors import get_connectors
 from exporters import get_exporters
 from parameters import Parameters
-from spark_configurations import sparkConfiguration
+from spark_configurations import SparkConfiguration
 from configuration import Configuration
 from logs import Log, print_compare_state, print_summary
 
@@ -72,7 +71,7 @@ def execute(args=None, spark_session=None):
 
         # Initialize Spark session if needed
         if parameters.spark_mode is True:
-            spark_sessions_config = sparkConfiguration(spark_session,
+            spark_sessions_config = SparkConfiguration(spark_session,
                                                     connectors,
                                                     parameters.spark_configuration_path,
                                                     parameters.spark_configuration_filter)
