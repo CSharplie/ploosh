@@ -2,7 +2,7 @@ Ploosh can be executed over spark (in Databricks, Microsoft Fabric or local)) us
 
 1. **Manual Spark session**: Pass an existing Spark session manually via the `spark_session` parameter.
 2. **Custom Spark session from YAML configuration**: You can specify a custom Spark session configuration using a YAML file. Ploosh will create a dedicated session based on the configuration when the connector name matches the YAML key.
-3. **Default Spark session**: If no Spark session is provided and no YAML configuration matches, Ploosh will automatically create a default local Spark session — but only if `spark=True` is passed to `execute_cases`.
+3. **Default Spark session**: If no Spark session is provided **and** no Spark YAML configuration is passed (i.e., `spark_configuration_path` and `spark_configuration_filter` are `None`), Ploosh will automatically create a default local Spark session — but only if `spark=True` is passed to `execute_cases`.
 
 
 # Examples
@@ -109,7 +109,7 @@ execute_cases(
 
 ## Default Spark Session (no manual or YAML configuration)
 
-If you don’t pass a Spark session manually and don’t provide a YAML configuration, Ploosh will automatically create a default Spark session — but only if `spark=True` is passed to `execute_cases`.
+If you don’t pass a Spark session manually and don’t provide a Spark YAML configuration, Ploosh will automatically create a default Spark session — but only if `spark=True` is passed to `execute_cases`.
 
 __Step 1__ : Example `connections.yml` with a Spark-enabled connector
 ```yaml
@@ -123,7 +123,7 @@ MY_SPARK_CONNECTOR:
     type: CSV_SPARK
     path: "../path/to/csv/data_target.csv"
     delimiter: ","
-  ...
+```
 
 __Step 2__ : Run without manually creating or passing a Spark session
 
