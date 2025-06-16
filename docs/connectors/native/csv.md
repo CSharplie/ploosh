@@ -19,6 +19,7 @@ No connection is required by this connector
 | quotechar         | no        |  '"'                          | Character used to denote the start and end of a quoted item
 | encoding          | no        |  "utf-8"                      | Encoding to use for UTF when reading/writing
 | engine            | no        |  None                         | Parser engine to use
+| Schema            | no        |  None                         | Schema to use for the CSV file
 
 ## Example
 ``` yaml
@@ -38,3 +39,24 @@ Example CSV:
     engine: "python"
     path: data/employees_before_2000.csv
 ```
+
+## Exemple with schema
+``` yaml 
+Example CSV with schema:
+  source:
+    connection: mysql_example
+    type: mysql
+    query: |
+        select *
+            from sales
+            where sale_date < "2000-01-01"
+  expected:
+    type: csv
+    infer: False
+    delimiter: ";"
+    encoding: "utf-8"
+    schema:
+      sale_id: string
+      sale_date: datetime
+      sale_amount: float
+  
