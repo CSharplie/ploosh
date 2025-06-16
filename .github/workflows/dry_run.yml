@@ -30,7 +30,7 @@ jobs:
           python -m venv .dryrun
       - name: Build package
         run: |
-          .build/bin/activate
+          . .build/bin/activate
 
           pip install -r requirements.txt
           pip install wheel==0.44.0
@@ -41,7 +41,7 @@ jobs:
           twine check dist/*
       - name: Execute ploosh
         run: | 
-          .dryrun/bin/activate
+          . .dryrun/bin/activate
 
           package_path=`ls dist/* | grep .whl`
           pip install $package_path
