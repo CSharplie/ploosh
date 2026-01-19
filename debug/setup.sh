@@ -2,7 +2,9 @@
 db_password=ThePasswordIs9293709B13?
 
 # Setup dev envrionnement 
-conda create -n ".ploosh" python=3.12.8 ipython
+conda init
+source ~/.bashrc
+conda create -n ".ploosh" -c conda-forge python=3.12.8 -y
 conda activate .ploosh
 
 pip install -r ./src/requirements.txt
