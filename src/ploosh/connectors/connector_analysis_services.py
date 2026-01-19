@@ -102,8 +102,7 @@ class ConnectorAnalysisServices(Connector):
             tenant_id = connection["tenant_id"]
             client_id = connection["client_id"]
             client_secret = connection["client_secret"]
-            authority = 'https://login.microsoftonline.com/'
-            credential = ClientSecretCredential(tenant_id, client_id, client_secret)  # , authority=authority)
+            credential = ClientSecretCredential(tenant_id, client_id, client_secret)
             token = credential.get_token(scope)
             token_string = token.token
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id=;Password={token_string};Impersonation Level=Impersonate;'

@@ -69,7 +69,6 @@ class ConnectorMSSQL(Connector):
         if connection["mode"] == "password":
             # Extract connection parameters
             driver = connection["driver"]
-            port = connection["port"]
             hostname = connection["hostname"]
             username = connection["username"]
             password = connection["password"]
