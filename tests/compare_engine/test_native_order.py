@@ -40,6 +40,16 @@ def test_header_case_insensitive(controls):
     assert compare_engine.compare()
     assert compare_engine.error_type is None
 
+def test_header_trim(controls):
+    df_source = pd.DataFrame({" A ": [1, 2, 3], " B ": [4, 5, 6]})
+    df_expected = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+    parameters = {}
+    options = control_and_setup(parameters, controls)["options"]
+
+    compare_engine = CompareEngineNative(df_source, df_expected, options)
+    assert compare_engine.compare()
+    assert compare_engine.error_type is None
+
 def test_header_ignore(controls):
     df_source = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
     df_expected = pd.DataFrame({"A": [1, 2, 3], "C": [4, 5, 6]})
