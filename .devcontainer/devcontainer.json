@@ -5,7 +5,10 @@
     "ghcr.io/devcontainers/features/java:1": {
       "version": "17",
       "jdkDistro": "ms"
+    },
+    "ghcr.io/devcontainers/features/conda:1": {
+        "version": "latest"
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt"
+  "postCreateCommand": "pip install -r ./src/requirements.txt"
 }
