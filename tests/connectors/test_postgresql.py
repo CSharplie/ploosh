@@ -31,6 +31,7 @@ def test_connection_with_password(connector, df_sales):
     df_test = connector.get_data(configuration, connection)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == "select * from sales;"
 
 def test_connection_with_connection_string(connector, df_sales):
     configuration = {
@@ -49,5 +50,6 @@ def test_connection_with_connection_string(connector, df_sales):
     df_test = connector.get_data(configuration, connection)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == "select * from sales;"
 
      
