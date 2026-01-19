@@ -54,6 +54,9 @@ class ConnectorDatabricks(Connector):
         # Create a SQLAlchemy engine using the connection string
         sql_connection = create_engine(connection_string, echo=False)
 
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
+
         # Execute the SQL query and read the data into a pandas DataFrame
         df = pd.read_sql(configuration["query"], sql_connection)
 

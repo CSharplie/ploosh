@@ -43,6 +43,8 @@ class ConnectorSnowflake(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
 
         # Extract connection parameters
         account_identifier = connection["account_identifier"]

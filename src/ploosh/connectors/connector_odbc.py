@@ -86,6 +86,9 @@ class ConnectorODCB(Connector):
             )
             odbc_connection.setencoding(encoding=connection["encoding"])
 
+            # Store the executed query for reference
+            self.executed_action = configuration["query"]
+
             # Execute the SQL query and read the data into a pandas DataFrame
             df = pd.read_sql(configuration["query"], odbc_connection)
 

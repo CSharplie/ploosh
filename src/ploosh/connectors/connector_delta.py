@@ -19,6 +19,9 @@ class ConnectorDELTA(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        # Store the executed action (file path) for reference
+        self.executed_action = configuration["path"]
+
         # Read the DELTA file using pandas with the specified delimiter
         dt = DeltaTable(configuration["path"])
         df = dt.to_pandas()

@@ -36,6 +36,7 @@ class ExporterJSON(Exporter):
                     "end": Exporter.date_to_string(case.source.duration.end),
                     "duration": case.source.duration.duration,
                     "count": case.source.count,
+                    "executed_action": case.source.executed_action,
                 }
 
             # Collect expected data if available
@@ -45,6 +46,7 @@ class ExporterJSON(Exporter):
                     "end": Exporter.date_to_string(case.expected.duration.end),
                     "duration": case.expected.duration.duration,
                     "count": case.expected.count,
+                    "executed_action": case.expected.executed_action,
                 }
 
             # Collect comparison data if available

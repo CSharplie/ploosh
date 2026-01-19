@@ -19,6 +19,9 @@ class ConnectorExcel(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+        # Store the executed action (file path) for reference
+        self.executed_action = configuration["path"]
+
         # Read the Excel file using pandas with the specified configuration options
         df = pd.read_excel(
             configuration["path"],

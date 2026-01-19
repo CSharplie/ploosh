@@ -26,6 +26,9 @@ class ConnectorCSVSpark(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        # Store the executed action (file path) for reference
+        self.executed_action = configuration["path"]
+
         # Read the CSV file using Spark with the specified configuration options
         df = self.spark.read.option("delimiter", configuration["delimiter"])    \
                             .option("header", configuration["header"])          \

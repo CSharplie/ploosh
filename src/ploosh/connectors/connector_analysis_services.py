@@ -120,6 +120,9 @@ class ConnectorAnalysisServices(Connector):
         except:
             raise ValueError("Can't connect to the AS Instance")
 
+        # Store the executed query for reference
+        self.executed_action = query
+
         # execute DAX query
         with con.cursor() as cur:
             try:

@@ -39,6 +39,9 @@ class ConnectorBigQuery(Connector):
         credentials = connection["credentials"]
         credentials_type = connection["credentials_type"]
 
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
+
         # If using service account credentials, create a connection string and use SQLAlchemy
         if credentials_type == "service_account":
             connection_string = f"bigquery://?credentials_base64={credentials}"

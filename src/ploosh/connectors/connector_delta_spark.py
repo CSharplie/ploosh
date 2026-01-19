@@ -19,6 +19,9 @@ class ConnectorDeltaSpark(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        # Store the executed action (file path) for reference
+        self.executed_action = configuration["path"]
+
         # Read the Delta table using Spark with the specified path
         df = self.spark.read.format("delta").load(configuration["path"])
 

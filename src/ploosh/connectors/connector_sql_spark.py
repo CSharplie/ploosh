@@ -18,6 +18,8 @@ class ConnectorSQLSpark(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
 
         # Execute the SQL query using Spark and return the resulting DataFrame
         df = self.spark.sql(configuration["query"])

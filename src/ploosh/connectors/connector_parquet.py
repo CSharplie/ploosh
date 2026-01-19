@@ -37,6 +37,9 @@ class ConnectorParquet(Connector):
                 if filters else None
             )
 
+        # Store the executed action (file path) for reference
+        self.executed_action = path
+
         # Read the Parquet file using pandas
         df = pd.read_parquet(path,
                              columns=columns,
