@@ -4,7 +4,9 @@ This connector allows you to connect to a bigquery instance and execute SQL quer
 ## Definition
 | Name                     | Mandatory | Default    | Description |
 |--------------------------|:---------:|:----------:|-------------|
-| credentials              | yes       |            | The authentication use a [google keyfile](https://googleapis.dev/python/google-api-core/latest/auth.html) encoded in base 64
+| credentials              | no        |            | The authentication use a [google keyfile](https://googleapis.dev/python/google-api-core/latest/auth.html) encoded in base 64
+
+if credentials are not provided, the connector will use the default credentials from the environment for exemple by the gcloud CLI or the environment variable `GOOGLE_APPLICATION_CREDENTIALS`
 
 ⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the credentials value
 
