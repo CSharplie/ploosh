@@ -18,7 +18,7 @@ class ConnectorFabricKqlSpark(Connector):
             {
                 "name": "database_id", # KQL Database ID
             }
-            ]        
+            ]
         self.configuration_definition = [
             {"name": "query"},  # KQL query to execute
         ]
