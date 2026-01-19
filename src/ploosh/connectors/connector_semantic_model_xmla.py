@@ -1,11 +1,11 @@
 # pylint: disable=R0903
 """Connector to read Semantic Model from Fabric XMLA endpoint"""
 
+import json
 import pandas as pd
 import requests
-from azure.identity import ClientSecretCredential, InteractiveBrowserCredential, UsernamePasswordCredential
+from azure.identity import ClientSecretCredential, InteractiveBrowserCredential
 from connectors.connector import Connector
-import json
 
 class ConnectorSemanticModel(Connector):
     """Connector to read Semantic Model using Fabric XMLA endpoint"""
@@ -74,7 +74,7 @@ class ConnectorSemanticModel(Connector):
             tenant_id = connection["tenant_id"]
             client_id = connection["client_id"]
             client_secret = connection["client_secret"]
-            authority = f'https://login.microsoftonline.com/'
+            authority = 'https://login.microsoftonline.com/'
             credential = ClientSecretCredential(tenant_id, client_id, client_secret, authority=authority)
             token = credential.get_token(scope)
             token_string = token.token  # need to define header

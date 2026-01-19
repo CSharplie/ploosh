@@ -1,8 +1,8 @@
 """Data connectors"""
-from importlib import import_module
-from logs import Log
 import inspect
 import os
+from importlib import import_module
+from logs import Log
 
 
 def get_connectors(spark_session):

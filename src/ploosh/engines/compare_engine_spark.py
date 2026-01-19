@@ -138,7 +138,8 @@ class CompareEngineSpark(CompareEngine):
         for c in self.df_source.columns:
             source_col = f"{c}_source"
             expected_col = f"{c}_expected"
- 
+
+
             source_is_numeric = isinstance(df1.schema[source_col].dataType, NumericType)
             expected_is_numeric = isinstance(df2.schema[expected_col].dataType, NumericType)
 
