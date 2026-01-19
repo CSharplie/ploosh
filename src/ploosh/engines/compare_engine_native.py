@@ -47,12 +47,12 @@ class CompareEngineNative(CompareEngine):
         """Compare the structure of the source and expected datasets"""
 
         # Normalize column names to lowercase
-        self.df_source.columns = map(str.lower, self.df_source.columns)
-        self.df_expected.columns = map(str.lower, self.df_expected.columns)
+        self.df_source.columns = [c.strip().lower() for c in self.df_source.columns]
+        self.df_expected.columns = [c.strip().lower() for c in self.df_expected.columns]
 
         # Remove columns specified in the ignore options
         if self.options is not None and self.options["ignore"] is not None:
-            columns_to_ignore = [x.lower() for x in self.options["ignore"]]
+            columns_to_ignore = [x.strip().lower() for x in self.options["ignore"]]
 
             self.df_source = self.df_source.drop(columns=columns_to_ignore, axis=1, errors="ignore")
             self.df_expected = self.df_expected.drop(columns=columns_to_ignore, axis=1, errors="ignore")
