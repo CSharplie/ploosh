@@ -1,3 +1,5 @@
+"""Analysis Services connector."""
+
 from pathlib import Path
 from sys import path
 import pandas as pd

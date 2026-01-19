@@ -1,3 +1,5 @@
+"""Spark load engine implementation."""
+
 from engines.load_engine import LoadEngine
 
 class LoadEngineSpark(LoadEngine):
