@@ -1,4 +1,4 @@
-# pylint: disable=R0903
+# pylint: disable=R0903,C0415,C0103
 """Connector to read Fabric KQL data with Spark"""
 
 from connectors.connector import Connector
