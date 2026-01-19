@@ -32,6 +32,8 @@ jobs:
         run: |
           . .build/bin/activate
 
+          pip install --upgrade pip
+
           pip install -r requirements.txt
           pip install wheel==0.44.0
           pip install twine==6.0.1
@@ -42,6 +44,8 @@ jobs:
       - name: Execute ploosh
         run: | 
           . .dryrun/bin/activate
+
+          pip install --upgrade pip
 
           package_path=`ls dist/* | grep .whl`
           pip install $package_path
