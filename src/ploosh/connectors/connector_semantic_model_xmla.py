@@ -1,11 +1,11 @@
 # pylint: disable=R0903
 """Connector to read Semantic Model from Fabric XMLA endpoint"""
 
+import json
 import pandas as pd
 import requests
 from azure.identity import ClientSecretCredential, InteractiveBrowserCredential, UsernamePasswordCredential
 from connectors.connector import Connector
-import json
 
 class ConnectorSemanticModel(Connector):
     """Connector to read Semantic Model using Fabric XMLA endpoint"""

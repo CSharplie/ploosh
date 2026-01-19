@@ -1,9 +1,9 @@
 # pylint: disable=R0903
 """Connector to read MSSQL database"""
 
+import urllib
 import pandas as pd
 from sqlalchemy import create_engine
-import urllib
 from connectors.connector import Connector
 
 

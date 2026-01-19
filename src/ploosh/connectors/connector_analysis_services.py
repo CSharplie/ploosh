@@ -1,8 +1,8 @@
-import pandas as pd
-from connectors.connector import Connector
-from azure.identity import ClientSecretCredential
-from sys import path
 from pathlib import Path
+from sys import path
+import pandas as pd
+from azure.identity import ClientSecretCredential
+from connectors.connector import Connector
 
 class ConnectorAnalysisServices(Connector):
     """Connector to read Analysis Services Model using ADOMD"""
