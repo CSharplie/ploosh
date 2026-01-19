@@ -12,7 +12,7 @@ def connector():
     # connection with hive metastore
     spark = SparkSession.builder \
         .appName("ploosh") \
-        .master("spark://localhost:7077") \
+        .master("local[*]") \
         .config("spark.executor.memory", "1g") \
         .config("spark.driver.memory", "1g") \
         .config("spark.sql.warehouse.dir", f"{os.getcwd()}/spark-warehouse") \

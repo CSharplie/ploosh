@@ -16,7 +16,7 @@ def controls():
 def spark():
     return SparkSession.builder \
         .appName("ploosh") \
-        .master("spark://localhost:7077") \
+        .master("local[*]") \
         .config("spark.executor.memory", "1g") \
         .config("spark.driver.memory", "1g") \
         .getOrCreate()
