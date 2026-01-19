@@ -28,7 +28,7 @@ class ConnectorFabricKqlSpark(Connector):
 
         from notebookutils import mssparkutils
 
-        accessToken = mssparkutils.credentials.getToken("kusto")
+        access_token = mssparkutils.credentials.getToken("kusto")
 
         # Read the KQL data using Spark with the specified connection and configuration options
         df = self.spark.read \
@@ -36,7 +36,7 @@ class ConnectorFabricKqlSpark(Connector):
             .option("kustoCluster", connection["kusto_uri"]) \
             .option("kustoDatabase", connection["database_id"]) \
             .option("kustoQuery", configuration["query"]) \
-            .option("accessToken", accessToken) \
+            .option("accessToken", access_token) \
             .load()
 
         return df
