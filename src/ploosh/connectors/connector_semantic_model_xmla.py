@@ -4,7 +4,7 @@
 import json
 import pandas as pd
 import requests
-from azure.identity import ClientSecretCredential, InteractiveBrowserCredential, UsernamePasswordCredential
+from azure.identity import ClientSecretCredential, InteractiveBrowserCredential
 from connectors.connector import Connector
 
 class ConnectorSemanticModel(Connector):
