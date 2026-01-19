@@ -2,7 +2,9 @@
 db_password=ThePasswordIs9293709B13?
 
 # Setup dev envrionnement 
-conda create -n ".ploosh" python=3.12.8 ipython
+conda init
+source ~/.bashrc
+conda create -n ".ploosh" -c conda-forge python=3.12.8 -y
 conda activate .ploosh
 
 pip install -r ./src/requirements.txt
@@ -70,3 +72,25 @@ spark_setup_file=$(pwd)/tests/.env/spark/setup.sql
 spark_setup_file_tmp=$(pwd)/tests/.env/spark/setup_tmp.sql
 sed "s|{{pwd}}|$(pwd)|g" $spark_setup_file > $spark_setup_file_tmp
 spark-sql -f$spark_setup_file_tmp
+
+cd src
+
+conda create -n ".build" python=3.12.8 ipython
+conda create -n ".dryrun" python=3.12.8 ipython
+
+conda activate .build
+
+pip install -r requirements.txt
+pip install wheel==0.44.0
+pip install twine==6.0.1
+pip install setuptools==75.1.0
+
+python setup-full.py sdist bdist_wheel
+twine check dist/*
+
+conda activate .dryrun
+
+package_path=`ls src/dist/* | grep .whl`
+pip install $package_path
+
+ploosh --cases "tests/.env/exec/"

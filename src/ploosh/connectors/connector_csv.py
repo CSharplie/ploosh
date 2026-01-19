@@ -18,6 +18,7 @@ class ConnectorCSV(Connector):
             {"name": "delimiter", "default": ","},  # Delimiter used in the CSV file
             {"name": "infer", "type": "boolean", "default": True},  # Infer the column names
             {"name": "names", "type": "list", "default": None},  # Sequence of column labels to apply
+            {"name": "schema", "type":"dict", "default": None},  # Schema to apply to the data
             {"name": "usecols", "type": "list", "default": None},  # Subset of columns to select
             {"name": "skiprows", "type": "string", "default": None},  # Line numbers to skip (0-indexed) or number of lines to skip (int) at the start of the file
             {"name": "skipfooter", "type": "integer", "default": 0},  # Number of lines at bottom of file to skip (Unsupported with engine='c')
@@ -44,6 +45,7 @@ class ConnectorCSV(Connector):
         quotechar = configuration["quotechar"]
         encoding = configuration["encoding"]
         engine = configuration["engine"]
+        schema = configuration["schema"]
 
         if configuration["skiprows"] is not None:
             try:
@@ -53,6 +55,26 @@ class ConnectorCSV(Connector):
 
         if skiprows is not None and not isinstance(skiprows, (list, int)):
             raise ValueError("The variable is neither a list nor an integer.")
+        
+        # If schema is provided, convert it to pandas dtypes
+        dtypes = None
+        if schema is not None:
+            dtypes = {}
+            for  key, value in schema.items():
+                match value:
+                    case "int":
+                        dtypes[key] = "int64"  # Use pandas nullable integer type
+                    case "float":
+                        dtypes[key] = "float64"
+                    case "string":
+                        dtypes[key] = "string"
+                    case "bool":
+                        dtypes[key] = "boolean"
+                    case "datetime":
+                        dtypes[key] = "object"   # Use object type for datetime, will be converted later
+                    case _:
+                        raise ValueError(f"Unsupported type: {value}")
+            
 
         # Read the CSV file using pandas with the specified delimiter
         df = pd.read_csv(path,
@@ -66,5 +88,14 @@ class ConnectorCSV(Connector):
                          lineterminator=lineterminator,
                          quotechar=quotechar,
                          engine=engine,
+                         dtype=dtypes,
                          encoding=encoding)
+        
+
+        # if a datetime column is specified, convert it to datetime
+        if schema is not None:
+            for column, dtype in dtypes.items():
+                if dtype == "object":
+                    df[column] = pd.to_datetime(df[column])
+
         return df

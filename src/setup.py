@@ -24,6 +24,7 @@ def setup_ploosh(name, install_requires):
             "pyspark==3.5.4",
             "deltalake==0.23.2",
             "delta-spark==3.3.0",
+            "pyarrow==18.0.0"
         ]
 
     setup (
