@@ -21,7 +21,7 @@ class Log:
         }
 
         # Get terminal size and set console log space
-        Log.CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(120, 50)).columns
+        Log.CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(200, 50)).columns
         Log.CONSOLE_WIDTH_GAP = 29
         Log.CONSOLE_LOG_SPACE = Log.CONSOLE_WIDTH - Log.CONSOLE_WIDTH_GAP
 
