@@ -66,8 +66,6 @@ class ExporterJSON(Exporter):
                     "message": case.error_message,
                 }
 
-            # Append the collected data to the data list
-            data.append(case_data)
 
             # If there is a comparison gap, export it to an Excel file
             if case.df_compare_gap is not None:
@@ -76,6 +74,13 @@ class ExporterJSON(Exporter):
                 # Create directories if they do not exist
                 os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
                 case.df_compare_gap.to_excel(detail_file_path)
+
+                case_data["error"]["detail_file_path"] = detail_file_path
+
+            # Append the collected data to the data list
+            data.append(case_data)
+
+
 
         # Create directories if they do not exist
         os.makedirs(os.path.dirname(output_file), exist_ok=True)

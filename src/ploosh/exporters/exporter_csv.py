@@ -37,11 +37,21 @@ class ExporterCSV(Exporter):
             "success_rate",
             "error_type",
             "error_message",
+            "error_detail_file_path",
         ]]
 
         # Iterate over each test case and collect data
         for name in cases:
             case = cases[name]
+
+            # If there is a comparison gap, export it to an Excel file
+            detail_file_path = None
+            if case.df_compare_gap is not None:
+                detail_file_path = f"{self.output_path}/json/test_results/{name}.xlsx"
+
+                # Create directories if they do not exist
+                os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
+                case.df_compare_gap.to_excel(detail_file_path)
 
             # Collect data for the current test case
             case_data = [
@@ -64,18 +74,12 @@ class ExporterCSV(Exporter):
                 case.success_rate,
                 case.error_type,
                 case.error_message,
+                detail_file_path,
             ]
 
             # Append the collected data to the data list
             data.append(case_data)
 
-            # If there is a comparison gap, export it to an Excel file
-            if case.df_compare_gap is not None:
-                detail_file_path = f"{self.output_path}/json/test_results/{name}.xlsx"
-
-                # Create directories if they do not exist
-                os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
-                case.df_compare_gap.to_excel(detail_file_path)
 
         # Create directories if they do not exist
         os.makedirs(os.path.dirname(output_file), exist_ok=True)

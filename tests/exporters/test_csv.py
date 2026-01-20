@@ -3,6 +3,7 @@ import os
 import tempfile
 import pytest
 from datetime import datetime
+import pandas as pd
 from ploosh.exporters.exporter_csv import ExporterCSV
 
 
@@ -21,7 +22,7 @@ class MockSource:
 
 
 class MockCase:
-    def __init__(self, state, source_executed_action=None, expected_executed_action=None, error_type=None, error_message=None):
+    def __init__(self, state, source_executed_action=None, expected_executed_action=None, error_type=None, error_message=None, df_compare_gap=None):
         self.state = state
         self.source = MockSource(source_executed_action)
         self.expected = MockSource(expected_executed_action)
@@ -29,7 +30,7 @@ class MockCase:
         self.success_rate = 0.95
         self.error_type = error_type
         self.error_message = error_message
-        self.df_compare_gap = None
+        self.df_compare_gap = df_compare_gap
 
 
 @pytest.fixture
@@ -40,7 +41,7 @@ def exporter():
         yield exporter
 
 
-def test_export_with_executed_action(exporter):
+def test_export(exporter):
     cases = {
         "test_case_1": MockCase("passed", "SELECT * FROM table1", "SELECT * FROM table2"),
         "test_case_2": MockCase("failed", "/path/to/file.csv", "/path/to/file.json", "ValueError", "Some error message"),
@@ -67,7 +68,7 @@ def test_export_with_executed_action(exporter):
         "source_start", "source_end", "source_duration", "source_count", "source_executed_action",
         "expected_start", "expected_end", "expected_duration", "expected_count", "expected_executed_action",
         "compare_start", "compare_end", "compare_duration", "success_rate",
-        "error_type", "error_message"
+        "error_type", "error_message", "error_detail_file_path"
     ]
     assert header == expected_header
 
@@ -91,6 +92,7 @@ def test_export_with_executed_action(exporter):
     success_rate_idx = header.index("success_rate")
     error_type_idx = header.index("error_type")
     error_message_idx = header.index("error_message")
+    error_detail_file_path_idx = header.index("error_detail_file_path")
 
     # Check first case (passed)
     row1 = rows[1]
@@ -113,6 +115,7 @@ def test_export_with_executed_action(exporter):
     assert row1[success_rate_idx] == "0.95"
     assert row1[error_type_idx] == ""
     assert row1[error_message_idx] == ""
+    assert row1[error_detail_file_path_idx] == ""
 
     # Check second case (failed)
     row2 = rows[2]
@@ -123,6 +126,7 @@ def test_export_with_executed_action(exporter):
     assert row2[expected_exec_idx] == "/path/to/file.json"
     assert row2[error_type_idx] == "ValueError"
     assert row2[error_message_idx] == "Some error message"
+    assert row2[error_detail_file_path_idx] == ""
 
     # Check third case (error with line returns)
     row3 = rows[3]
@@ -133,3 +137,53 @@ def test_export_with_executed_action(exporter):
     assert row3[expected_exec_idx] == "SELECT *\nFROM table2\nWHERE id = 1"
     assert row3[error_type_idx] == "SyntaxError"
     assert row3[error_message_idx] == "Invalid syntax"
+    assert row3[error_detail_file_path_idx] == ""
+
+
+def test_export_with_detail_file_path(exporter):
+    # Create a mock DataFrame for comparison gap
+    df_gap = pd.DataFrame({
+        "column1": [1, 2, 3],
+        "column2": ["a", "b", "c"]
+    })
+    
+    cases = {
+        "test_case_with_gap": MockCase(
+            "failed", 
+            "SELECT * FROM table1", 
+            "SELECT * FROM table2", 
+            "ComparisonError", 
+            "Data mismatch found",
+            df_compare_gap=df_gap
+        ),
+    }
+
+    execution_id = "test_execution_456"
+    exporter.export(cases, execution_id)
+
+    output_file = f"{exporter.output_path}/csv/test_results.csv"
+    assert os.path.exists(output_file)
+
+    with open(output_file, "r", encoding="UTF-8") as f:
+        reader = csv.reader(f)
+        rows = list(reader)
+
+    assert len(rows) == 2  # Header + 1 data row
+
+    # Get header and indices
+    header = rows[0]
+    error_detail_file_path_idx = header.index("error_detail_file_path")
+    name_idx = header.index("name")
+    state_idx = header.index("state")
+
+    # Check that the detail_file_path is present
+    row = rows[1]
+    assert row[name_idx] == "test_case_with_gap"
+    assert row[state_idx] == "failed"
+    
+    # Verify the detail file path format
+    expected_path = f"{exporter.output_path}/json/test_results/test_case_with_gap.xlsx"
+    assert row[error_detail_file_path_idx] == expected_path
+    
+    # Verify the Excel file was actually created
+    assert os.path.exists(expected_path)

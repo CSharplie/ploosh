@@ -3,6 +3,7 @@ import os
 import tempfile
 import pytest
 from datetime import datetime
+import pandas as pd
 from ploosh.exporters.exporter_json import ExporterJSON
 
 
@@ -21,7 +22,7 @@ class MockSource:
 
 
 class MockCase:
-    def __init__(self, state, source_executed_action=None, expected_executed_action=None, error_type=None, error_message=None):
+    def __init__(self, state, source_executed_action=None, expected_executed_action=None, error_type=None, error_message=None, df_compare_gap=None):
         self.state = state
         self.source = MockSource(source_executed_action)
         self.expected = MockSource(expected_executed_action)
@@ -29,7 +30,7 @@ class MockCase:
         self.success_rate = 0.95
         self.error_type = error_type
         self.error_message = error_message
-        self.df_compare_gap = None
+        self.df_compare_gap = df_compare_gap
 
 
 @pytest.fixture
@@ -40,7 +41,7 @@ def exporter():
         yield exporter
 
 
-def test_export_with_executed_action(exporter):
+def test_export(exporter):
     cases = {
         "test_case_1": MockCase("passed", "SELECT * FROM table1", "SELECT * FROM table2"),
         "test_case_2": MockCase("failed", "/path/to/file.csv", "/path/to/file.json", "ValueError", "Some error message"),
@@ -103,3 +104,47 @@ def test_export_with_executed_action(exporter):
     assert case3["expected"]["executed_action"] == "SELECT *\nFROM table2\nWHERE id = 1"
     assert case3["error"]["type"] == "SyntaxError"
     assert case3["error"]["message"] == "Invalid syntax"
+
+
+def test_export_with_detail_file_path(exporter):
+    # Create a mock DataFrame for comparison gap
+    df_gap = pd.DataFrame({
+        "column1": [1, 2, 3],
+        "column2": ["a", "b", "c"]
+    })
+    
+    cases = {
+        "test_case_with_gap": MockCase(
+            "failed", 
+            "SELECT * FROM table1", 
+            "SELECT * FROM table2", 
+            "ComparisonError", 
+            "Data mismatch found",
+            df_compare_gap=df_gap
+        ),
+    }
+
+    execution_id = "test_execution_456"
+    exporter.export(cases, execution_id)
+
+    output_file = f"{exporter.output_path}/json/test_results.json"
+    assert os.path.exists(output_file)
+
+    with open(output_file, "r", encoding="UTF-8") as f:
+        data = json.load(f)
+
+    assert len(data) == 1
+
+    # Check that the detail_file_path is present
+    case = data[0]
+    assert case["name"] == "test_case_with_gap"
+    assert case["state"] == "failed"
+    assert "error" in case
+    assert "detail_file_path" in case["error"]
+    
+    # Verify the detail file path format
+    expected_path = f"{exporter.output_path}/json/test_results/test_case_with_gap.xlsx"
+    assert case["error"]["detail_file_path"] == expected_path
+    
+    # Verify the Excel file was actually created
+    assert os.path.exists(expected_path)
