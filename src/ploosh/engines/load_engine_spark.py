@@ -1,3 +1,5 @@
+"""Spark load engine implementation."""
+
 from engines.load_engine import LoadEngine
 
 class LoadEngineSpark(LoadEngine):
@@ -20,7 +22,7 @@ class LoadEngineSpark(LoadEngine):
             column_type = column["type"]
             if column_type == "datetime":
                 column_type = "timestamp"
-                
+
             df_data = df_data.withColumn(column_name, df_data[column_name].cast(column_type))
 
         return df_data

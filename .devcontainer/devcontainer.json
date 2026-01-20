@@ -10,5 +10,5 @@
         "version": "latest"
     }
   },
-  "postCreateCommand": "pip install -r ./src/requirements.txt"
+  "postCreateCommand": "bash ./scripts/init_dev_container.sh"
 }

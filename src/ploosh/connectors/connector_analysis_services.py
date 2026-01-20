@@ -1,8 +1,10 @@
-import pandas as pd
-from connectors.connector import Connector
-from azure.identity import ClientSecretCredential
-from sys import path
+"""Analysis Services connector."""
+
 from pathlib import Path
+from sys import path
+import pandas as pd
+from azure.identity import ClientSecretCredential
+from connectors.connector import Connector
 
 class ConnectorAnalysisServices(Connector):
     """Connector to read Analysis Services Model using ADOMD"""
@@ -100,8 +102,7 @@ class ConnectorAnalysisServices(Connector):
             tenant_id = connection["tenant_id"]
             client_id = connection["client_id"]
             client_secret = connection["client_secret"]
-            authority = f'https://login.microsoftonline.com/'
-            credential = ClientSecretCredential(tenant_id, client_id, client_secret)  # , authority=authority)
+            credential = ClientSecretCredential(tenant_id, client_id, client_secret)
             token = credential.get_token(scope)
             token_string = token.token
             connection_string = f'Provider=MSOLAP;Data Source={server};Catalog={dataset_id};User Id=;Password={token_string};Impersonation Level=Impersonate;'
@@ -118,6 +119,9 @@ class ConnectorAnalysisServices(Connector):
             con.open()  # Open the connection
         except:
             raise ValueError("Can't connect to the AS Instance")
+
+        # Store the executed query for reference
+        self.executed_action = query
 
         # execute DAX query
         with con.cursor() as cur:

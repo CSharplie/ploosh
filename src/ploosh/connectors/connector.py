@@ -9,7 +9,12 @@ class Connector:
     configuration_definition = None  # Definition of the configuration parameters
     is_spark = False  # Flag to indicate if the connector uses Spark
     spark = None  # Spark session object
+    executed_action = None
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from connector"""
         return None  # This method should be overridden by subclasses to fetch data
+
+    def get_executed_action(self):
+        """Get executed query, command, file path, etc."""
+        return self.executed_action  # This method should be overridden by subclasses to return executed actions

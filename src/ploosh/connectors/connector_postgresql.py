@@ -1,9 +1,9 @@
 # pylint: disable=R0903
 """Connector to read PostgreSQL database"""
 
+import urllib
 import pandas as pd
 from sqlalchemy import create_engine
-import urllib
 from connectors.connector import Connector
 
 
@@ -79,6 +79,9 @@ class ConnectorPostgreSQL(Connector):
         sql_connection = create_engine(
             connection_string, echo=False, connect_args=connect_args
         )
+
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
 
         # Execute the SQL query and read the data into a pandas DataFrame
         df = pd.read_sql(configuration["query"], sql_connection)

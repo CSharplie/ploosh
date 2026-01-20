@@ -2,8 +2,6 @@ name: 'Release on PyPi'
 
 on:
   push:
-    branches:
-      - develop
     tags:
       - '*'
     paths:

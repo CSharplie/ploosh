@@ -1,4 +1,4 @@
-# pylint: disable=R0903
+# pylint: disable=R0903,C0415,C0103
 """Connector to read Fabric KQL data with Spark"""
 
 from connectors.connector import Connector
@@ -18,7 +18,7 @@ class ConnectorFabricKqlSpark(Connector):
             {
                 "name": "database_id", # KQL Database ID
             }
-            ]        
+            ]
         self.configuration_definition = [
             {"name": "query"},  # KQL query to execute
         ]
@@ -28,7 +28,10 @@ class ConnectorFabricKqlSpark(Connector):
 
         from notebookutils import mssparkutils
 
-        accessToken = mssparkutils.credentials.getToken("kusto")
+        access_token = mssparkutils.credentials.getToken("kusto")
+
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
 
         # Read the KQL data using Spark with the specified connection and configuration options
         df = self.spark.read \
@@ -36,7 +39,7 @@ class ConnectorFabricKqlSpark(Connector):
             .option("kustoCluster", connection["kusto_uri"]) \
             .option("kustoDatabase", connection["database_id"]) \
             .option("kustoQuery", configuration["query"]) \
-            .option("accessToken", accessToken) \
+            .option("accessToken", access_token) \
             .load()
 
         return df

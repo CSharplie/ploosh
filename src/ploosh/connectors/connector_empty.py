@@ -16,6 +16,9 @@ class ConnectorEmpty(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Return empty value"""
+        # Store the executed action for reference
+        self.executed_action = "empty"
+
         # Create an empty pandas DataFrame
         df = pd.DataFrame()
         return df

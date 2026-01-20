@@ -52,6 +52,17 @@ def test_header_case_insensitive(spark, controls):
     assert compare_engine.compare()
     assert compare_engine.error_type is None
 
+def test_header_trim(spark, controls):
+    df_source = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], [" A ", " B "])
+    df_expected = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], ["A", "B"])
+
+    parameters = {}
+    options = control_and_setup(parameters, controls)["options"]
+
+    compare_engine = CompareEngineSpark(df_source, df_expected, options)
+    assert compare_engine.compare()
+    assert compare_engine.error_type is None
+
 def test_header_ignore(spark, controls):
     df_source = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], ["A", "B"])
     df_expected = spark.createDataFrame([(1, 4), (2, 5), (3, 6)], ["A", "C"])

@@ -1,9 +1,9 @@
 # pylint: disable=R0903
 """Connector to read MSSQL database"""
 
+import urllib
 import pandas as pd
 from sqlalchemy import create_engine
-import urllib
 from connectors.connector import Connector
 
 
@@ -69,7 +69,6 @@ class ConnectorMSSQL(Connector):
         if connection["mode"] == "password":
             # Extract connection parameters
             driver = connection["driver"]
-            port = connection["port"]
             hostname = connection["hostname"]
             username = connection["username"]
             password = connection["password"]
@@ -86,6 +85,9 @@ class ConnectorMSSQL(Connector):
 
         # Create a SQLAlchemy engine using the connection string
         sql_connection = create_engine(connection_string, echo=False)
+
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
 
         # Execute the SQL query and read the data into a pandas DataFrame
         df = pd.read_sql(configuration["query"], sql_connection)

@@ -55,7 +55,8 @@ class ConnectorCSV(Connector):
 
         if skiprows is not None and not isinstance(skiprows, (list, int)):
             raise ValueError("The variable is neither a list nor an integer.")
-        
+
+
         # If schema is provided, convert it to pandas dtypes
         dtypes = None
         if schema is not None:
@@ -74,7 +75,10 @@ class ConnectorCSV(Connector):
                         dtypes[key] = "object"   # Use object type for datetime, will be converted later
                     case _:
                         raise ValueError(f"Unsupported type: {value}")
-            
+
+
+        # Store the executed action (file path) for reference
+        self.executed_action = path
 
         # Read the CSV file using pandas with the specified delimiter
         df = pd.read_csv(path,
@@ -90,7 +94,7 @@ class ConnectorCSV(Connector):
                          engine=engine,
                          dtype=dtypes,
                          encoding=encoding)
-        
+
 
         # if a datetime column is specified, convert it to datetime
         if schema is not None:

@@ -24,6 +24,7 @@ def test_connection_with_tabulation(connector, df_sales):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == "./tests/.env/csv/sales_with_tab.csv"
 
 def test_connection_with_default(connector, df_sales):
     configuration = {
@@ -35,6 +36,7 @@ def test_connection_with_default(connector, df_sales):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == "./tests/.env/csv/sales_with_comma.csv"
 
 def test_connection_with_schema(connector, df_sales):
     # schecma : sale_id,seller_name,card_name,card_rarity,card_condition,price,quantity,sale_date,card_set,buyer_name,transaction_status
@@ -69,5 +71,6 @@ def test_connection_with_schema(connector, df_sales):
     assert df_test.dtypes["card_set"] == "string"
     assert df_test.dtypes["buyer_name"] == "string"
     assert df_test.dtypes["transaction_status"] == "string"
+    assert connector.executed_action == "./tests/.env/csv/sales_with_schema.csv"
 
 

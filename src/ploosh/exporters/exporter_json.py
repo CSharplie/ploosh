@@ -12,7 +12,7 @@ class ExporterJSON(Exporter):
         # Set the name of the exporter
         self.name = "JSON"
 
-    def export(self, cases: dict):
+    def export(self, cases: dict, execution_id: str):
         """Export test case results to a JSON file"""
 
         # Define the output file path
@@ -25,6 +25,7 @@ class ExporterJSON(Exporter):
 
             # Collect basic data for the current test case
             case_data = {
+                "execution_id": execution_id,
                 "name": name,
                 "state": case.state,
             }
@@ -36,6 +37,7 @@ class ExporterJSON(Exporter):
                     "end": Exporter.date_to_string(case.source.duration.end),
                     "duration": case.source.duration.duration,
                     "count": case.source.count,
+                    "executed_action": case.source.executed_action,
                 }
 
             # Collect expected data if available
@@ -45,6 +47,7 @@ class ExporterJSON(Exporter):
                     "end": Exporter.date_to_string(case.expected.duration.end),
                     "duration": case.expected.duration.duration,
                     "count": case.expected.count,
+                    "executed_action": case.expected.executed_action,
                 }
 
             # Collect comparison data if available
@@ -63,8 +66,6 @@ class ExporterJSON(Exporter):
                     "message": case.error_message,
                 }
 
-            # Append the collected data to the data list
-            data.append(case_data)
 
             # If there is a comparison gap, export it to an Excel file
             if case.df_compare_gap is not None:
@@ -73,6 +74,13 @@ class ExporterJSON(Exporter):
                 # Create directories if they do not exist
                 os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
                 case.df_compare_gap.to_excel(detail_file_path)
+
+                case_data["error"]["detail_file_path"] = detail_file_path
+
+            # Append the collected data to the data list
+            data.append(case_data)
+
+
 
         # Create directories if they do not exist
         os.makedirs(os.path.dirname(output_file), exist_ok=True)

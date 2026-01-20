@@ -52,12 +52,12 @@ class CompareEngineSpark(CompareEngine):
     def compare_structure(self) -> bool:
         """Compare the structure of the source and expected datasets"""
         # Normalize column names to lowercase
-        self.df_source = self.df_source.select(*[col(c).alias(c.lower()) for c in self.df_source.columns])
-        self.df_expected = self.df_expected.select(*[col(c).alias(c.lower()) for c in self.df_expected.columns])
+        self.df_source = self.df_source.select(*[col(c).alias(c.strip().lower()) for c in self.df_source.columns])
+        self.df_expected = self.df_expected.select(*[col(c).alias(c.strip().lower()) for c in self.df_expected.columns])
 
         # Remove columns specified in the ignore options
         if self.options is not None and self.options["ignore"] is not None:
-            columns_to_ignore = [col.lower() for col in self.options["ignore"]]
+            columns_to_ignore = [col.strip().lower() for col in self.options["ignore"]]
 
             self.df_source = self.df_source.drop(*columns_to_ignore)
             self.df_expected = self.df_expected.drop(*columns_to_ignore)
@@ -138,7 +138,8 @@ class CompareEngineSpark(CompareEngine):
         for c in self.df_source.columns:
             source_col = f"{c}_source"
             expected_col = f"{c}_expected"
- 
+
+
             source_is_numeric = isinstance(df1.schema[source_col].dataType, NumericType)
             expected_is_numeric = isinstance(df2.schema[expected_col].dataType, NumericType)
 
