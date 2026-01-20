@@ -30,6 +30,7 @@ def test_json_default(connector, df_sales):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/json/sales.json"
 
 
 def test_json_with_lines_true(connector, df_sales):
@@ -43,6 +44,7 @@ def test_json_with_lines_true(connector, df_sales):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/json/sales_lines_true.json"
 
 
 def test_json_with_two_rows(connector, df_sales_with_two_rows):
@@ -57,6 +59,7 @@ def test_json_with_two_rows(connector, df_sales_with_two_rows):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales_with_two_rows)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/json/sales_lines_true.json"
 
 
 def test_json_with_specific_encoding(connector, df_sales):
@@ -69,3 +72,4 @@ def test_json_with_specific_encoding(connector, df_sales):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/json/sales-ISO-8859-1.json"

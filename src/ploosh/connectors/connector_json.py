@@ -22,6 +22,9 @@ class ConnectorJSON(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        # Store the executed action (file path) for reference
+        self.executed_action = configuration["path"]
+
         # Read the JSON file using pandas with the specified delimiter
         df = pd.read_json(configuration["path"],
                          encoding = configuration["encoding"],

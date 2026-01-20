@@ -30,6 +30,9 @@ class ConnectorFabricKqlSpark(Connector):
 
         access_token = mssparkutils.credentials.getToken("kusto")
 
+        # Store the executed query for reference
+        self.executed_action = configuration["query"]
+
         # Read the KQL data using Spark with the specified connection and configuration options
         df = self.spark.read \
             .format("com.microsoft.kusto.spark.datasource") \

@@ -93,6 +93,9 @@ class ConnectorSemanticModel(Connector):
         }
         }''' % (query)
 
+        # Store the executed query for reference
+        self.executed_action = query
+
         post_r = requests.post(url=post_query, data=body, headers=header)
 
         if post_r.status_code == 200:

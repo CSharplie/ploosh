@@ -67,6 +67,7 @@ class CaseItem:
     configuration = None
     duration = None
     df_data = None
+    executed_action = None
     count = 0
 
     def __init__(self, configuration, connector, connection):
@@ -121,6 +122,9 @@ class Case:
 
         # Load data from connector
         obj.df_data = obj.connector.get_data(obj.configuration, obj.connection)
+
+        # Store executed action
+        obj.executed_action = obj.connector.get_executed_action()
 
         # Execute load engine
         obj.df_data = load_engine.execute(obj.df_data)

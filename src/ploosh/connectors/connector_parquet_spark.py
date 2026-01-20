@@ -22,6 +22,9 @@ class ConnectorParquetSpark(Connector):
         # Extract the path and configuration parameters
         path = configuration["path"]
 
+        # Store the executed action (file path) for reference
+        self.executed_action = path
+
         # Read the Parquet file using pandas
         df = self.spark.read.parquet(path)
 

@@ -39,6 +39,7 @@ def test_default(connector, df_sales):
     df_test = connector.get_data(configuration, {}).toPandas()
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.data/sales.csv"
 
 def test_delimiter(connector, df_sales):
     configuration = {
@@ -51,6 +52,7 @@ def test_delimiter(connector, df_sales):
     df_test = connector.get_data(configuration, {}).toPandas()
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/csv/sales_with_tab.csv"
 
 def test_infer_schema(connector, df_sales_with_types):
     configuration = {
@@ -63,6 +65,7 @@ def test_infer_schema(connector, df_sales_with_types):
     df_test = connector.get_data(configuration, {}).toPandas()
 
     assert len(df_test.compare(df_sales_with_types)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.data/sales.csv"
 
 def test_quote(connector, df_sales):
     configuration = {
@@ -75,6 +78,7 @@ def test_quote(connector, df_sales):
     df_test = connector.get_data(configuration, {}).toPandas()
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/csv/sales_with_single_quote.csv"
 
 def test_encoding(connector, df_sales):
     configuration = {
@@ -87,6 +91,7 @@ def test_encoding(connector, df_sales):
     df_test = connector.get_data(configuration, {}).toPandas()
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/csv/sales_with_iso_8859_1.csv"
 
 def test_line_sep(connector, df_sales):
     configuration = {
@@ -99,3 +104,4 @@ def test_line_sep(connector, df_sales):
     df_test = connector.get_data(configuration, {}).toPandas()
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == f"{os.getcwd()}/tests/.env/csv/sales_with_cr.csv"

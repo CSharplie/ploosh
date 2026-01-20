@@ -18,6 +18,9 @@ class ConnectorEmptySpark(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Return empty value"""
 
+        # Store the executed action for reference
+        self.executed_action = "empty"
+
         # Create an empty RDD (Resilient Distributed Dataset)
         empty_rdd = self.spark.sparkContext.emptyRDD()
 

@@ -23,3 +23,4 @@ def test_default(connector, df_sales):
     df_test = connector.get_data(configuration, None)
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == "./tests/.env/delta/sales"

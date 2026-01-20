@@ -22,6 +22,9 @@ class ConnectorJSONSpark(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        # Store the executed action (file path) for reference
+        self.executed_action = configuration["path"]
+
         # Read the JSON file using Spark with the specified configuration options
         df = self.spark.read.option("multiline", configuration["multiline"])    \
                             .option("encoding", configuration["encoding"])      \

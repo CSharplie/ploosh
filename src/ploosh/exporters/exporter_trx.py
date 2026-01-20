@@ -36,7 +36,7 @@ class ExporterTRX(Exporter):
 
         return output_message_xml, result_files_xml
 
-    def export(self, cases: dict):
+    def export(self, cases: dict, execution_id: str):
         """Export test case results to a TRX file"""
 
         # Generate a unique ID for the TRX file

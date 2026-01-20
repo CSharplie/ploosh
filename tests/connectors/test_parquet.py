@@ -36,6 +36,7 @@ def test_default(connector, df_sales):
     df_test = connector.get_data(configuration, {})
 
     assert len(df_test.compare(df_sales)) == 0
+    assert connector.executed_action == "./tests/.env/parquet/sales.parquet"
 
 
 def test_with_specific_columns(connector, df_sales_with_specific_columns):
@@ -48,6 +49,7 @@ def test_with_specific_columns(connector, df_sales_with_specific_columns):
     df_test = connector.get_data(configuration, {})
 
     assert len(df_test.compare(df_sales_with_specific_columns)) == 0
+    assert connector.executed_action == "./tests/.env/parquet/sales.parquet"
 
 
 def test_with_filters(connector, df_sales_with_filters):
@@ -61,3 +63,4 @@ def test_with_filters(connector, df_sales_with_filters):
     df_test = connector.get_data(configuration, {})
 
     assert len(df_test.compare(df_sales_with_filters)) == 0
+    assert connector.executed_action == "./tests/.env/parquet/sales.parquet"

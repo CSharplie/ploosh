@@ -77,6 +77,9 @@ class ConnectorCSV(Connector):
                         raise ValueError(f"Unsupported type: {value}")
 
 
+        # Store the executed action (file path) for reference
+        self.executed_action = path
+
         # Read the CSV file using pandas with the specified delimiter
         df = pd.read_csv(path,
                          delimiter=delimiter,
