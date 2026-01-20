@@ -47,7 +47,8 @@ def test_export_with_executed_action(exporter):
         "test_case_3": MockCase("error", "SELECT *\nFROM table\nWHERE id = 1", "SELECT *\nFROM table2\nWHERE id = 1", "SyntaxError", "Invalid syntax")
     }
 
-    exporter.export(cases)
+    execution_id = "test_execution_123"
+    exporter.export(cases, execution_id)
 
     output_file = f"{exporter.output_path}/csv/test_results.csv"
     assert os.path.exists(output_file)
@@ -61,6 +62,7 @@ def test_export_with_executed_action(exporter):
     # Check header
     header = rows[0]
     expected_header = [
+        "execution_id",
         "name", "state",
         "source_start", "source_end", "source_duration", "source_count", "source_executed_action",
         "expected_start", "expected_end", "expected_duration", "expected_count", "expected_executed_action",
@@ -70,6 +72,7 @@ def test_export_with_executed_action(exporter):
     assert header == expected_header
 
     # Find column indices
+    execution_id_idx = header.index("execution_id")
     name_idx = header.index("name")
     state_idx = header.index("state")
     source_start_idx = header.index("source_start")
@@ -91,6 +94,7 @@ def test_export_with_executed_action(exporter):
 
     # Check first case (passed)
     row1 = rows[1]
+    assert row1[execution_id_idx] == "test_execution_123"
     assert row1[name_idx] == "test_case_1"
     assert row1[state_idx] == "passed"
     assert row1[source_start_idx] == "2024-10-07T11:55:00Z"
@@ -112,6 +116,7 @@ def test_export_with_executed_action(exporter):
 
     # Check second case (failed)
     row2 = rows[2]
+    assert row2[execution_id_idx] == "test_execution_123"
     assert row2[name_idx] == "test_case_2"
     assert row2[state_idx] == "failed"
     assert row2[source_exec_idx] == "/path/to/file.csv"
@@ -121,6 +126,7 @@ def test_export_with_executed_action(exporter):
 
     # Check third case (error with line returns)
     row3 = rows[3]
+    assert row3[execution_id_idx] == "test_execution_123"
     assert row3[name_idx] == "test_case_3"
     assert row3[state_idx] == "error"
     assert row3[source_exec_idx] == "SELECT *\nFROM table\nWHERE id = 1"

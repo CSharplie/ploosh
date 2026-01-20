@@ -47,7 +47,8 @@ def test_export_with_executed_action(exporter):
         "test_case_3": MockCase("error", "SELECT *\nFROM table\nWHERE id = 1", "SELECT *\nFROM table2\nWHERE id = 1", "SyntaxError", "Invalid syntax")
     }
 
-    exporter.export(cases)
+    execution_id = "test_execution_123"
+    exporter.export(cases, execution_id)
 
     output_file = f"{exporter.output_path}/json/test_results.json"
     print(output_file)
@@ -60,6 +61,7 @@ def test_export_with_executed_action(exporter):
 
     # Check first case (passed)
     case1 = data[0]
+    assert case1["execution_id"] == "test_execution_123"
     assert case1["name"] == "test_case_1"
     assert case1["state"] == "passed"
     assert "source" in case1
@@ -83,6 +85,7 @@ def test_export_with_executed_action(exporter):
 
     # Check second case (failed)
     case2 = data[1]
+    assert case2["execution_id"] == "test_execution_123"
     assert case2["name"] == "test_case_2"
     assert case2["state"] == "failed"
     assert case2["source"]["executed_action"] == "/path/to/file.csv"
@@ -93,6 +96,7 @@ def test_export_with_executed_action(exporter):
 
     # Check third case (error with line returns)
     case3 = data[2]
+    assert case3["execution_id"] == "test_execution_123"
     assert case3["name"] == "test_case_3"
     assert case3["state"] == "error"
     assert case3["source"]["executed_action"] == "SELECT *\nFROM table\nWHERE id = 1"

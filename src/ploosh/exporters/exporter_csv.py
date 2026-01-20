@@ -10,7 +10,7 @@ class ExporterCSV(Exporter):
         # Set the name of the exporter
         self.name = "CSV"
 
-    def export(self, cases: dict):
+    def export(self, cases: dict, execution_id: str):
         """Export test case results to a CSV file"""
 
         # Define the output file path
@@ -18,6 +18,7 @@ class ExporterCSV(Exporter):
 
         # Initialize the data list with headers
         data = [[
+            "execution_id",
             "name",
             "state",
             "source_start",
@@ -44,6 +45,7 @@ class ExporterCSV(Exporter):
 
             # Collect data for the current test case
             case_data = [
+                execution_id,
                 name,
                 case.state,
                 Exporter.date_to_string(case.source.duration.start),

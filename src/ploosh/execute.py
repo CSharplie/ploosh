@@ -1,6 +1,7 @@
 """Automatized Testing Framework"""
 
 import sys
+import uuid
 from colorama import Fore
 from pyspark.sql import SparkSession
 from case import StateStatistics
@@ -52,6 +53,7 @@ def execute(args=None, spark_session=None):
     Log.print_logo()
 
     statistics = StateStatistics()
+    execution_id = str(uuid.uuid4())
 
     Log.print(f"{Fore.CYAN}Initialization[...]")
     try:
@@ -117,7 +119,7 @@ def execute(args=None, spark_session=None):
 
     Log.print(f"{Fore.CYAN}Export results[...]")
     # Export test results
-    configuration.exporter.export(cases)
+    configuration.exporter.export(cases, execution_id)
     Log.print(f"{Fore.CYAN}Summary[...]")
     # Print summary of test results
     print_summary(cases, statistics)

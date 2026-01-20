@@ -12,7 +12,7 @@ class ExporterJSON(Exporter):
         # Set the name of the exporter
         self.name = "JSON"
 
-    def export(self, cases: dict):
+    def export(self, cases: dict, execution_id: str):
         """Export test case results to a JSON file"""
 
         # Define the output file path
@@ -25,6 +25,7 @@ class ExporterJSON(Exporter):
 
             # Collect basic data for the current test case
             case_data = {
+                "execution_id": execution_id,
                 "name": name,
                 "state": case.state,
             }

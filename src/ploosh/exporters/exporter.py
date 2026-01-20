@@ -16,6 +16,6 @@ class Exporter:
 
         return data.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    def export(self, cases: dict):
+    def export(self, cases: dict, execution_id: str):
         """Export test case results to the destination"""
         return None
