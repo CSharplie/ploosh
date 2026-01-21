@@ -16,6 +16,8 @@ def execute_cases(
     spark_session=None,
     filter=None,
     path_output=None,
+    spark_configuration_path=None,
+    spark_configuration_filter=None
 ):
     """Execute test cases with the given parameters"""
     args = ["ploosh"]
@@ -44,6 +46,16 @@ def execute_cases(
     if path_output is not None:
         args.append("--output")
         args.append(path_output)
+
+    # Add spark_configuration_path parameter to arguments if provided
+    if spark_configuration_path is not None:
+        args.append("--spark_configuration_path")
+        args.append(spark_configuration_path)
+
+    # Add spark_configuration_filter parameter to arguments if provided
+    if spark_configuration_path is not None:
+        args.append("--spark_configuration_filter")
+        args.append(spark_configuration_filter)
 
     # Execute the test cases with the constructed arguments
     execute(args, spark_session)
