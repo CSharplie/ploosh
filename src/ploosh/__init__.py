@@ -8,7 +8,6 @@ sys.path.append(os.path.dirname(__file__))
 
 from execute import execute
 
-
 def execute_cases(
     cases=None,
     connections=None,
@@ -16,6 +15,7 @@ def execute_cases(
     spark_session=None,
     filter=None,
     path_output=None,
+    variables=None,
 ):
     """Execute test cases with the given parameters"""
     args = ["ploosh"]
@@ -44,6 +44,12 @@ def execute_cases(
     if path_output is not None:
         args.append("--output")
         args.append(path_output)
+
+    # Add variables parameter to arguments if provided
+    if variables is not None:
+        for key, value in variables.items():
+            args.append(f"--p_{key}")
+            args.append(value)
 
     # Execute the test cases with the constructed arguments
     execute(args, spark_session)
