@@ -1,30 +1,31 @@
-This connector is used to read Parquet files using Spark. 
+# Parquet (Spark)
 
-:warning: A spark connector can be use only with another spark connector. It is not possible to use a spark connector with a non spark connector.
+This connector is used to read Parquet files using Spark.
 
-See [Spark documentation](Spark) for more information.
+> ⚠️ A Spark connector can only be used with another Spark connector. It is not possible to mix Spark and native connectors in the same test case.
 
-# Connection configuration
-No connection is required by this connector
+See [Spark mode overview](/docs/spark/overview) for more information.
 
-# Configuration
+## Connection configuration
+
+No connection is required by this connector.
+
 ## Test case configuration
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| path              | yes       |                                | Path to the parquet file
 
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| path | yes | | Path to the Parquet file |
 
-## Example
+### Example
+
 ``` yaml
 Example Parquet Spark:
   source:
     type: parquet_spark
-    path: data/employees/example.parquet
-
+    path: /lakehouse/default/Files/data/employees.parquet
   expected:
     type: sql_spark
     query: |
-      select * 
-          from employees
-          where hire_date < "2000-01-01"
+      SELECT *
+      FROM expected_employees
 ```

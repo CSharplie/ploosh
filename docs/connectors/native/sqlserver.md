@@ -1,72 +1,84 @@
-This connector allows to connect to a SQL Server database and execute SQL queries.
+# SQL Server
 
-# Requirements
-ODBC Driver 18 must be installed on the executing computer.
+This connector is used to query a Microsoft SQL Server database using SQL.
 
-* For Linux, follow the instructions from [Microsoft documentation](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver15&tabs=ubuntu18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline#18)
-* For Windows, follow the instructions from [Microsoft documentation](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15)
-* For macOS, follow the instructions from [Microsoft documentation](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos?view=sql-server-ver15)
+> **Requirement**: ODBC Driver 18 for SQL Server must be installed on the system.
+>
+> Installation guides: [Windows](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server) | [Linux](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) | [macOS](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos)
 
-# Connection configuration
-## Password mode
-### Definition
-| Name                       | Mandatory | Default                       | Description |
-|----------------------------|:---------:|:-----------------------------:|-------------|
-| mode                       | no        |  password                     | Change the connection mode. Can be "password" or "connection_string". "connection_string" mode allow to use a custom connection string.
-| hostname                   | yes       |                               | Target host name
-| database                   | yes       |                               | Target database name
-| username                   | yes       |                               | Sql user name
-| password                   | yes       |                               | Sql user password
-| port                       | no        | 1433                          | Port to use by the connection
-| trust_server_certificate   | no        | false                         | Trust the server ssl connection
-| encrypt                    | no        | yes                           | Encrypt the connection
-| driver                     | no        | ODBC Driver 18 for SQL Server | Driver to use by the connection
+## Connection configuration
 
-⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+Two connection modes are available: `password` and `connection_string`.
 
-### Example
+### Password mode
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| mode | no | `password` | Connection mode: `password` or `connection_string` |
+| hostname | yes | | Server hostname or IP address |
+| database | yes | | Database name |
+| username | yes | | Username |
+| password | yes | | Password |
+| port | no | `1433` | Port number |
+| encrypt | no | `true` | Enable connection encryption |
+| trust_server_certificate | no | `false` | Trust the server certificate without validation |
+| driver | no | `ODBC Driver 18 for SQL Server` | ODBC driver name |
+
+### Connection string mode
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| mode | yes | | Must be `connection_string` |
+| connection_string | yes | | SQLAlchemy connection string |
+
+### Example (password mode)
+
 ``` yaml
-mssql_example:
-  type: mssql
-  hostname: ploosh.database.windows.net
-  database: SampleDB
-  username: sa_ploosh
-  password: $var.sa_ploosh_password 
+connections:
+  mssql_connection:
+    type: mssql
+    hostname: my-server.database.windows.net
+    database: my_database
+    username: my_user
+    password: $var.mssql_password
+    port: 1433
+    encrypt: true
+    trust_server_certificate: false
 ```
 
-### Definition
-## Connection string mode
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| mode              | no        |  password                     | Use "connection_string" value to use custom connection_string
-| connection_string | yes       |                               | Connection string use to access in the database. Refer to [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/20/dialects/mssql.html) to get the accepted format
+### Example (connection string mode)
 
-### Example
 ``` yaml
-mssql_example:
-  type: mssql
-  mode: connection_string
-  connection_string: "mssql+pyodbc://ploosh01:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes&authentication=ActiveDirectoryIntegrated"
+connections:
+  mssql_connection:
+    type: mssql
+    mode: connection_string
+    connection_string: mssql+pyodbc:///?odbc_connect=Driver={ODBC Driver 18 for SQL Server};Server=myserver;Database=mydb;Uid=myuser;Pwd=mypassword;Encrypt=yes;
 ```
 
-# Test case configuration
-## Definition
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| connection        | yes       |                               | The connection to use 
-| query             | yes       |                               | The query to execute to the database
+## Test case configuration
 
-## Example
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| query | yes | | SQL query to execute |
+
+### Example
+
 ``` yaml
 Example SQL Server:
   source:
-    connection: mssql_example
     type: mssql
-    query: | 
-        select * 
-            from [rh].[employees]
-            where [hire_date] < '2000-01-01'
+    connection: mssql_connection
+    query: |
+      SELECT *
+      FROM employees
+      WHERE hire_date < '2000-01-01'
   expected:
     type: csv
     path: data/employees_before_2000.csv
 ```
+
+## Requirements
+
+- [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
+- `pip install pyodbc` (included in `ploosh` full installation)

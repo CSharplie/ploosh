@@ -1,39 +1,40 @@
-This connector is used to read CSV files using Spark. 
+# CSV (Spark)
 
-⚠️ A spark connector can be use only with another spark connector. It is not possible to use a spark connector with a non spark connector.
+This connector is used to read CSV files using Spark.
 
-See [Spark documentation](/docs/configuration-spark-mode/) for more information.
+> ⚠️ A Spark connector can only be used with another Spark connector. It is not possible to mix Spark and native connectors in the same test case.
 
-# Connection configuration
-No connection is required by this connector
+See [Spark mode overview](/docs/spark/overview) for more information.
 
-# Configuration
+## Connection configuration
+
+No connection is required by this connector.
+
 ## Test case configuration
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| path              | yes       |                               | Path to the CSV
-| delimiter         | no        |  ,                            | Column delimiter
-| header            | no        |  true                         | Use the first row as header
-| inferSchema       | no        |  False                        | Infers the input schema automatically from data
-| multiline         | no        |  False                        | Parse one record, which may span multiple lines, per file
-| quote             | no        |  '"'                          | Character used to denote the start and end of a quoted item
-| encoding         | no        |  "UTF-8"                       | Column delimiter
-| lineSep          | no        |  "\n"                          | Column delimiter
 
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| path | yes | | Path to the CSV file (supports wildcards, e.g. `*.csv`) |
+| delimiter | no | `,` | Delimiter used in the CSV file |
+| header | no | `true` | Whether the CSV file has a header row |
+| inferSchema | no | `false` | Automatically infer column types from data |
+| multiline | no | `false` | Enable parsing of records spanning multiple lines |
+| quote | no | `"` | Character used to denote the start and end of a quoted item |
+| encoding | no | `UTF-8` | Encoding to use when reading the file |
+| lineSep | no | `\n` | Character used to denote a line break |
 
-## Example
+### Example
+
 ``` yaml
 Example CSV Spark:
   source:
     type: csv_spark
-    path: data/employees/*.csv
-    multiline: False
-    inferSchema: False
-    encoding: "UTF-8" 
+    path: /lakehouse/default/Files/data/employees/*.csv
+    header: true
+    inferSchema: true
   expected:
     type: sql_spark
     query: |
-      select * 
-          from employees
-          where hire_date < "2000-01-01"
+      SELECT *
+      FROM expected_employees
 ```

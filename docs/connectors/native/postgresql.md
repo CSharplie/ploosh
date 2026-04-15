@@ -1,64 +1,76 @@
-This connector allows to connect to a PostgreSQL database and execute SQL queries.
+# PostgreSQL
 
-# Connection configuration
-## Password mode
-### Definition
-| Name          | Mandatory | Default    | Description |
-|---------------|:---------:|:----------:|-------------|
-| mode          | no        |  password  | Change the connection mode. Can be "password" or "connection_string". "connection_string" mode allow to use a custom connection string.
-| hostname      | yes       |            | Target host name
-| database      | yes       |            | Target database name
-| username      | yes       |            | User name
-| password      | yes       |            | User password
-| port          | no        | 3306       | Port to use by the connection
-| ssl_context   | No        | False      | Set True if the server require a secure transport
+This connector is used to query a PostgreSQL database using SQL.
 
-⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+## Connection configuration
 
-### Example
+Two connection modes are available: `password` and `connection_string`.
+
+### Password mode
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| mode | no | `password` | Connection mode: `password` or `connection_string` |
+| hostname | yes | | Server hostname or IP address |
+| database | yes | | Database name |
+| username | yes | | Username |
+| password | yes | | Password |
+| port | no | `5432` | Port number |
+| ssl_context | no | `false` | Enable SSL connection |
+
+### Connection string mode
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| mode | yes | | Must be `connection_string` |
+| connection_string | yes | | SQLAlchemy connection string |
+
+### Example (password mode)
+
 ``` yaml
-postgresql_example:
-  type: postgresql
-  hostname: ploosh.postgresql.database.azure.com
-  database: SampleDB
-  username: sa_ploosh
-  password: $var.sa_ploosh_password 
-  ssl_context: true
+connections:
+  postgresql_connection:
+    type: postgresql
+    hostname: my-server.postgres.database.azure.com
+    database: my_database
+    username: my_user
+    password: $var.pg_password
+    port: 5432
+    ssl_context: true
 ```
 
-### Definition
-## Connection string mode
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| mode              | no        |  password                     | Use "connection_string" value to use custom connection_string
-| connection_string | yes       |                               | Connection string use to access in the database. Refer to [SQLAlchemy documentation](https://docs.sqlalchemy.org/en/20/dialects/postgresql.html) to get the accepted format
+### Example (connection string mode)
 
-### Example
 ``` yaml
-postgresql_example:
-  type: postgresql
-  mode: connection_string
-  connection_string: "postgresql+pg8000://sa_ploosh:$var.sa_ploosh_password@ploosh.postgresql.database.azure.com/SampleDB"
+connections:
+  postgresql_connection:
+    type: postgresql
+    mode: connection_string
+    connection_string: postgresql+pg8000://user:password@host:5432/database
 ```
 
-# Test case configuration
-## Definition
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| connection        | yes       |                               | The connection to use 
-| query             | yes       |                               | The query to execute to the database
+## Test case configuration
 
-## Example
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| query | yes | | SQL query to execute |
+
+### Example
+
 ``` yaml
 Example PostgreSQL:
   source:
-    connection: postgresql_example
     type: postgresql
-    query: | 
-        select * 
-            from employees
-            where hire_date < "2000-01-01"
+    connection: postgresql_connection
+    query: |
+      SELECT *
+      FROM employees
+      WHERE hire_date < '2000-01-01'
   expected:
     type: csv
     path: data/employees_before_2000.csv
 ```
+
+## Requirements
+
+- `pip install pg8000` (included in `ploosh` full installation)
