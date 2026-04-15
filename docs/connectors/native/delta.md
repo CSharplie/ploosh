@@ -1,27 +1,25 @@
-This connector is used to read Delta files from local file system.
+# Delta
 
-# Connection configuration
-No connection is required by this connector
+This connector is used to read local Delta tables using the `deltalake` library.
 
-# Test case configuration
+## Connection configuration
+
+No connection is required by this connector.
+
 ## Test case configuration
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| path              | yes       |                               | Path to the delta file 
 
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| path | yes | | Path to the Delta table directory |
 
-## Example
+### Example
+
 ``` yaml
-Example delta:
+Example Delta:
   source:
     type: delta
-    path: data/employees
-
+    path: ./data/employees_delta
   expected:
     type: csv
-    infer: True
-    delimiter: ";"
-    encoding: "utf-8"
-    engine: "python"
-    path: data/employees_before_2000.csv
+    path: ./data/expected_employees.csv
 ```

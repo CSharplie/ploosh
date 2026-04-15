@@ -1,20 +1,24 @@
-This connector is used to read data from Dremio using Spark via the Arrow Flight SQL JDBC driver.
+# Dremio (Spark)
 
-⚠️ A spark connector can be use only with another spark connector. It is not possible to use a spark connector with a non spark connector.
+This connector is used to query Dremio using Spark via the Arrow Flight SQL JDBC driver.
 
-See [Spark documentation](/docs/configuration-spark-mode/) for more information.
+> ⚠️ A Spark connector can only be used with another Spark connector. It is not possible to mix Spark and native connectors in the same test case.
 
-# Connection configuration
-| Name                              | Mandatory | Default | Description |
-|-----------------------------------|:---------:|:-------:|-------------|
-| host                              | yes       |         | Dremio server hostname or IP address
-| port                              | no        | 32010   | Arrow Flight SQL port
-| use_encryption                    | no        | true    | Enable TLS encryption for the connection
-| disable_certificate_verification  | no        | false   | Disable TLS certificate verification (not recommended in production)
-| username                          | yes       |         | Dremio username
-| password                          | yes       |         | Dremio password or PAT
+See [Spark mode overview](/docs/spark/overview) for more information.
 
-## Example
+## Connection configuration
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| host | yes | | Dremio server hostname or IP address |
+| port | no | `32010` | Arrow Flight SQL port |
+| use_encryption | no | `true` | Enable TLS encryption for the connection |
+| disable_certificate_verification | no | `false` | Disable TLS certificate verification (not recommended in production) |
+| username | yes | | Dremio username |
+| password | yes | | Dremio password or PAT |
+
+### Example
+
 ``` yaml
 connections:
   dremio_connection:
@@ -24,16 +28,17 @@ connections:
     use_encryption: true
     disable_certificate_verification: false
     username: my_user
-    password: my_password
+    password: $var.dremio_password
 ```
 
-# Configuration
 ## Test case configuration
-| Name  | Mandatory | Default | Description |
-|-------|:---------:|:-------:|-------------|
-| query | yes       |         | The SQL query to execute against Dremio
 
-## Example
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| query | yes | | SQL query to execute against Dremio |
+
+### Example
+
 ``` yaml
 Example Dremio Spark:
   source:
@@ -51,6 +56,7 @@ Example Dremio Spark:
       WHERE hire_date < '2000-01-01'
 ```
 
-# Requirements
+## Requirements
+
 - Apache Arrow Flight SQL JDBC driver (`org.apache.arrow.driver.jdbc.ArrowFlightJdbcDriver`)
 - Dremio instance accessible from the Spark cluster

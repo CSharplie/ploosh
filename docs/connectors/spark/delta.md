@@ -1,28 +1,31 @@
-This connector is used to read Detla table files using Spark. 
+# Delta (Spark)
 
-⚠️ A spark connector can be use only with another spark connector. It is not possible to use a spark connector with a non spark connector.
+This connector is used to read Delta tables using Spark.
 
-See [Spark documentation](/docs/configuration-spark-mode/) for more information.
+> ⚠️ A Spark connector can only be used with another Spark connector. It is not possible to mix Spark and native connectors in the same test case.
 
-# Connection configuration
-No connection is required by this connector
+See [Spark mode overview](/docs/spark/overview) for more information.
 
-# Configuration
+## Connection configuration
+
+No connection is required by this connector.
+
 ## Test case configuration
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| path              | yes       |                               | Path to the Delta table
 
-## Example
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| path | yes | | Path to the Delta table directory |
+
+### Example
+
 ``` yaml
 Example Delta Spark:
   source:
     type: delta_spark
-    path: data/employees
+    path: /lakehouse/default/Tables/employees
   expected:
-    type: sql_spark
-    query: |
-      select * 
-          from employees
-          where hire_date < "2000-01-01"
+    type: csv_spark
+    path: /lakehouse/default/Files/expected/employees.csv
+    header: true
+    inferSchema: true
 ```

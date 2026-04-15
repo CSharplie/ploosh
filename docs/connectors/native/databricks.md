@@ -1,43 +1,51 @@
-This connector allows you to connect to a Databricks instance and execute SQL queries.
+# Databricks
 
-# Connection configuration
-## Definition
-| Name                     | Mandatory | Default    | Description |
-|--------------------------|:---------:|:----------:|-------------|
-| token                    | yes       |            | a token generated from databricks. See the [documentation](https://docs.databricks.com/en/dev-tools/auth/pat.html)
-| hostname                 | yes       |            | url to databricks
-| database                 | yes       |            | name of the database
-| http_path                | yes       |            | the value is available on [JDBC/ODBC](https://docs.databricks.com/en/integrations/compute-details.html) settings 
+This connector is used to query a Databricks SQL warehouse or cluster using SQL.
 
-## Example
+## Connection configuration
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| token | yes | | Personal Access Token (PAT) for authentication |
+| hostname | yes | | Databricks instance hostname (e.g. `adb-1234567890.1.azuredatabricks.net`) |
+| database | yes | | Database name |
+| http_path | yes | | HTTP path for the SQL warehouse or cluster (found in JDBC/ODBC settings) |
+| port | no | `443` | Port number |
+
+### Example
+
 ``` yaml
-databricks_example:
-  type: databricks
-  hostname: adb-myproject.8.azuredatabricks.net
-  database: default
-  token:  $var.databricks_token
-  http_path: /sql/1.0/warehouses/da000000000000000
+connections:
+  databricks_connection:
+    type: databricks
+    token: $var.databricks_token
+    hostname: adb-1234567890.1.azuredatabricks.net
+    database: my_database
+    http_path: /sql/1.0/warehouses/abc123
 ```
 
-# Test case configuration
-## Definition
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| connection        | yes       |                               | The connection to use 
-| query             | yes       |                               | The query to execute to the database
+## Test case configuration
 
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| query | yes | | SQL query to execute |
 
-## Example
+### Example
+
 ``` yaml
 Example Databricks:
   source:
-    connection: databricks_example
     type: databricks
-    query: | 
-        select * 
-            from `rh.employees`
-            where hire_date < "2000-01-01"
+    connection: databricks_connection
+    query: |
+      SELECT *
+      FROM employees
+      WHERE hire_date < '2000-01-01'
   expected:
     type: csv
     path: data/employees_before_2000.csv
 ```
+
+## Requirements
+
+- `pip install databricks-sqlalchemy` (included in `ploosh` full installation)
