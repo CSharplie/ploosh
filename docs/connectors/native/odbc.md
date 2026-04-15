@@ -1,44 +1,77 @@
-This connector allows to connect to a ODBC datasource and execute SQL queries.
+# ODBC
 
-# Connection configuration
-## Definition
-| Name                     | Mandatory | Default    | Description |
-|--------------------------|:---------:|:----------:|-------------|
-| dsn                      | yes       |            | Data Source Name
-| auto_commit              | no        | true       | Autocommit mode
-| username                 | no        | null       | User name
-| password                 | no        | null       | User password
-| driver                   | no        | null       | ODBC driver name
-| encoding                 | no        | UTF-8      | Encoding to use for the connection
+This connector is used to query any database accessible via an ODBC driver.
 
-⚠️ it's highly recommended to use a [parameter](/docs/configuration-custom-parameters/) to pass the password value
+## Connection configuration
 
-## Example
+Two connection modes are available: `DSN` and `connection_string`.
+
+### DSN mode
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| mode | no | `DSN` | Connection mode: `DSN` or `connection_string` |
+| DSN | yes | | Data Source Name configured on the system |
+| auto_commit | no | `true` | Enable auto-commit |
+| use_credentials | no | `false` | Whether to pass username/password |
+| user | no | | Username (when `use_credentials` is `true`) |
+| password | no | | Password (when `use_credentials` is `true`) |
+| encoding | no | `UTF-8` | Encoding for the connection |
+
+### Connection string mode
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| mode | yes | | Must be `connection_string` |
+| connection_string | yes | | ODBC connection string |
+| auto_commit | no | `true` | Enable auto-commit |
+| encoding | no | `UTF-8` | Encoding for the connection |
+
+### Example (DSN mode)
+
 ``` yaml
-odbc_example:
-  type: odbc
-  dsn: my_dsn
-  username: pixel
-  password: $var.odbc_password
+connections:
+  odbc_connection:
+    type: odbc
+    DSN: my_data_source
+    use_credentials: true
+    user: my_user
+    password: $var.odbc_password
 ```
 
-# Test case configuration
-## Definition
-| Name              | Mandatory | Default                       | Description |
-|-------------------|:---------:|:-----------------------------:|-------------|
-| connection        | yes       |                               | The connection to use
-| query             | yes       |                               | The query to execute to the database
+### Example (connection string mode)
 
-## Example
+``` yaml
+connections:
+  odbc_connection:
+    type: odbc
+    mode: connection_string
+    connection_string: "Driver={ODBC Driver 18 for SQL Server};Server=myserver;Database=mydb;Uid=myuser;Pwd=mypassword;"
+```
+
+## Test case configuration
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| query | yes | | SQL query to execute |
+
+### Example
+
 ``` yaml
 Example ODBC:
   source:
-    connection: odbc_example
     type: odbc
-    query: | 
-        select * 
-            from employees
-            where hire_date < '2000-01-01'
+    connection: odbc_connection
+    query: |
+      SELECT *
+      FROM employees
+      WHERE department = 'Engineering'
+  expected:
     type: csv
-    path: data/employees_before_2000.csv
+    path: data/expected_engineers.csv
 ```
+
+## Requirements
+
+- `pip install pyodbc` (included in `ploosh` full installation)
+- An ODBC driver installed and a DSN configured on the system

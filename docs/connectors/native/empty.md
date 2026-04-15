@@ -1,22 +1,35 @@
-This connector is used to return an empty dataframe with 0 rows and 0 columns 
+# Empty
 
-# Connection configuration
-No connection is required by this connector
+This connector returns an empty DataFrame (0 rows, 0 columns). It is used as the expected side of a test case when the source query should return no data.
 
-# Test case configuration
+## Connection configuration
+
+No connection is required by this connector.
+
 ## Test case configuration
-Test case configuration parameter is required by this connector
 
-## Example
+No configuration is required by this connector.
+
+### Example
+
 ``` yaml
-Example Empty:
+Test no invalid records:
   source:
-    connection: mysql_example
-    type: mysql
-    query: | 
-        select * 
-            from employees
-            where hire_date < "2000-01-01"
+    connection: my_database
+    type: mssql
+    query: |
+      SELECT *
+      FROM fact_orders
+      WHERE amount < 0
   expected:
     type: empty
 ```
+
+## Use cases
+
+- Verify absence of anomalies or invalid data
+- Check for duplicates
+- Validate referential integrity
+- Ensure no NULL values in mandatory columns
+
+See [Testing approaches](/docs/use-cases/testing-approaches) for more examples.

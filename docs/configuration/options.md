@@ -1,99 +1,248 @@
-Test case allow to define options for the test case execution. The options are defined in the `options` section of the test case configuration.
+# Test case options
 
-# Ignore
-The `ignore` option allow to ignore specifics columns in the comparison. The `ignore` option is a list of columns to ignore in the comparison. The columns are defined by their name.
+Test cases allow defining options to control the comparison behavior. Options are set in the `options` section of the test case YAML.
 
-## Example
+## All options
+
+| Option | Type | Default | Available in | Description |
+|--------|------|:-------:|:------------:|-------------|
+| `compare_mode` | string | `order` | Native, Spark | Comparison mode: `order` or `join` |
+| `join_keys` | list | `[]` | Spark only | Columns to join on (for `join` mode) |
+| `sort` | list | | Native, Spark | Columns to sort before comparison |
+| `ignore` | list | | Native, Spark | Columns to exclude from comparison |
+| `cast` | list | `[]` | Native, Spark | Columns to cast to a specific type |
+| `pass_rate` | decimal | `1` | Native, Spark | Minimum success rate (0.0 to 1.0) |
+| `tolerance` | decimal | `0` | Native, Spark | Numeric tolerance for float comparisons |
+| `trim` | boolean | `false` | Native, Spark | Trim whitespace from string columns |
+| `case_insensitive` | boolean | `false` | Native, Spark | Convert strings to lowercase before comparing |
+| `allow_no_rows` | boolean | `true` | Native, Spark | Allow both datasets to be empty without error |
+| `disabled` | boolean | `false` | Native, Spark | Skip this test case entirely |
+
+---
+
+## compare_mode
+
+Defines how rows are matched between source and expected datasets.
+
+| Mode | Description | Available in |
+|------|-------------|:------------:|
+| `order` | Rows are matched by position (row 1 vs row 1, row 2 vs row 2, etc.) | Native, Spark |
+| `join` | Rows are matched by joining on `join_keys` columns | Spark only |
+
+### Example (order mode — default)
+
 ``` yaml
 Example:
   options:
-    ignore:
-      - column_to_ignore_1
-      - column_to_ignore_2
+    compare_mode: order
+    sort:
+      - employee_id
   source:
-    connection: my_connection
-    query: select * from my_table
+    type: sql_spark
+    query: SELECT * FROM employees ORDER BY employee_id
   expected:
-    connection: my_connection
-    query: select * from my_table
+    type: csv_spark
+    path: ./expected.csv
 ```
 
-# Sort
-The `sort` option allow to sort the dataset before the comparison. The `sort` option is a list of columns to sort the dataset. The columns are defined by their name.
+### Example (join mode — Spark only)
 
-## Example
+``` yaml
+Example:
+  options:
+    compare_mode: join
+    join_keys:
+      - employee_id
+  source:
+    type: sql_spark
+    query: SELECT * FROM employees
+  expected:
+    type: csv_spark
+    path: ./expected.csv
+```
+
+> The `join` mode is useful when row ordering is non-deterministic or when matching by business keys is more appropriate.
+
+---
+
+## sort
+
+Sort both datasets before comparison. Specify a list of column names to sort by, or `["*"]` to sort by all columns.
+
 ``` yaml
 Example:
   options:
     sort:
-      - column_to_sort_1
-      - column_to_sort_2
+      - department
+      - name
   source:
+    type: mysql
     connection: my_connection
-    query: select * from my_table
+    query: SELECT * FROM employees
   expected:
-    connection: my_connection
-    query: select * from my_table
+    type: csv
+    path: ./expected.csv
 ```
 
-⚠️ The best practice is to sort the dataset in the source and the expected query to ensure the comparison is done on the same order and provide a better performance.
+> **Best practice**: Sort in your SQL queries (`ORDER BY`) for better performance and deterministic results.
 
-# Cast
-The `cast` option allow to cast the column type before the comparison. The `cast` option is a list of name and type to cast the column. The column name is defined by their name and the type.
+---
 
-The allowed types are:
-- `int`
-- `float`
-- `string`
-- `datetime`
+## ignore
 
-## Example
+Exclude specific columns from the comparison. Useful for audit columns, timestamps, or auto-generated fields.
+
+``` yaml
+Example:
+  options:
+    ignore:
+      - created_at
+      - updated_at
+  source:
+    type: mysql
+    connection: my_connection
+    query: SELECT * FROM employees
+  expected:
+    type: csv
+    path: ./expected.csv
+```
+
+---
+
+## cast
+
+Cast column types before comparison. Useful when source and expected have different types for the same data.
+
+Allowed types: `int`, `float`, `string`, `datetime`
+
 ``` yaml
 Example:
   options:
     cast:
-      - name: column_to_cast_1
-        type: int
-    - name: column_to_cast_2
+      - name: salary
         type: float
-    source:
-        connection: my_connection
-        query: select * from my_table
-    expected:
-        connection: my_connection
-        query: select * from my_table
+      - name: hire_date
+        type: datetime
+  source:
+    type: mysql
+    connection: my_connection
+    query: SELECT * FROM employees
+  expected:
+    type: csv
+    path: ./expected.csv
 ```
 
-# Pass rate
-The `pass_rate` option allow to define the pass rate of the test case. The pass rate is a float between 0 and 1. The pass rate is the percentage of the rows that need to be the same to pass the test case.
+---
 
-## Example
+## pass_rate
+
+Define the minimum percentage of matching rows required for the test to pass. Value between `0.0` and `1.0` (default: `1.0` = all rows must match).
+
 ``` yaml
 Example:
   options:
     pass_rate: 0.95
   source:
+    type: mysql
     connection: my_connection
-    query: select * from my_table
+    query: SELECT * FROM employees
   expected:
-    connection: my_connection
-    query: select * from my_table
+    type: csv
+    path: ./expected.csv
 ```
 
-# Trim
-The `trim` option allow to trim the string columns before the comparison. The `trim` option is a list of columns to trim. The columns are defined by their name.
+> A `pass_rate` of `0.95` means the test passes if at least 95% of rows match.
 
-## Example
+---
+
+## tolerance
+
+Allow small numeric differences when comparing float/decimal columns. Set to `0` (default) for exact matching.
+
 ``` yaml
 Example:
   options:
-    trim:
-      - column_to_trim_1
-      - column_to_trim_2
+    tolerance: 0.01
   source:
+    type: mysql
     connection: my_connection
-    query: select * from my_table
+    query: SELECT * FROM financial_data
   expected:
+    type: csv
+    path: ./expected.csv
+```
+
+> Useful for floating-point precision differences between systems (e.g. migration from one database to another).
+
+---
+
+## trim
+
+Trim leading and trailing whitespace from all string columns before comparison.
+
+``` yaml
+Example:
+  options:
+    trim: true
+  source:
+    type: mysql
     connection: my_connection
-    query: select * from my_table
+    query: SELECT * FROM employees
+  expected:
+    type: csv
+    path: ./expected.csv
+```
+
+---
+
+## case_insensitive
+
+Convert all string values to lowercase before comparison.
+
+``` yaml
+Example:
+  options:
+    case_insensitive: true
+  source:
+    type: mysql
+    connection: my_connection
+    query: SELECT * FROM employees
+  expected:
+    type: csv
+    path: ./expected.csv
+```
+
+---
+
+## allow_no_rows
+
+When set to `true` (default), the test passes if both source and expected datasets are empty. When `false`, empty datasets cause the test to fail.
+
+``` yaml
+Example:
+  options:
+    allow_no_rows: false
+  source:
+    type: mysql
+    connection: my_connection
+    query: SELECT * FROM employees WHERE department = 'NonExistent'
+  expected:
+    type: empty
+```
+
+---
+
+## disabled
+
+Skip a test case entirely. The test will appear as `notExecuted` in the results.
+
+``` yaml
+Temporarily disabled test:
+  disabled: true
+  source:
+    type: mysql
+    connection: my_connection
+    query: SELECT * FROM problematic_table
+  expected:
+    type: empty
 ```

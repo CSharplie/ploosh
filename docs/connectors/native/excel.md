@@ -1,25 +1,45 @@
-This connector is used to read Excel files from local file system.
+# Excel
 
-# Connection configuration
-No connection is required by this connector
+This connector is used to read local Excel files (.xlsx, .xls).
 
-# Test case configuration
-# Definition
+## Connection configuration
 
-| Name      | Mandatory | Default | Description |
-|-----------|:---------:|:-------:|-------------|
-| path      | yes       |         | The path to the Excel file to read |
-| sheet     | yes       |         | The sheet name or index to read from the Excel file
+No connection is required by this connector.
 
-# Example
+## Test case configuration
+
+| Name | Mandatory | Default | Description |
+|------|:---------:|:-------:|-------------|
+| path | yes | | Path to the Excel file |
+| sheet_name | yes | | Sheet name or sheet index (0-based) |
+| skiprows | no | `0` | Number of rows to skip at the start of the sheet |
+
+### Example
 
 ``` yaml
 Example Excel:
   source:
-    type: mysql
-    
-  expected:
     type: excel
-    path: data/employees.xlsx
-    sheet: employees
+    path: ./data/employees.xlsx
+    sheet_name: Sheet1
+  expected:
+    type: csv
+    path: ./data/expected_employees.csv
+```
 
+### Example with sheet index
+
+``` yaml
+Example Excel by index:
+  source:
+    type: excel
+    path: ./data/report.xlsx
+    sheet_name: 0
+    skiprows: 2
+  expected:
+    type: empty
+```
+
+## Requirements
+
+- `openpyxl` (included in `ploosh` installation)

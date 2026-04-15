@@ -1,44 +1,59 @@
-# Structure
+# CSV exporter
+
+The CSV exporter generates a flat CSV file with one row per test case and detailed Excel files for failed tests.
+
+## Output structure
+
 ```
-output/
-├─ csv/
-│  ├─ test_results.csv
-│  ├─ test_results/
-│  │  ├─ test case 1.xlsx
-│  │  ├─ test case 2.xlsx
-│  │  └─ ...
+{output_path}/csv/
+├── test_results.csv              → Summary of all test cases
+└── test_results/
+    ├── Test case 1.xlsx          → Gap details (only for failed tests)
+    └── Test case 2.xlsx
 ```
 
-The csv extractor will generate a `test_results.csv` file and a `test_results` folder containing the details of the test cases results in xlsx format.
+## CSV columns
 
-# test_results.csv
-The `test_results.csv` file will contain the following columns:
-- `execution_id`: the unique execution identifier for this test run
-- `name`: the name of the test case
-- `state`: the state of the test case. Can be `passed`, `failed` or `error`
-- `source_start`: the start time of the source extraction
-- `source_end`: the end time of the source extraction
-- `source_duration`: the duration of the source extraction
-- `source_count`: the count of the source dataset
-- `source_executed_action`: the executed action for the source (SQL query, file path, etc.)
-- `expected_start`: the start time of the expected extraction
-- `expected_end`: the end time of the expected extraction
-- `expected_duration`: the duration of the expected extraction
-- `expected_count`: the count of the expected dataset
-- `expected_executed_action`: the executed action for the expected dataset (SQL query, file path, etc.)
-- `compare_start`: the start time of the comparison
-- `compare_end`: the end time of the comparison
-- `compare_duration`: the duration of the comparison
-- `success_rate`: the success rate of the test case
-- `error_type`: the type of the error if the test case failed or raised an error
-- `error_message`: the error message if the test case failed or raised an error
-- `error_detail_file_path`: the path to the Excel file containing the comparison gap details (only present when there are data mismatches)
-# test_results folder
-The `test_results` folder will contain one xlsx file per test case. Each file will contain a sheet with the gap between the source and the expected dataset
+| Column | Description |
+|--------|-------------|
+| `execution_id` | Unique identifier for the test run |
+| `name` | Test case name |
+| `state` | Result: `passed`, `failed`, `error`, `notExecuted` |
+| `source_start` | Source data loading start time |
+| `source_end` | Source data loading end time |
+| `source_duration` | Source loading duration in seconds |
+| `source_count` | Number of rows in source dataset |
+| `source_executed_action` | Query or path executed for source |
+| `expected_start` | Expected data loading start time |
+| `expected_end` | Expected data loading end time |
+| `expected_duration` | Expected loading duration in seconds |
+| `expected_count` | Number of rows in expected dataset |
+| `expected_executed_action` | Query or path executed for expected |
+| `compare_start` | Comparison start time |
+| `compare_end` | Comparison end time |
+| `compare_duration` | Comparison duration in seconds |
+| `success_rate` | Percentage of matching rows (0.0 to 1.0) |
+| `error_type` | Error category: `headers`, `count`, `data`, `compare` |
+| `error_message` | Error description |
+| `error_detail_file_path` | Path to the XLSX gap analysis file |
 
-# Example
-``` csv
-execution_id,name,state,source_start,source_end,source_duration,source_count,source_executed_action,expected_start,expected_end,expected_duration,expected_count,expected_executed_action,compare_start,compare_end,compare_duration,success_rate,error_type,error_message,error_detail_file_path
-test_execution_123,test 1,passed,2024-02-05T17:08:36Z,2024-02-05T17:08:36Z,0.0032982,100,SELECT * FROM table1,2024-02-05T17:08:36Z,2024-02-05T17:08:36Z,6.0933333333333335e-05,100,SELECT * FROM table2,2024-02-05T17:08:36Z,2024-02-05T17:08:36Z,0.0032982,1.0,,,
-test_execution_123,test 2,failed,2024-02-05T17:08:36Z,2024-02-05T17:08:36Z,0.0032982,100,SELECT * FROM table1,2024-02-05T17:08:36Z,2024-02-05T17:08:36Z,6.0933333333333335e-05,100,SELECT * FROM table2,2024-02-05T17:08:36Z,2024-02-05T17:08:36Z,0.0032982,0.95,Data,Some rows are not equals between source dataset and expected dataset,/output/csv/test_results/test 2.xlsx
+## Usage
+
+### Command line
+
+``` shell
+ploosh --connections connections.yml --cases test_cases --export CSV
 ```
+
+### Python API
+
+``` python
+from ploosh import execute_cases
+
+execute_cases(cases="test_cases", connections="connections.yml", path_output="./output")
+# Then manually set export format — CSV export is available via CLI --export flag
+```
+
+## Gap analysis Excel files
+
+For each failed test case, an XLSX file is generated showing the differences between source and expected datasets with side-by-side comparison of values.
