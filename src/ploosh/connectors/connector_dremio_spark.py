@@ -5,7 +5,7 @@ from connectors.connector import Connector
 
 class ConnectorDremioSpark(Connector):
     """Connector to read Fabric KQL data with Spark"""
-    
+
     def __init__(self):
         # Initialize the connector with its name and configuration definitions
         self.name = "DREMIO_SPARK"
@@ -46,14 +46,15 @@ class ConnectorDremioSpark(Connector):
         """ Get data from Dremio using Spark based on the provided configuration and connection details."""
 
         connection_string = f"jdbc:arrow-flight-sql://{connection['host']}:{connection['port']}/?useEncryption={str(connection['use_encryption']).lower()}&disableCertificateVerification={str(connection['disable_certificate_verification']).lower()}"
-        
+
         df = (self.spark.read
             .format("jdbc")
             .option("driver", "org.apache.arrow.driver.jdbc.ArrowFlightJdbcDriver")
             .option("url", connection_string)
-            .option("user", connection['username']) 
-            .option("password", connection['password']) 
+            .option("user", connection['username'])
+            .option("password", connection['password'])
             .option("query", configuration["query"])
             .load())
 
         return df
+
