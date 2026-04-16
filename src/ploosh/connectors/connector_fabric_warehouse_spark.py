@@ -9,7 +9,7 @@ class ConnectorFabricWarehouseSpark(Connector):
 
     def __init__(self):
         # Initialize the connector with its name and configuration definitions
-        self.name = "FABRIC_Warehouse_SPARK"
+        self.name = "FABRIC_WAREHOUSE_SPARK"
         self.is_spark = True  # Indicates that this connector uses Spark
         self.connection_definition = [
                 {
@@ -28,6 +28,7 @@ class ConnectorFabricWarehouseSpark(Connector):
         """Get data from source"""
 
         from sempy_labs import ConnectWarehouse
+        
 
         with ConnectWarehouse(warehouse=connection["warehouse_name"], workspace=connection["workspace_name"]) as sql:
             df = sql.query(configuration["query"])
