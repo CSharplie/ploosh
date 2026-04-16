@@ -28,7 +28,6 @@ class ConnectorFabricWarehouseSpark(Connector):
         """Get data from source"""
 
         from sempy_labs import ConnectWarehouse
-        
 
         with ConnectWarehouse(warehouse=connection["warehouse_name"], workspace=connection["workspace_name"]) as sql:
             df = sql.query(configuration["query"])
