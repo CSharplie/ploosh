@@ -13,7 +13,8 @@ install_requires = [
     "pandas-gbq==0.23.0",
     "pydata-google-auth==1.8.2",
     "azure-identity>=1.16.0",
-    "pyadomd==0.1.1"
+    "pyadomd==0.1.1",
+    "semantic-link-labs==0.14.3"
 ]
 
 setup_ploosh("ploosh", install_requires)
