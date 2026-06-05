@@ -1,9 +1,8 @@
-# pylint: disable=R0903
+# pylint: disable=R0903,C0415
 """Connector to read ODBC connection"""
 
 import warnings
 import pandas as pd
-import pyodbc
 from connectors.connector import Connector
 
 
@@ -54,6 +53,8 @@ class ConnectorODCB(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+
+        import pyodbc
 
         if connection["mode"] == "DSN":
             # Establish the ODBC connection using the provided DSN and optional credentials

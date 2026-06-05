@@ -188,37 +188,46 @@ def get_data(self, configuration: dict, connection: dict):
 
 ## Step 5 — Add dependencies
 
-If your connector requires an external Python package, you need to add it in several places:
+If your connector requires an external Python package, you need to declare it in `pyproject.toml`.
 
-### 1. `src/requirements.txt`
+### 1. Core dependency
 
-Add the package with a pinned version:
+If your dependency is a **core library** needed by the framework itself (e.g. pandas, pyjeb), add it with a pinned version to the `dependencies` list under `[project]`:
 
-```
-my-package==1.2.3
-```
-
-### 2. `src/setup.py` or `src/setup-full.py`
-
-Ploosh is published as two PyPI packages:
-
-| Package | Setup file | Scope |
-|---------|-----------|-------|
-| `ploosh-core` | `src/setup-core.py` | Lightweight — no connector-specific dependencies |
-| `ploosh` | `src/setup-full.py` | Full — all connector dependencies included |
-
-- If your dependency is a **core library** needed by the framework itself (e.g. pandas, pyjeb), add it to the `install_requires` list in `src/setup.py`.
-- If your dependency is **specific to your connector** (e.g. a database driver), add it to the `install_requires` list in `src/setup-full.py`.
-
-```python
-# src/setup-full.py
-install_requires = [
+```toml
+# pyproject.toml
+[project]
+dependencies = [
     # ... existing dependencies
     "my-package==1.2.3",
 ]
 ```
 
-> The `ploosh-core` package imports connectors with a `try/except` — if a dependency is missing, the connector is simply skipped with a warning. This allows `ploosh-core` to work without all dependencies installed.
+Core dependencies are always installed with `pip install ploosh`.
+
+### 2. Connector-specific dependency (extra)
+
+If your dependency is **specific to your connector** (e.g. a database driver), add it as an optional dependency (extra) under `[project.optional-dependencies]`. Create a dedicated extra named after your connector, and also add it to the `full` extra:
+
+```toml
+# pyproject.toml
+[project.optional-dependencies]
+my-connector = ["my-package==1.2.3"]
+
+full = [
+    # ... existing connector dependencies
+    "my-package==1.2.3",
+]
+```
+
+Users can then install only what they need:
+
+```bash
+pip install ploosh[my-connector]   # core + your connector
+pip install ploosh[full]           # core + all connectors
+```
+
+> Import the optional dependency **inside** the connector's `get_data` method (not at module level), so that the connector module can still be loaded when the extra is not installed.
 
 ## Step 6 — Add unit tests
 

@@ -1,10 +1,8 @@
-# pylint: disable=R0903
+# pylint: disable=R0903,C0415
 """Connector to read Semantic Model from Fabric XMLA endpoint"""
 
 import json
 import pandas as pd
-import requests
-from azure.identity import ClientSecretCredential, InteractiveBrowserCredential
 from connectors.connector import Connector
 
 class ConnectorSemanticModel(Connector):
@@ -50,6 +48,9 @@ class ConnectorSemanticModel(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+
+        import requests
+        from azure.identity import ClientSecretCredential, InteractiveBrowserCredential
 
         mode = connection["mode"]
         dataset_id = connection["dataset_id"]
