@@ -7,7 +7,6 @@ on:
       - develop
     paths:
       - 'src/**'
-      - 'tests/**'
   workflow_dispatch:
 jobs:
   dry_run:
