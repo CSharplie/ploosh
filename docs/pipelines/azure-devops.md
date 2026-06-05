@@ -38,7 +38,7 @@ stages:
             displayName: Install ploosh
             inputs:
               script: |
-                pip install ploosh
+                pip install "ploosh[mysql,sqlserver,postgresql]"
           - task: CmdLine@2
             displayName: Execute ploosh
             inputs:

@@ -20,9 +20,7 @@ dependencies = [
     "pandas==2.1.4",
     "openpyxl==3.1.2",
     "sqlalchemy==1.4.51",
-    "pyspark==3.5.4",
     "deltalake==0.23.2",
-    "delta-spark==3.3.0",
     "pyarrow==18.0.0",
 ]
 
@@ -40,6 +38,10 @@ ploosh = "ploosh.__main__:main"
 
 # Optional dependencies: install connectors on demand, e.g. `pip install ploosh[mysql]`
 [project.optional-dependencies]
+spark = [
+    "pyspark==3.5.4",
+    "delta-spark==3.3.0",
+]
 mysql = ["pymysql==1.1.0"]
 postgresql = ["pg8000==1.30.3"]
 sqlserver = ["pyodbc==5.0.1"]
@@ -60,6 +62,8 @@ fabric = ["semantic-link-labs==0.14.3"]
 
 # Aggregate of every connector (previous `ploosh` full package)
 full = [
+    "pyspark==3.5.4",
+    "delta-spark==3.3.0",
     "pymysql==1.1.0",
     "pg8000==1.30.3",
     "pyodbc==5.0.1",
@@ -88,7 +92,7 @@ version = { attr = "ploosh.version.PLOOSH_VERSION" }
 name = "cz_conventional_commits"
 version_scheme = "pep440"
 version_provider = "commitizen"
-version = "0.5.0"
+version = "0.4.11"
 version_files = [
     "src/ploosh/version.py",
 ]

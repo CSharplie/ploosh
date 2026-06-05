@@ -2,46 +2,62 @@
 
 ## Requirements
 
-- Python 3.8 or higher
+- Python 3.9 or higher
 
 ## Install from PyPi
 
 Ploosh is available on [PyPi](https://pypi.org/project/ploosh/) and can be installed using pip.
 
-### Full installation
+### Core installation
 
-Includes all connectors (databases, cloud platforms, BI tools):
+By default, `ploosh` installs a lightweight core with the native (pandas-based) engine and file connectors only:
 
 ``` shell
 pip install ploosh
 ```
 
-### Core installation
+### Optional connectors (extras)
 
-Includes only the core connectors (files, empty) with minimal dependencies:
+Connector-specific dependencies are provided as optional extras. Install only what you need:
 
 ``` shell
-pip install ploosh-core
+pip install "ploosh[mysql]"              # MySQL
+pip install "ploosh[postgresql]"         # PostgreSQL
+pip install "ploosh[snowflake,bigquery]" # multiple extras at once
 ```
 
-### Dependencies
+Available extras:
 
-The full installation includes the following additional packages for database and cloud connectors:
+| Extra | Connector / Feature | Main dependency |
+|-------|---------------------|-----------------|
+| `spark` | Spark engine and Spark connectors | `pyspark`, `delta-spark` |
+| `mysql` | MySQL | `pymysql` |
+| `postgresql` | PostgreSQL | `pg8000` |
+| `sqlserver` | SQL Server | `pyodbc` |
+| `odbc` | ODBC | `pyodbc` |
+| `snowflake` | Snowflake | `snowflake-sqlalchemy` |
+| `databricks` | Databricks | `databricks-sql-connector` |
+| `bigquery` | BigQuery | `pandas-gbq`, `sqlalchemy-bigquery` |
+| `xmla` | Analysis Services, Semantic Model (XMLA) | `pyadomd`, `azure-identity` |
+| `fabric` | Fabric semantic model / warehouse | `semantic-link-labs` |
 
-| Package | Connector |
-|---------|-----------|
-| `pyodbc` | SQL Server, ODBC |
-| `pymysql` | MySQL |
-| `pg8000` | PostgreSQL |
-| `snowflake-sqlalchemy` | Snowflake |
-| `databricks-sqlalchemy` | Databricks |
-| `pandas-gbq` | BigQuery |
-| `azure-identity` | Analysis Services, Semantic Model |
-| `pyadomd` | Analysis Services |
+### Full installation
+
+Includes every connector (all extras above):
+
+``` shell
+pip install "ploosh[full]"
+```
 
 ## Install for Spark mode
 
-When running Ploosh inside a Spark environment (Microsoft Fabric, Databricks), install the package directly in the notebook:
+The Spark engine is **not** included in the core installation. Install the `spark` extra to enable it:
+
+``` shell
+pip install "ploosh[spark]"
+```
+
+When running Ploosh inside a managed Spark environment (Microsoft Fabric, Databricks) that already provides PySpark, install the package directly in the notebook:
 
 ``` python
 %pip install ploosh

@@ -1,7 +1,6 @@
-# pylint: disable=R0903
+# pylint: disable=R0903,C0415
 """Connector to return empty"""
 
-from pyspark.sql.types import StructType
 from connectors.connector import Connector
 
 
@@ -17,6 +16,8 @@ class ConnectorEmptySpark(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Return empty value"""
+
+        from pyspark.sql.types import StructType
 
         # Store the executed action for reference
         self.executed_action = "empty"

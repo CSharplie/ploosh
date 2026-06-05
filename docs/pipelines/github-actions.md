@@ -33,7 +33,7 @@ jobs:
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
       - name: Install Ploosh
-        run: pip install ploosh
+        run: pip install "ploosh[sqlserver]"
 
       - name: Run tests
         run: |
