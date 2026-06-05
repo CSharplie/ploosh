@@ -64,6 +64,7 @@ Create a `ploosh_connections.yaml` file for your Fabric data sources:
 # For KQL databases
 kql_connection:
   type: fabric_kql_spark
+  connection_mode: native
   kusto_uri: https://mycluster.kusto.windows.net
   database_id: my_kql_database
 
