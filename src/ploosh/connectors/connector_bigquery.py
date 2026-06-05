@@ -1,8 +1,7 @@
-# pylint: disable=R0903
+# pylint: disable=R0903,C0415
 """Connector to read BigQuery database"""
 
 import pandas as pd
-import pandas_gbq
 from sqlalchemy import create_engine
 from connectors.connector import Connector
 
@@ -35,6 +34,9 @@ class ConnectorBigQuery(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+
+        import pandas_gbq
+
         # Extract credentials and credentials type from the connection
         credentials = connection["credentials"]
         credentials_type = connection["credentials_type"]

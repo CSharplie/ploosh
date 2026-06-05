@@ -7,7 +7,6 @@ on:
       - develop
     paths:
       - 'src/**'
-      - 'tests/**'
   workflow_dispatch:
 jobs:
   dry_run:
@@ -16,7 +15,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: src/
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -34,12 +32,10 @@ jobs:
 
           pip install --upgrade pip
 
-          pip install -r requirements.txt
-          pip install wheel==0.44.0
+          pip install build==1.5.0
           pip install twine==6.0.1
-          pip install setuptools==75.1.0
 
-          python setup-full.py sdist bdist_wheel
+          python -m build
           twine check dist/*
       - name: Execute ploosh
         run: | 
@@ -48,6 +44,6 @@ jobs:
           pip install --upgrade pip
 
           package_path=`ls dist/* | grep .whl`
-          pip install $package_path
+          pip install "$package_path[full]"
 
-          ploosh --cases "../tests/.env/exec/" -filter "dry_run_native.yaml" --failure false
+          ploosh --cases "tests/.env/exec/" -filter "dry_run_native.yaml" --failure false

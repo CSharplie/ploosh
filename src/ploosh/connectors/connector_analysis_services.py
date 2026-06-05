@@ -1,9 +1,9 @@
+# pylint: disable=C0415
 """Analysis Services connector."""
 
 from pathlib import Path
 from sys import path
 import pandas as pd
-from azure.identity import ClientSecretCredential
 from connectors.connector import Connector
 
 class ConnectorAnalysisServices(Connector):
@@ -75,6 +75,8 @@ class ConnectorAnalysisServices(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+
+        from azure.identity import ClientSecretCredential
 
         mode = connection["mode"]
 

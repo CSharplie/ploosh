@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from datetime import datetime
 import numpy as np
 from engines.compare_engine_native import CompareEngineNative
-from engines.compare_engine_spark import CompareEngineSpark
 from engines.load_engine_native import LoadEngineNative
 from engines.load_engine_spark import LoadEngineSpark
 
@@ -165,6 +164,8 @@ class Case:
 
     def compare_dataframes_with_spark(self, spark_session):
         """Compare source and expected dataframe using Spark"""
+        from engines.compare_engine_spark import CompareEngineSpark  # pylint: disable=C0415
+
         self.compare_duration.start = datetime.now()
 
         compare_engine = CompareEngineSpark(self.source.df_data, self.expected.df_data, self.options)

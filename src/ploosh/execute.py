@@ -3,7 +3,6 @@
 import sys
 import uuid
 from colorama import Fore
-from pyspark.sql import SparkSession
 from case import StateStatistics
 from connectors import get_connectors
 from exporters import get_exporters
@@ -65,6 +64,8 @@ def execute(args=None, spark_session=None):
 
         # Initialize Spark session if needed
         if parameters.spark_mode is True and spark_session is None:
+            from pyspark.sql import SparkSession  # pylint: disable=C0415
+
             Log.print("Start spark session")
             spark_session = SparkSession.builder \
                 .master("local") \
