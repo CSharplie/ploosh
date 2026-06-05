@@ -31,8 +31,8 @@ jobs:
           python-version: "3.12.8"
       - name: Install requirements
         run: |
-          pip install commitizen==4.15.1 build==1.5.0 twine==6.2.0
           pip install -r src/requirements.txt
+          pip install commitizen==4.15.1 build==1.5.0 twine==6.2.0
       - name: Check if bump needed
         id: check
         run: |
