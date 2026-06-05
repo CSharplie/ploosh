@@ -92,9 +92,9 @@ version = { attr = "ploosh.version.PLOOSH_VERSION" }
 name = "cz_conventional_commits"
 version_scheme = "pep440"
 version_provider = "commitizen"
-version = "0.4.12"
+version = "0.5.1"
 version_files = [
-    "src/ploosh/version.py",
+    "src/ploosh/version.py:PLOOSH_VERSION",
 ]
 tag_format = "v$version"
 update_changelog_on_bump = false
