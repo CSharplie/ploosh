@@ -2,11 +2,19 @@ name: 'Release on PyPi'
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'src/**'
+    tags:
+      - 'v*'
   workflow_dispatch:
+    inputs:
+      increment:
+        description: 'Version part to bump'
+        required: true
+        default: 'PATCH'
+        type: choice
+        options:
+          - PATCH
+          - MINOR
+          - MAJOR
 
 permissions:
   contents: write
@@ -36,32 +44,29 @@ jobs:
       - name: Check if bump needed
         id: check
         run: |
-          if [[ "${{ github.event.head_commit.message }}" == "bump: "* ]]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
+          # Do not bump on tag pushes; tags publish without bumping
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "skip_bump=true" >> $GITHUB_OUTPUT
           else
-            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "skip_bump=false" >> $GITHUB_OUTPUT
           fi
       - name: Bump version with Commitizen
-        if: steps.check.outputs.skip == 'false'
-        run: cz bump --yes
+        if: steps.check.outputs.skip_bump == 'false'
+        run: cz bump --yes --increment "${{ github.event.inputs.increment || 'PATCH' }}"
       - name: Push bumped version back to repository
-        if: steps.check.outputs.skip == 'false'
+        if: steps.check.outputs.skip_bump == 'false'
         run: |
           branch=${GITHUB_REF#refs/heads/}
           git push origin HEAD:$branch --follow-tags
       - name: Clean previous build artifacts
-        if: steps.check.outputs.skip == 'false'
         run: rm -rf dist
       - name: Build package
-        if: steps.check.outputs.skip == 'false'
         run: python -m build
       - name: Check package
-        if: steps.check.outputs.skip == 'false'
         run: twine check dist/*
       - name: Publish
-        if: steps.check.outputs.skip == 'false'
         run: |
-          if [[ $GITHUB_REF == refs/heads/main ]]; then
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo "Deploying to production environment"
             twine upload --repository-url https://upload.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_USER }} -p '${{ secrets.PYPI_PASSWORD }}' --verbose
           else
