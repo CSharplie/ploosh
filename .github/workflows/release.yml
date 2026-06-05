@@ -2,46 +2,69 @@ name: 'Release on PyPi'
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
     paths:
       - 'src/**'
-      - 'tests/**'
   workflow_dispatch:
+
+permissions:
+  contents: write
+
 jobs:
   publish:
     name: 'Publish on PyPi'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: src/
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Configure Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12.8"
       - name: Install requirements
-        run: | 
-          pip install -r requirements.txt
-          pip install wheel==0.44.0
-          pip install twine==6.0.1
-          pip install setuptools==75.1.0
-      - name: Build package (full)
-        run: python setup-full.py sdist bdist_wheel
-      - name: Build package (core)
-        run: python setup-core.py sdist bdist_wheel
+        run: |
+          pip install commitizen==4.15.1 build==1.5.0 twine==6.2.0
+          pip install -r src/requirements.txt
+      - name: Check if bump needed
+        id: check
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == "bump: "* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Bump version with Commitizen
+        if: steps.check.outputs.skip == 'false'
+        run: cz bump --yes
+      - name: Push bumped version back to repository
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          branch=${GITHUB_REF#refs/heads/}
+          git push origin HEAD:$branch --follow-tags
+      - name: Clean previous build artifacts
+        if: steps.check.outputs.skip == 'false'
+        run: rm -rf dist
+      - name: Build package
+        if: steps.check.outputs.skip == 'false'
+        run: python -m build
       - name: Check package
+        if: steps.check.outputs.skip == 'false'
         run: twine check dist/*
       - name: Publish
-        run: | 
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
             echo "Deploying to production environment"
             twine upload --repository-url https://upload.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_USER }} -p '${{ secrets.PYPI_PASSWORD }}' --verbose
-
-          else 
+          else
             echo "Deploying to test environment"
             twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${{ secrets.PYPI_TEST_USER }} -p '${{ secrets.PYPI_TEST_PASSWORD }}' --verbose
           fi

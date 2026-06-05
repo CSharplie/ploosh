@@ -1,3 +1,104 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ploosh"
+dynamic = ["version"]
+description = "A framework to automatize your tests for data projects"
+readme = "readme.md"
+requires-python = ">=3.9"
+license = { text = "Apache License 2.0" }
+keywords = ["testing", "data", "quality", "framework", "yaml"]
+
+# Core dependencies: always installed with `pip install ploosh`
+dependencies = [
+    "colorama==0.4.6",
+    "PyYAML==6.0.1",
+    "Pyjeb==0.2.1",
+    "numpy==1.26.3",
+    "pandas==2.1.4",
+    "openpyxl==3.1.2",
+    "sqlalchemy==1.4.51",
+    "pyspark==3.5.4",
+    "deltalake==0.23.2",
+    "delta-spark==3.3.0",
+    "pyarrow==18.0.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/CSharplie/ploosh/"
+"Say Thanks!" = "https://ploosh.io"
+"Bug Tracker" = "https://github.com/CSharplie/ploosh/issues"
+"CI" = "https://github.com/CSharplie/ploosh/actions"
+"Documentation" = "https://ploosh.io/docs/ploosh/"
+"Source Code" = "https://github.com/CSharplie/ploosh"
+"Download" = "https://pypi.org/project/ploosh/"
+
+[project.scripts]
+ploosh = "ploosh.__main__:main"
+
+# Optional dependencies: install connectors on demand, e.g. `pip install ploosh[mysql]`
+[project.optional-dependencies]
+mysql = ["pymysql==1.1.0"]
+postgresql = ["pg8000==1.30.3"]
+sqlserver = ["pyodbc==5.0.1"]
+odbc = ["pyodbc==5.0.1"]
+snowflake = ["snowflake-sqlalchemy==1.5.1"]
+databricks = ["databricks-sql-connector==2.9.3"]
+bigquery = [
+    "sqlalchemy-bigquery==1.9.0",
+    "google-cloud-bigquery-storage==2.24.0",
+    "pandas-gbq==0.23.0",
+    "pydata-google-auth==1.8.2",
+]
+xmla = [
+    "pyadomd==0.1.1",
+    "azure-identity>=1.16.0",
+]
+fabric = ["semantic-link-labs==0.14.3"]
+
+# Aggregate of every connector (previous `ploosh` full package)
+full = [
+    "pymysql==1.1.0",
+    "pg8000==1.30.3",
+    "pyodbc==5.0.1",
+    "snowflake-sqlalchemy==1.5.1",
+    "databricks-sql-connector==2.9.3",
+    "sqlalchemy-bigquery==1.9.0",
+    "google-cloud-bigquery-storage==2.24.0",
+    "pandas-gbq==0.23.0",
+    "pydata-google-auth==1.8.2",
+    "pyadomd==0.1.1",
+    "azure-identity>=1.16.0",
+    "semantic-link-labs==0.14.3",
+]
+
+# Development and CI tooling
+dev = [
+    "pytest==8.3.3",
+    "pytest-timeout==2.3.1",
+    "pylint==3.3.3",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "ploosh.version.PLOOSH_VERSION" }
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_scheme = "pep440"
+version_provider = "commitizen"
+version = "0.4.11"
+version_files = [
+    "src/ploosh/version.py",
+]
+tag_format = "v$version"
+update_changelog_on_bump = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["ploosh*"]
+
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
