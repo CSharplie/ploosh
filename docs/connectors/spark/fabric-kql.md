@@ -2,6 +2,10 @@
 
 This connector is used to query Microsoft Fabric KQL databases using Spark and the Kusto Spark connector.
 
+It supports two execution modes:
+- `native` (Spark Kusto connector)
+- `api` (Fabric KQL REST API)
+
 > ⚠️ A Spark connector can only be used with another Spark connector. It is not possible to mix Spark and native connectors in the same test case.
 
 See [Spark mode overview](/docs/spark/overview) for more information.
@@ -10,17 +14,31 @@ See [Spark mode overview](/docs/spark/overview) for more information.
 
 | Name | Mandatory | Default | Description |
 |------|:---------:|:-------:|-------------|
+| connection_mode | no | api | Execution mode: `native` or `api` |
 | kusto_uri | yes | | Kusto cluster URI (e.g. `https://mycluster.kusto.windows.net`) |
-| database_id | yes | | KQL database ID |
+| database_id | yes (native mode) | | KQL database ID used by Spark native connector |
+| database_name | yes (api mode) | | KQL database name used by REST API mode |
 
-### Example
+### Example (native mode)
 
 ``` yaml
 connections:
   kql_connection:
     type: fabric_kql_spark
+    connection_mode: native
     kusto_uri: https://mycluster.kusto.windows.net
     database_id: my_kql_database
+```
+
+### Example (api mode)
+
+``` yaml
+connections:
+  kql_connection:
+    type: fabric_kql_spark
+    connection_mode: api
+    kusto_uri: https://mycluster.kusto.windows.net
+    database_name: my_kql_database
 ```
 
 ## Test case configuration
@@ -51,6 +69,12 @@ Example Fabric KQL:
 ## Authentication
 
 This connector uses the Microsoft Fabric authentication token obtained via `mssparkutils.credentials.getToken("kusto")`. The Spark environment must have access to Microsoft Fabric resources.
+
+## Runtime behavior
+
+- In `api` mode, the connector expects a `PrimaryResult` table in the API response.
+- If the API call fails or no `PrimaryResult` table is returned, the connector raises a clear error.
+- If performance issues are observed with `native` mode, prefer `api` mode.
 
 ## Requirements
 

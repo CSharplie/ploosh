@@ -130,6 +130,7 @@ Test product categories:
 ``` yaml
 kql_events:
   type: fabric_kql_spark
+  connection_mode: native
   kusto_uri: https://mycluster.kusto.windows.net
   database_id: events_database
 ```
