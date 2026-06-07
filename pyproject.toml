@@ -13,7 +13,7 @@ keywords = ["testing", "data", "quality", "framework", "yaml"]
 
 # Core dependencies: always installed with `pip install ploosh`
 dependencies = [
-    "colorama==0.4.6",
+    "rich==13.9.4",
     "PyYAML==6.0.1",
     "Pyjeb==0.2.1",
     "numpy==1.26.3",
