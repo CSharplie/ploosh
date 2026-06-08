@@ -92,7 +92,7 @@ version = { attr = "ploosh.version.PLOOSH_VERSION" }
 name = "cz_conventional_commits"
 version_scheme = "pep440"
 version_provider = "commitizen"
-version = "0.5.4"
+version = "0.5.5"
 check_consistency = true
 version_files = [
     "src/ploosh/version.py:PLOOSH_VERSION",
