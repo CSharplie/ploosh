@@ -68,7 +68,7 @@ class ConnectorFabricKqlSpark(Connector):
 
             if response.status_code == 200:
                 json_data = response.json()
-                
+
                 data_table = None
                 for table in json_data:
                     if table.get("TableKind") == "PrimaryResult":
@@ -82,7 +82,7 @@ class ConnectorFabricKqlSpark(Connector):
                 if data_table:
                     columns = [col["ColumnName"] for col in data_table["Columns"]]
                     rows = data_table["Rows"]
-                    
+
                     df = pd.DataFrame(rows, columns=columns)
                     df = self.spark.createDataFrame(df)
                 else:

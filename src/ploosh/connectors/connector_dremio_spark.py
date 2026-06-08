@@ -57,4 +57,3 @@ class ConnectorDremioSpark(Connector):
             .load())
 
         return df
-

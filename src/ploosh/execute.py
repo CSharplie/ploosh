@@ -50,7 +50,7 @@ def compare_data(current_case_name, current_case, statistics, spark_session):
     return False
 
 
-def process_case(current_case, case_name, statistics, spark_session, verbose):
+def process_case(current_case, case_name, statistics, spark_session):
     """Process a single test case: load, compare and compute durations"""
     # Skip disabled test cases
     if current_case.disabled:
@@ -71,7 +71,7 @@ def process_case(current_case, case_name, statistics, spark_session, verbose):
     if not compare_data(case_name, current_case, statistics, spark_session):
         Log.print_case_progress(case_name, state=current_case.state)
         return
-    
+
     # Print comparison state and calculate durations
     print_compare_state(case_name, current_case)
     Log.print_case_progress(case_name, state=current_case.state)
@@ -132,7 +132,6 @@ def execute(args=None, spark_session=None):
                     case_name,
                     statistics,
                     spark_session,
-                    False,
                 )
                 for case_name in cases
             ]
@@ -147,7 +146,6 @@ def execute(args=None, spark_session=None):
                 case_name,
                 statistics,
                 spark_session,
-                True,
             )
 
     # Export test results

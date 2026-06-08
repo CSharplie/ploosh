@@ -1,8 +1,6 @@
 """Module for log functions"""
 
-import math
 import os
-import re
 import shutil
 import threading
 from datetime import datetime
@@ -45,9 +43,9 @@ class Log:
         # Create log folder if it doesn't exist
         os.makedirs(Log.LOGS_FOLDER, exist_ok=True)
 
-        # Initialize the console for rich logging 
-        Log.console = Console(       
-            force_terminal=True, 
+        # Initialize the console for rich logging
+        Log.console = Console(
+            force_terminal=True,
             force_jupyter=False,
             width=Log.CONSOLE_WIDTH,
         )
@@ -131,7 +129,7 @@ def print_compare_state(case_name, current_case):
 
     if current_case.state == "passed":
         return
-    
+
     message = f"{case_name}\nCompare state: {current_case.state.upper()}\n"
     message += f"Error type   : {current_case.error_type.upper()}\n"
     message += f"Error message: {current_case.error_message}"
