@@ -60,18 +60,19 @@ class Log:
                 log_file.write(f"[{date_time}] [{level}] {message}\n")
 
 
-    def print_message(message: str, level: str = "INFO"):
+    def print_message(message: str, level: str = "INFO", no_overflow: bool = False, style: str = None):
         """Print an info message with all metadata informations"""
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         table = Table(box=None, show_header=False, expand=True, padding=(0, 1), pad_edge=False)
         table.add_column("date_time", style="dim", no_wrap=True)
         table.add_column("level", no_wrap=True)
-        table.add_column("message", ratio=1)
+        table.add_column("message", ratio=1, overflow="crop" if no_overflow else "fold")
 
         level_cell = Text(f"[{level}]", style=Log.LEVELS_PRINT.get(level, "white"))
+        message_cell = Text(str(message), style=style) if style else f"{message}"
 
-        table.add_row(f"[{date_time}]", level_cell, f"{message}")
+        table.add_row(f"[{date_time}]", level_cell, message_cell)
 
         Log.console.print(table)
         Log.write_log_line(date_time, level, str(message))
@@ -125,21 +126,17 @@ class Log:
         Log.console.print(Align.center(Text(ploosh_subtitle, style="bold", no_wrap=True)))
         Log.console.print(Align.right(Text(ploosh_github_url, no_wrap=True)))
 
-def print_compare_state(current_case):
+def print_compare_state(case_name, current_case):
     """Print the comparison state of a test case"""
 
-    state = current_case.state.upper()
-    state_matrix = {
-        "FAILED": Log.print_warning,
-        "ERROR": Log.print_error,
-        "PASSED": Log.print_message,
-    }
-    state_item = state_matrix[state]
-    state_item(f"Compare state: {state}")
+    if current_case.state == "passed":
+        return
+    
+    message = f"{case_name}\nCompare state: {current_case.state.upper()}\n"
+    message += f"Error type   : {current_case.error_type.upper()}\n"
+    message += f"Error message: {current_case.error_message}"
 
-    if state != "PASSED":
-        state_item(f"Error type   : {current_case.error_type.upper()}")
-        state_item(f"Error message: {current_case.error_message}")
+    Log.print_warning(message)
 
 
 def print_summary(cases, statistics):
