@@ -16,6 +16,7 @@ def execute_cases(
     filter=None,
     path_output=None,
     variables=None,
+    workers = 1
 ):
     """Execute test cases with the given parameters"""
     args = ["ploosh"]
@@ -44,6 +45,11 @@ def execute_cases(
     if path_output is not None:
         args.append("--output")
         args.append(path_output)
+
+    # Add workers parameter to arguments if provided
+    if workers > 1:
+        args.append("--workers")
+        args.append(str(workers))
 
     # Add variables parameter to arguments if provided
     if variables is not None:
