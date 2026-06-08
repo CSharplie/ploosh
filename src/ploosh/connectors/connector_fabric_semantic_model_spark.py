@@ -22,7 +22,7 @@ class ConnectorFabricSemanticModel(Connector):
         ]
         self.configuration_definition = [
             {
-                "name": "method", 
+                "name": "method",
                 "validset": ["DAX Query", "Table", "Measure"]
             },
             {
@@ -47,7 +47,7 @@ class ConnectorFabricSemanticModel(Connector):
                 "type": "dict",
                 "default": None
             },
-            {   
+            {
                 "name": "column_names",
                 "type": "list"
             }

@@ -1,4 +1,5 @@
 """Module to manage test case"""
+import threading
 from dataclasses import dataclass
 from datetime import datetime
 import numpy as np
@@ -15,22 +16,24 @@ class StateStatistics:
     failed = 0
     error = 0
     total = 0
+    _lock = threading.Lock()
 
     def add_state(self, state):
-        """Add new state to statistics"""
-        if state == "passed":
-            self.passed += 1
-        if state == "failed":
-            self.failed += 1
-        if state == "error":
-            self.error += 1
-        if state == "notExecuted":
-            self.not_executed += 1
+        """Add new state to statistics (thread-safe)"""
+        with self._lock:
+            if state == "passed":
+                self.passed += 1
+            if state == "failed":
+                self.failed += 1
+            if state == "error":
+                self.error += 1
+            if state == "notExecuted":
+                self.not_executed += 1
 
-        if state != "notExecuted":
-            self.executed += 1
+            if state != "notExecuted":
+                self.executed += 1
 
-        self.total += 1
+            self.total += 1
 
 
 @dataclass
