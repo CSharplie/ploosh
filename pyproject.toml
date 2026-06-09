@@ -7,7 +7,7 @@ name = "ploosh"
 dynamic = ["version"]
 description = "A framework to automatize your tests for data projects"
 readme = "readme.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11,<3.14"
 license = { text = "Apache License 2.0" }
 keywords = ["testing", "data", "quality", "framework", "yaml"]
 
@@ -16,11 +16,14 @@ dependencies = [
     "rich==13.9.4",
     "PyYAML==6.0.1",
     "Pyjeb==0.2.1",
-    "numpy==1.26.3",
-    "pandas==2.1.4",
+    "requests==2.31.0",
+    "numpy==1.26.3; python_version < '3.13'",
+    "numpy>=2.1.0; python_version >= '3.13'",
+    "pandas==2.1.4; python_version < '3.13'",
+    "pandas>=2.2.3; python_version >= '3.13'",
     "openpyxl==3.1.2",
-    "sqlalchemy==1.4.51",
-    "deltalake==0.23.2",
+    "sqlalchemy==1.4.51; python_version < '3.13'",
+    "sqlalchemy>=1.4.54,<2.0; python_version >= '3.13'",
     "pyarrow==18.0.0",
 ]
 
@@ -42,6 +45,7 @@ spark = [
     "pyspark==3.5.4",
     "delta-spark==3.3.0",
 ]
+delta = ["deltalake==0.23.2"]
 mysql = ["pymysql==1.1.0"]
 postgresql = ["pg8000==1.30.3"]
 sqlserver = ["pyodbc==5.0.1"]
@@ -64,6 +68,8 @@ fabric = ["semantic-link-labs==0.14.3"]
 full = [
     "pyspark==3.5.4",
     "delta-spark==3.3.0",
+    "deltalake==0.23.2",
+    "requests==2.31.0",
     "pymysql==1.1.0",
     "pg8000==1.30.3",
     "pyodbc==5.0.1",
