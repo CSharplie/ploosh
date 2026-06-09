@@ -1,29 +1,40 @@
 """Module for log functions"""
 
-import math
 import os
-import re
 import shutil
+import threading
 from datetime import datetime
-from colorama import Fore, Style
+from rich.console import Console
+from rich.table import Table
+from rich.align import Align
+from rich.text import Text
 from version import PLOOSH_VERSION
 
 class Log:
     """Log class contain all functions to log"""
 
+    FILE_LOCK = threading.Lock()
+
     @staticmethod
     def init():
         """Initialize log settings and create log directory"""
         Log.LEVELS_PRINT = {
-            "INFO": Fore.GREEN,
-            "WARN": Fore.YELLOW,
-            "ERRO": Fore.RED,
+            "INFO": "green",
+            "WARN": "yellow",
+            "ERRO": "red",
+        }
+
+        Log.STATE_PRINT = {
+            "progress": "cyan",
+            "passed": "green",
+            "failed": "yellow",
+            "error": "red",
+            "notExecuted": "cyan",
+            "skipped": "cyan",
         }
 
         # Get terminal size and set console log space
         Log.CONSOLE_WIDTH = shutil.get_terminal_size(fallback=(120, 50)).columns
-        Log.CONSOLE_WIDTH_GAP = 29
-        Log.CONSOLE_LOG_SPACE = Log.CONSOLE_WIDTH - Log.CONSOLE_WIDTH_GAP
 
         # Set log folder and log file path
         Log.LOGS_FOLDER = "./logs"
@@ -32,122 +43,134 @@ class Log:
         # Create log folder if it doesn't exist
         os.makedirs(Log.LOGS_FOLDER, exist_ok=True)
 
+        # Initialize the console for rich logging
+        Log.console = Console(
+            force_terminal=True,
+            force_jupyter=False,
+            width=Log.CONSOLE_WIDTH,
+        )
+
     @staticmethod
-    def print(message: str, level: str = "INFO", filler: str = "."):
-        """Print a message with all metadata informations"""
+    def write_log_line(date_time: str, level: str, message: str):
+        """Append one plain-text log line to the log file."""
+        with Log.FILE_LOCK:
+            with open(Log.LOGS_PATH, "a", encoding="UTF-8") as log_file:
+                log_file.write(f"[{date_time}] [{level}] {message}\n")
+
+
+    def print_message(message: str, level: str = "INFO", no_overflow: bool = False, style: str = None):
+        """Print an info message with all metadata informations"""
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Determine the number of filler characters needed
-        count_filler = 1 if message.count("[...]") == 0 else message.count("[...]")
+        table = Table(box=None, show_header=False, expand=True, padding=(0, 1), pad_edge=False)
+        table.add_column("date_time", style="dim", no_wrap=True)
+        table.add_column("level", no_wrap=True)
+        table.add_column("message", ratio=1, overflow="crop" if no_overflow else "fold")
 
-        # Remove ANSI escape sequences from the message
-        raw_message = re.sub(r"[^\w ]*[\d]+m", "", message)
-        print_length = len(raw_message)
-        feed_characters = filler * math.trunc(
-            (Log.CONSOLE_LOG_SPACE - print_length + (5 * count_filler)) / count_filler
-        )
-        message = message.replace("[...]", feed_characters)
+        level_cell = Text(f"[{level}]", style=Log.LEVELS_PRINT.get(level, "white"))
+        message_cell = Text(str(message), style=style) if style else f"{message}"
 
-        rows_to_print = [message]
-        # Disable coloration for multi-line messages
-        if print_length > Log.CONSOLE_LOG_SPACE or "\n" in message:
-            rows_to_print = []
-            message_rows = raw_message.split("\n")
-            for row in message_rows:
-                rows_count = math.ceil(len(row) / Log.CONSOLE_LOG_SPACE)
-                for i in range(0, rows_count):
-                    start = i * Log.CONSOLE_LOG_SPACE
-                    end = (i + 1) * Log.CONSOLE_LOG_SPACE
-                    rows_to_print.append(row[start:end])
+        table.add_row(f"[{date_time}]", level_cell, message_cell)
 
-        # Format each row with date, time, and log level
-        rows_to_print = [
-            f"{Fore.CYAN}[{date_time}] {Log.LEVELS_PRINT[level]}[{level}]{Style.RESET_ALL} {row}{Style.RESET_ALL}"
-            for row in rows_to_print
-        ]
+        Log.console.print(table)
+        Log.write_log_line(date_time, level, str(message))
 
-        # Print each row to the console
-        for row in rows_to_print:
-            print(row)
+    def print_case_progress(message: str, level: str = "INFO", state: str = "progress"):
+        """Print a progress message with all metadata informations"""
+        date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Write the log to the log file
-        with open(Log.LOGS_PATH, "a", encoding="UTF-8") as f:
-            log_text = "\r\n".join(rows_to_print) + "\r\n"
+        table = Table(box=None, show_header=False, expand=True, padding=(0, 1), pad_edge=False)
+        table.add_column("date_time", style="dim", no_wrap=True)
+        table.add_column("level", no_wrap=True)
+        table.add_column("message", ratio=1)
+        table.add_column("state", justify="right", no_wrap=True)
 
-            # Remove color codes from the log text
-            for key in Fore.__dict__:
-                log_text = log_text.replace(Fore.__dict__[key], "")
+        level_cell = Text(f"[{level}]", style=Log.LEVELS_PRINT.get(level, "white"))
+        state_cell = Text(state, style=Log.STATE_PRINT.get(state, "white"))
+        table.add_row(f"[{date_time}]", level_cell, f"{message}", state_cell)
 
-            for key in Style.__dict__:
-                log_text = log_text.replace(Style.__dict__[key], "")
-
-            f.write(log_text)
+        Log.console.print(table)
+        Log.write_log_line(date_time, level, f"{message} [{state}]")
 
     @staticmethod
     def print_error(message: str):
         """Print an error message with all metadata informations"""
-        Log.print(message, "ERRO")
+        Log.print_message(message, "ERRO")
 
     @staticmethod
     def print_warning(message: str):
         """Print a warning message with all metadata informations"""
-        Log.print(message, "WARN")
+        Log.print_message(message, "WARN")
 
     @staticmethod
     def print_logo():
         """Print the ATF logo"""
-        Log.print(r"[...]", filler="~")
-        Log.print(r"[...]       .__                      .__     [...]", filler=" ")
-        Log.print(r"[...]______ |  |   ____   ____  _____|  |__  [...]", filler=" ")
-        Log.print(r"[...]\____ \|  |  /  _ \ /  _ \/  ___|  |  \ [...]", filler=" ")
-        Log.print(r"[...]|  |_> |  |_(  <_> (  <_> \___ \|   Y  \[...]", filler=" ")
-        Log.print(r"[...]|   __/|____/\____/ \____/____  |___|  /[...]", filler=" ")
-        Log.print(r"[...]|__|                          \/     \/ [...]", filler=" ")
-        Log.print(f"[...]Automatized Testing Framework (v {PLOOSH_VERSION})[...]", filler=" ")
-        Log.print(r"[...]", filler=" ")
-        Log.print(r"[...]https://github.com/CSharplie/ploosh", filler=" ")
-        Log.print(r"[...]", filler="~")
 
+        ploosh_logo = "\n"
+        ploosh_logo += "           ░██                                  ░██        \n"
+        ploosh_logo += "           ░██                                  ░██        \n"
+        ploosh_logo += "░████████  ░██  ░███████   ░███████   ░███████  ░████████  \n"
+        ploosh_logo += "░██    ░██ ░██ ░██    ░██ ░██    ░██ ░██        ░██    ░██ \n"
+        ploosh_logo += "░██    ░██ ░██ ░██    ░██ ░██    ░██  ░███████  ░██    ░██ \n"
+        ploosh_logo += "░███   ░██ ░██ ░██    ░██ ░██    ░██        ░██ ░██    ░██ \n"
+        ploosh_logo += "░██░█████  ░██  ░███████   ░███████   ░███████  ░██    ░██ \n"
+        ploosh_logo += "░██                                                        \n"
+        ploosh_logo += "░██                                                        \n"
 
-def print_compare_state(current_case):
+        ploosh_subtitle = f"Automatized Testing Framework (v{PLOOSH_VERSION})\n"
+        ploosh_github_url = "https://github.com/CSharplie/ploosh"
+
+        Log.console.print(Align.center(Text(ploosh_logo, justify="left", no_wrap=True)))
+        Log.console.print(Align.center(Text(ploosh_subtitle, style="bold", no_wrap=True)))
+        Log.console.print(Align.right(Text(ploosh_github_url, no_wrap=True)))
+
+def print_compare_state(case_name, current_case):
     """Print the comparison state of a test case"""
 
-    state = current_case.state.upper()
-    state_matrix = {
-        "FAILED": {"color": Fore.YELLOW, "function": Log.print_warning},
-        "ERROR": {"color": Fore.RED, "function": Log.print_error},
-        "PASSED": {"color": Fore.GREEN, "function": Log.print},
-    }
-    state_item = state_matrix[state]
-    state_item["function"](f"Compare state: {state_item['color']}{state}")
+    if current_case.state == "passed":
+        return
 
-    if state != "PASSED":
-        state_item["function"](f"Error type   : {state_item['color']}{current_case.error_type.upper()}")
-        state_item["function"](f"Error message: {state_item['color']}{current_case.error_message}")
+    message = f"{case_name}\nCompare state: {current_case.state.upper()}\n"
+    message += f"Error type   : {current_case.error_type.upper()}\n"
+    message += f"Error message: {current_case.error_message}"
+
+    Log.print_warning(message)
 
 
 def print_summary(cases, statistics):
     """Print a summary of test case results"""
     for case_name in cases:
         state = cases[case_name].state
-        color = Fore.CYAN
-
-        if state == "error":
-            color = Fore.RED
-        if state == "passed":
-            color = Fore.GREEN
-        if state == "failed":
-            color = Fore.YELLOW
 
         if state == "notExecuted":
             state = "skipped"
 
-        Log.print(f"{case_name} [...] {color}{state.upper()}")
+        Log.print_case_progress(case_name, state=state)
 
-    # Print overall statistics
-    message = f"passed: {Fore.GREEN}{statistics.passed}{Style.RESET_ALL}, "
-    message += f"failed: {Fore.YELLOW}{statistics.failed}{Style.RESET_ALL}, "
-    message += f"error: {Fore.RED}{statistics.error}{Style.RESET_ALL}, "
-    message += f"skipped: {Fore.CYAN}{statistics.not_executed}{Style.RESET_ALL}"
+    date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    table = Table(box=None, show_header=False, expand=True, padding=(0, 1), pad_edge=False)
+    table.add_column("date_time", style="dim", no_wrap=True)
+    table.add_column("level", no_wrap=True)
+    table.add_column("message", ratio=1)
 
-    Log.print(message)
+    level_cell = Text("[INFO]", style=Log.LEVELS_PRINT.get("INFO", "white"))
+    summary_cell = Text()
+    summary_cell.append("passed: ")
+    summary_cell.append(str(statistics.passed), style="green")
+    summary_cell.append(", failed: ")
+    summary_cell.append(str(statistics.failed), style="yellow")
+    summary_cell.append(", error: ")
+    summary_cell.append(str(statistics.error), style="red")
+    summary_cell.append(", skipped: ")
+    summary_cell.append(str(statistics.not_executed), style="cyan")
+
+    table.add_row(f"[{date_time}]", level_cell, summary_cell)
+    Log.console.print(table)
+    Log.write_log_line(
+        date_time,
+        "INFO",
+        (
+            f"passed: {statistics.passed}, failed: {statistics.failed}, "
+            f"error: {statistics.error}, skipped: {statistics.not_executed}"
+        ),
+    )

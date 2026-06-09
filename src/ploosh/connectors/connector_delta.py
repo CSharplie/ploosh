@@ -1,7 +1,6 @@
 # pylint: disable=R0903
 """Connector to read delta file"""
 
-from deltalake import DeltaTable
 from connectors.connector import Connector
 
 
@@ -18,6 +17,8 @@ class ConnectorDELTA(Connector):
 
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
+
+        from deltalake import DeltaTable
 
         # Store the executed action (file path) for reference
         self.executed_action = configuration["path"]

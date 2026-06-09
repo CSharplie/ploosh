@@ -4,9 +4,8 @@ You can run Ploosh with a local Spark session for development and testing.
 
 ## Prerequisites
 
-- Python 3.8+
-- PySpark installed: `pip install pyspark`
-- Ploosh installed: `pip install ploosh`
+- Python 3.9+
+- Ploosh installed with the Spark extra: `pip install "ploosh[spark]"`
 
 ## Usage
 

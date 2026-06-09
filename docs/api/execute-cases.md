@@ -19,6 +19,7 @@ execute_cases(
     filter=None,
     path_output=None,
     variables=None,
+    workers=1,
 )
 ```
 
@@ -33,6 +34,7 @@ execute_cases(
 | `filter` | string | | Glob pattern to filter test case files (e.g. `"*.yaml"`) |
 | `path_output` | string | | Path to the output folder for results |
 | `variables` | dict | | Dictionary of custom parameter values |
+| `workers` | int | `1` | Number of parallel workers used to process test cases (`1` = sequential) |
 
 ## Examples
 
@@ -100,10 +102,23 @@ execute_cases(
 )
 ```
 
+### Parallel execution
+
+``` python
+from ploosh import execute_cases
+
+execute_cases(
+    cases="test_cases",
+    connections="connections.yml",
+    workers=4
+)
+```
+
 ## Behavior
 
 - If `spark_session` is provided, Ploosh uses it for Spark connectors
 - If `spark="true"` and no `spark_session` is given, Ploosh creates a local SparkSession
+- With `workers > 1`, test cases are processed concurrently in a thread pool; `workers=1` (default) runs them sequentially
 - Results are exported to `{path_output}/{format}/` (e.g. `output/json/test_results.json`)
 - The function prints status to stdout in real-time
 - By default, raises `SystemExit(1)` if any test fails. Use `--failure false` from CLI or handle the exit in your code

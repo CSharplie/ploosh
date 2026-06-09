@@ -19,6 +19,7 @@ ploosh --connections <path> --cases <path> [options]
 | `--export` | no | `JSON` | Export format: `JSON`, `CSV`, or `TRX` |
 | `--spark` | no | `false` | Enable Spark mode (creates a local SparkSession) |
 | `--failure` | no | `true` | Exit with code 1 if any test fails or errors |
+| `--workers` | no | `1` | Number of parallel workers used to process test cases (`1` = sequential) |
 | `--p_<name>` | no | | Custom parameter value (see [Custom parameters](/docs/configuration/custom-parameters)) |
 
 ## Examples
@@ -56,6 +57,16 @@ ploosh --connections "connections.yml" --cases "test_cases" --spark true
 ```
 
 > When `--spark true` is set and no spark session is provided programmatically, Ploosh creates a local SparkSession. For Fabric or Databricks, use the Python API instead. See [Spark mode overview](/docs/spark/overview).
+
+### Parallel execution
+
+Process test cases concurrently using multiple workers to speed up large test suites:
+
+``` shell
+ploosh --connections "connections.yml" --cases "test_cases" --workers 4
+```
+
+> `--workers` controls how many test cases are processed at the same time. The default value `1` runs test cases sequentially. Increasing the number of workers can significantly reduce total execution time when test cases are I/O-bound (waiting on databases, files, or remote services). Choose a value based on your available resources and the limits of the systems you query.
 
 ## Python API
 

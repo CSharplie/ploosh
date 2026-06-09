@@ -2,7 +2,6 @@
 
 from execute import execute
 
-
 def main():
     """Entry point for conda execution"""
     # Call the main execution function

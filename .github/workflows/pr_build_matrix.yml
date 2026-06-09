@@ -1,7 +1,86 @@
-name: PR Build Matrix
-on: workflow_dispatch
+name: 'Build and test matrix'
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
-  dummy:
+  build:
+    name: 'Build package'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
-      - run: echo "Dummy job for debug"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build package
+        run: |
+          python -m venv .build
+          . .build/bin/activate
+
+          pip install --upgrade pip
+
+          pip install build==1.5.0
+          pip install twine==6.0.1
+
+          python -m build
+          twine check dist/*
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ploosh-dist
+          path: dist/*.whl
+
+  test:
+    name: 'Test py${{ matrix.python-version }} [${{ matrix.extra }}]'
+    needs: build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.12"
+          - "3.13"
+        extra:
+          - base
+          - full
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: Download package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ploosh-dist
+          path: dist
+      - name: Install package
+        run: |
+          python -m venv .test
+          . .test/bin/activate
+
+          pip install --upgrade pip
+
+          package_path=`ls dist/* | grep .whl`
+
+          if [ "${{ matrix.extra }}" = "base" ]; then
+            pip install "$package_path"
+          else
+            pip install "$package_path[${{ matrix.extra }}]"
+          fi
+      - name: Execute ploosh
+        run: |
+          . .test/bin/activate
+
+          ploosh

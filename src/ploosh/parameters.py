@@ -11,6 +11,7 @@ class Parameters:
     path_output = None
     export = None
     failure_on_error = None
+    workers = 1
     variables = {}
 
     def __init__(self, argv: list):
@@ -27,6 +28,12 @@ class Parameters:
         self.export = self.get_value("export", "JSON").upper()
         self.failure_on_error = self.get_value("failure", True)
         self.spark_mode = self.get_value("spark", False)
+
+        # Number of parallel workers used to process test cases (1 = sequential)
+        try:
+            self.workers = max(1, int(self.get_value("workers", 1)))
+        except (TypeError, ValueError):
+            self.workers = 1
 
     def set_args(self, args):
         """Set dictionary of args with cleaned name"""

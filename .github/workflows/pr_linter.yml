@@ -1,0 +1,54 @@
+name: 'Execute linter'
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'src/**'
+      - 'tests/**'
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  lint:
+    name: 'Lint code'
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12.8"
+    - name: Install requirements
+      run: | 
+        pip install -r src/requirements.txt
+        pip install pylint==3.3.3
+    - name: Lint code
+      id: lint
+      run: | 
+        {
+          pylint --fail-under=9.3 src/ 2>&1
+        } | tee lint_output.txt
+        echo "result<<EOF" >> $GITHUB_OUTPUT
+        cat lint_output.txt >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+      continue-on-error: true
+    - name: Output results
+      if: ${{ always() }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        header: Linter results
+        message: |
+            ``` bash
+            ${{ steps.lint.outputs.result }}
+            ```
+    - name: Fail if lint failed
+      if: ${{ steps.lint.outcome == 'failure' }}
+      run: exit 1

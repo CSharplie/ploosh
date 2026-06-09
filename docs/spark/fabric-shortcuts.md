@@ -62,6 +62,7 @@ For workloads that write events to KQL databases, use the `fabric_kql_spark` con
 connections:
   kql_events:
     type: fabric_kql_spark
+    connection_mode: native
     kusto_uri: https://mycluster.kusto.windows.net
     database_id: events_db
 ```

@@ -1,9 +1,9 @@
 """Module to manage test case"""
+import threading
 from dataclasses import dataclass
 from datetime import datetime
 import numpy as np
 from engines.compare_engine_native import CompareEngineNative
-from engines.compare_engine_spark import CompareEngineSpark
 from engines.load_engine_native import LoadEngineNative
 from engines.load_engine_spark import LoadEngineSpark
 
@@ -16,22 +16,24 @@ class StateStatistics:
     failed = 0
     error = 0
     total = 0
+    _lock = threading.Lock()
 
     def add_state(self, state):
-        """Add new state to statistics"""
-        if state == "passed":
-            self.passed += 1
-        if state == "failed":
-            self.failed += 1
-        if state == "error":
-            self.error += 1
-        if state == "notExecuted":
-            self.not_executed += 1
+        """Add new state to statistics (thread-safe)"""
+        with self._lock:
+            if state == "passed":
+                self.passed += 1
+            if state == "failed":
+                self.failed += 1
+            if state == "error":
+                self.error += 1
+            if state == "notExecuted":
+                self.not_executed += 1
 
-        if state != "notExecuted":
-            self.executed += 1
+            if state != "notExecuted":
+                self.executed += 1
 
-        self.total += 1
+            self.total += 1
 
 
 @dataclass
@@ -165,6 +167,8 @@ class Case:
 
     def compare_dataframes_with_spark(self, spark_session):
         """Compare source and expected dataframe using Spark"""
+        from engines.compare_engine_spark import CompareEngineSpark  # pylint: disable=C0415
+
         self.compare_duration.start = datetime.now()
 
         compare_engine = CompareEngineSpark(self.source.df_data, self.expected.df_data, self.options)

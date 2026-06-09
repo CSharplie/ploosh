@@ -1,4 +1,4 @@
-name: 'Unit tests'
+name: 'Execute unit tests'
 
 on:
   pull_request:
@@ -9,6 +9,10 @@ on:
       - 'src/**'
       - 'tests/**'
   workflow_dispatch:
+permissions:
+    contents: read
+    pull-requests: write
+    issues: write
 jobs:
     tests:
         name: 'Execute unit tests'
@@ -59,24 +63,43 @@ jobs:
               -p 1433:1433 \
               -d \
               mcr.microsoft.com/mssql/server:2022-latest
-
         - name: Feed databases
           run: | 
             sleep 30 # wait until all services are up
-            
+
             mysql -h 127.0.0.1 -u ploosh -p'${{ secrets.TEST_LOCAL_DB_PASSWORD }}' < tests/.env/mysql/setup.sql
-    
+
             export PGPASSWORD='${{ secrets.TEST_LOCAL_DB_PASSWORD }}';
             psql -h 127.0.0.1 -U ploosh -d ploosh -f tests/.env/postgresql/setup.sql
-    
+
             /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${{ secrets.TEST_LOCAL_DB_PASSWORD }}" -i tests/.env/mssql/setup.sql
-    
+
             spark_setup_file=$(pwd)/tests/.env/spark/setup.sql
             spark_setup_file_tmp=$(pwd)/tests/.env/spark/setup_tmp.sql
             sed "s|{{pwd}}|$(pwd)|g" $spark_setup_file > $spark_setup_file_tmp
             spark-sql -f$spark_setup_file_tmp
         - name: Execute tests
+          id: tests
           run: | 
-            export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
-            pytest -rA ./tests 
-    
+            {
+              export TEST_DB_PASSWORD="${{ secrets.TEST_LOCAL_DB_PASSWORD }}"
+              pytest -rx ./tests --verbose 2>&1
+            } | tee test_output.txt
+            echo "result<<EOF" >> $GITHUB_OUTPUT
+            cat test_output.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          continue-on-error: true
+        - name: Output results
+          if: ${{ steps.tests.outcome == 'failure' }}
+          uses: marocchino/sticky-pull-request-comment@v2
+          with:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            header: Unit test results
+            message: |
+                ``` bash
+                ${{ steps.tests.outputs.result }}
+                ```
+        - name: Fail if tests failed
+          if: ${{ steps.tests.outcome == 'failure' }}
+          run: exit 1
+        
