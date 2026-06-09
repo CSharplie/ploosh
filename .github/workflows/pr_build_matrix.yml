@@ -3,7 +3,7 @@ name: 'Build and test matrix'
 on:
   pull_request:
     branches:
-      - main
+      - *
   workflow_dispatch:
 
 jobs:
