@@ -48,8 +48,8 @@ spark = [
 delta = ["deltalake==0.23.2"]
 mysql = ["pymysql==1.1.0"]
 postgresql = ["pg8000==1.30.3"]
-sqlserver = ["pyodbc==5.0.1"]
-odbc = ["pyodbc==5.0.1"]
+sqlserver = ["pyodbc==5.2.0"]
+odbc = ["pyodbc==5.2.0"]
 snowflake = ["snowflake-sqlalchemy==1.5.1"]
 databricks = ["databricks-sql-connector==2.9.3"]
 bigquery = [
@@ -73,7 +73,7 @@ full = [
     "requests==2.31.0",
     "pymysql==1.1.0",
     "pg8000==1.30.3",
-    "pyodbc==5.0.1",
+    "pyodbc==5.2.0",
     "snowflake-sqlalchemy==1.5.1",
     "databricks-sql-connector==2.9.3",
     "sqlalchemy-bigquery==1.9.0; python_version < '3.13'",
