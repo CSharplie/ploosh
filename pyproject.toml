@@ -63,7 +63,7 @@ xmla = [
     "pyadomd==0.1.1",
     "azure-identity>=1.16.0",
 ]
-fabric = ["semantic-link-labs==0.14.3"]
+fabric = ["semantic-link-labs==0.14.3; python_version < '3.13'"]
 
 # Aggregate of every connector (previous `ploosh` full package)
 full = [
@@ -83,7 +83,7 @@ full = [
     "pydata-google-auth==1.8.2",
     "pyadomd==0.1.1",
     "azure-identity>=1.16.0",
-    "semantic-link-labs==0.14.3",
+    "semantic-link-labs==0.14.3; python_version < '3.13'",
 ]
 
 # Development and CI tooling
