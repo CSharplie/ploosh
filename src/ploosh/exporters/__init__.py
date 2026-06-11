@@ -24,9 +24,9 @@ def get_exporters():
         # Inspect the module to find classes that start with "Exporter"
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and name.startswith("Exporter"):
-                current_connector = obj()  # Instantiate the exporter class
+                current_exporter = obj()  # Instantiate the exporter class
                 connectors[
-                    current_connector.name
-                ] = current_connector  # Add the exporter to the connectors dictionary
+                    current_exporter.name
+                ] = current_exporter  # Add the exporter to the connectors dictionary
 
     return connectors
