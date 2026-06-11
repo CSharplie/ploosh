@@ -3,7 +3,7 @@
 
 import urllib
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from connectors.connector import Connector
 
 
@@ -52,9 +52,7 @@ class ConnectorMYSQL(Connector):
         ]
         self.configuration_definition = [{"name": "query"}, {"name": "connection"}]
 
-    def get_data(self, configuration: dict, connection: dict):
-        """Get data from source"""
-
+    def __get_sql_connection(self, connection: dict):
         # Use the provided connection string if mode is "connection_string"
         connection_string = connection["connection_string"]
         if connection["mode"] == "password":
@@ -81,6 +79,14 @@ class ConnectorMYSQL(Connector):
             connection_string, echo = False, connect_args = connect_args
         )
 
+        return sql_connection
+
+    def get_data(self, configuration: dict, connection: dict):
+        """Get data from source"""
+
+        # Get the SQL connection
+        sql_connection = self.__get_sql_connection(connection)
+
         # Store the executed query for reference
         self.executed_action = configuration["query"]
 
@@ -88,3 +94,15 @@ class ConnectorMYSQL(Connector):
         df = pd.read_sql(configuration["query"], sql_connection)
 
         return df
+
+    def execute_query(self, query: str, connection: dict, parameters: dict | tuple | None = None):
+        """Execute query on the database"""
+
+        # Get the SQL connection
+        sql_connection = self.__get_sql_connection(connection)
+
+        # Execute the SQL query
+        with sql_connection.begin() as conn:
+            result = conn.execute(text(query), parameters if parameters is not None else {})
+
+        return result
