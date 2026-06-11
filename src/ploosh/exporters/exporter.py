@@ -13,6 +13,8 @@ class Exporter:
     """Test result exporter"""
     name = None  # Name of the exporter
     output_path = None  # Output path for the exported results
+    connection = None  # Connection details for the destination (e.g., database connection string, API endpoint)
+    connector = None # Connector instance to interact with the destination (e.g., database connector, API client)
 
     @staticmethod
     def date_to_string(data):
@@ -25,7 +27,6 @@ class Exporter:
     def export(self, cases: dict, execution_id: str):
         """Export test case results to the destination"""
         return None
-
 
     def export_gap_file(self, detail_file_path: str, df_compare_gap):
         """Export comparison gap to a styled Excel file."""

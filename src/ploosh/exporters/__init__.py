@@ -4,9 +4,9 @@ import os
 import inspect
 
 
-def get_exporters():
+def get_exporters(connections={}, connectors={}):
     """Get all existing exporters"""
-    connectors = {}
+    exporters = {}
 
     # List all Python files in the current directory that start with "exporter_"
     files = [
@@ -25,8 +25,25 @@ def get_exporters():
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and name.startswith("Exporter"):
                 current_exporter = obj()  # Instantiate the exporter class
-                connectors[
-                    current_exporter.name
-                ] = current_exporter  # Add the exporter to the connectors dictionary
 
-    return connectors
+                if current_exporter.name is None:
+                    continue  # Skip if is the mother class Exporter without a defined name
+
+                # Get the connection for the exporter if defined in the connections file by __export__ name
+                connection = None
+                if "__export__" in connections.keys() and connections["__export__"]["type"].upper() == current_exporter.name.upper():
+                    connection = connections["__export__"]
+
+                # Get the connector for the exporter if defined in the connectors
+                # Will be used to execute the export query
+                connector = None
+                if current_exporter.name.upper() in connectors.keys():
+                    connector = connectors[current_exporter.name.upper()]
+
+                current_exporter.connection = connection
+                current_exporter.connector = connector
+                exporters[
+                    current_exporter.name
+                ] = current_exporter  # Add the exporter to the exporters dictionary
+
+    return exporters
