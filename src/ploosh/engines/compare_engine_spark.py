@@ -174,13 +174,12 @@ class CompareEngineSpark(CompareEngine):
                 self.error_message = "Some rows are not equal between source dataset and expected dataset"
                 self.error_type = "data"
 
-
-                nouvelles_colonnes = []
+                new_columns = []
                 for column in df_differences.columns:
-                    base, suffixe = column.rsplit('_', maxsplit=1)
-                    nouvelles_colonnes.append((base, suffixe))
+                    base, suffix = column.rsplit('_', maxsplit=1)
+                    new_columns.append((base, suffix))
 
-                df_differences.columns = pd.MultiIndex.from_tuples(nouvelles_colonnes)
+                df_differences.columns = pd.MultiIndex.from_tuples(new_columns)
 
                 self.df_compare_gap = df_differences.reindex(sorted(df_differences.columns), axis=1)
 
