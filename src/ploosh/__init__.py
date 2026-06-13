@@ -16,7 +16,8 @@ def execute_cases(
     filter=None,
     path_output=None,
     variables=None,
-    workers = 1
+    workers = 1,
+    export="json"
 ):
     """Execute test cases with the given parameters"""
     args = ["ploosh"]
@@ -56,6 +57,11 @@ def execute_cases(
         for key, value in variables.items():
             args.append(f"--p_{key}")
             args.append(value)
+
+    # Add exporter parameter to arguments if provided
+    if export is not None:
+        args.append("--export")
+        args.append(export)
 
     # Execute the test cases with the constructed arguments
     execute(args, spark_session)

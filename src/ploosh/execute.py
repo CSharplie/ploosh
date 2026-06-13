@@ -108,13 +108,15 @@ def execute(args=None, spark_session=None):
         # Load connectors and exporters
         Log.print_message("Load connectors")
         connectors = get_connectors(spark_session)
-        Log.print_message("Load exporters")
-        exporters = get_exporters()
 
         # Load configuration and test cases
         Log.print_message("Load configuration")
-        configuration = Configuration(parameters, connectors, exporters)
+        configuration = Configuration(parameters, connectors)
         cases = configuration.get_cases()
+
+        Log.print_message("Load exporters")
+        exporters = get_exporters(configuration.connections, connectors)
+        configuration.set_exporter(exporters)
     except Exception as e:
         # Handle any errors that occur during initialization
         Log.print_error(str(e))

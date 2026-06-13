@@ -1,5 +1,6 @@
 """Comparison engine for spark connectors"""
 
+import pandas as pd
 from pyspark.sql import DataFrame, Window
 from pyspark.sql.functions import col, lower, trim, abs, when, lit, row_number
 from pyspark.sql.types import NumericType
@@ -173,7 +174,14 @@ class CompareEngineSpark(CompareEngine):
                 self.error_message = "Some rows are not equal between source dataset and expected dataset"
                 self.error_type = "data"
 
-            self.df_compare_gap = df_differences.reindex(sorted(df_differences.columns), axis=1)
+                new_columns = []
+                for column in df_differences.columns:
+                    base, suffix = column.rsplit('_', maxsplit=1)
+                    new_columns.append((base, suffix))
+
+                df_differences.columns = pd.MultiIndex.from_tuples(new_columns)
+
+                self.df_compare_gap = df_differences.reindex(sorted(df_differences.columns), axis=1)
 
             return False
 

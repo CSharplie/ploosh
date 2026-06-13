@@ -15,6 +15,10 @@ class Connector:
         """Get data from connector"""
         return None  # This method should be overridden by subclasses to fetch data
 
+    def execute_query(self, query: str, connection: dict, parameters: dict | tuple | None = None):
+        """Execute the action defined in the configuration (e.g., run a query, execute a command, etc.)"""
+        return None
+
     def get_executed_action(self):
         """Get executed query, command, file path, etc."""
         return self.executed_action  # This method should be overridden by subclasses to return executed actions

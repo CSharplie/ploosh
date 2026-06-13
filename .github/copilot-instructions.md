@@ -45,3 +45,4 @@ pytest
 - Include tests for new logic or bug fixes when feasible.
 - Avoid unrelated refactors in feature or fix PRs.
 - Ensure code and docs remain consistent before finalizing.
+- Follow the PR template in `.github/pull_request_template.md` when describing changes.
