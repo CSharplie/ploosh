@@ -24,7 +24,7 @@ class ExporterPostgreSQL(Exporter):
             success_rate FLOAT 
         );
     """
-    
+
     INSERT_QUERY = """
         INSERT INTO ploosh_results (
             execution_id, name, state,
@@ -45,13 +45,12 @@ class ExporterPostgreSQL(Exporter):
 
     def export(self, cases: dict, execution_id: str):
         """Export test case results to a PostgreSQL database"""
-        
         # Check if connection and connector are available
         if self.connection is None:
-            raise Exception("PostgreSQL export connection not found. Add __export__ section to connections.yml")
+            raise RuntimeError("PostgreSQL export connection not found. Add __export__ section to connections.yml")
         if self.connector is None:
-            raise Exception("PostgreSQL connector not found. Make sure pg8000 is installed.")
-        
+            raise RuntimeError("PostgreSQL connector not found. Make sure pg8000 is installed.")
+
         self.connector.execute_query(self.CREATE_TABLE_QUERY, connection=self.connection)
 
         try:
@@ -79,5 +78,5 @@ class ExporterPostgreSQL(Exporter):
                         "success_rate": case.success_rate,
                     }
                 )
-        except Exception as e:
-            raise Exception(f"Failed to export results to PostgreSQL: {str(e)}")
+        except RuntimeError as e:
+            raise RuntimeError(f"Failed to export results to PostgreSQL: {str(e)}") from e
