@@ -3,6 +3,7 @@ from datetime import datetime
 from ploosh.exporters.exporter_postgresql import ExporterPostgreSQL
 
 
+
 class MockDuration:
     def __init__(self, start, end, duration):
         self.start = start
