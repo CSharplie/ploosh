@@ -97,6 +97,8 @@ Exporters save test results to files. All exporters also generate **Excel files 
 | JSON | `test_results.json` | Structured results with nested objects |
 | CSV | `test_results.csv` | Flattened results, one row per test |
 | TRX | `test_results.xml` | Visual Studio Test Results format, compatible with Azure DevOps |
+| MySQL | `ploosh_results` table | Results written to a MySQL database table |
+| PostgreSql | `ploosh_results` table | Results written to a PostgreSql database table |
 
 For each failed test, an `.xlsx` file is generated containing only the rows and columns that differ, with `{column}_source` and `{column}_expected` side by side. This makes it easy to identify exactly where source and expected data diverge.
 

@@ -71,9 +71,8 @@ class ExporterJSON(Exporter):
             if case.df_compare_gap is not None:
                 detail_file_path = f"{self.output_path}/json/test_results/{name}.xlsx"
 
-                # Create directories if they do not exist
-                os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
-                case.df_compare_gap.to_excel(detail_file_path)
+                self.export_gap_file(detail_file_path, case.df_compare_gap)
+
 
                 case_data["error"]["detail_file_path"] = detail_file_path
 

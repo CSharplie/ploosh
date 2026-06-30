@@ -43,14 +43,13 @@ class Configuration:
         {"name": "expected.connection", "default": None},
     ]
 
-    def __init__(self, parameters: Parameters, connectors: dict, exporters: dict):
+    def __init__(self, parameters: Parameters, connectors: dict):
         """Initialize Configuration with parameters, connectors, and exporters"""
         self.parameters = parameters
         self.connectors = connectors
 
         # Initialize connections and set the exporter
         self.init_connections()
-        self.set_exporter(exporters)
 
     def get_module_type(self, obj: dict):
         """Get type of module from user configuration"""

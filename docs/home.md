@@ -51,6 +51,8 @@ Ploosh runs natively on Spark for validating large-scale data platforms.
 - [JSON](/docs/exporters/json) — Default format, structured results
 - [CSV](/docs/exporters/csv) — Flat file format
 - [TRX](/docs/exporters/trx) — Visual Studio Test Results, Azure DevOps compatible
+- [MySQL](/docs/exporters/mysql) — Write results to a MySQL database table
+- [PostgreSql](/docs/exporters/postgresql) — Write results to a PostgreSql database table
 
 ## CI/CD Pipelines
 

@@ -30,9 +30,7 @@ class ExporterTRX(Exporter):
             detail_file_path = f"{output_folder}/test_results/In/{execution_id}/{case_name}.xlsx"
             result_files_xml = f"<ResultFiles><ResultFile path='{case_name}.xlsx'/></ResultFiles>"
 
-            # Create directories if they do not exist
-            os.makedirs(os.path.dirname(detail_file_path), exist_ok=True)
-            current_case.df_compare_gap.to_excel(detail_file_path)
+            self.export_gap_file(detail_file_path, current_case.df_compare_gap)
 
         return output_message_xml, result_files_xml
 

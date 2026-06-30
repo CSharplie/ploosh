@@ -52,5 +52,7 @@ Ploosh provides two execution modes to adapt to different environments:
 | JSON | JSON file with detailed results |
 | CSV | CSV file with flattened results |
 | TRX | Visual Studio Test Results XML format, compatible with Azure DevOps Test Plans |
+| MySQL | Results written to a MySQL database table |
+| PostgreSql | Results written to a PostgreSql database table |
 
 All export formats also generate Excel files (XLSX) with detailed gap analysis for failed test cases.

@@ -37,6 +37,7 @@ class ConnectorFabricKqlSpark(Connector):
     def get_data(self, configuration: dict, connection: dict):
         """Get data from source"""
 
+        from pyspark.sql.types import StructType
         from notebookutils import mssparkutils
 
         access_token = mssparkutils.credentials.getToken("kusto")
@@ -83,12 +84,17 @@ class ConnectorFabricKqlSpark(Connector):
                     columns = [col["ColumnName"] for col in data_table["Columns"]]
                     rows = data_table["Rows"]
 
-                    df = pd.DataFrame(rows, columns=columns)
-                    df = self.spark.createDataFrame(df)
+                    if not rows or len(rows) == 0 or not columns or len(columns) == 0:
+                        empty_rdd = self.spark.sparkContext.emptyRDD()
+                        columns = StructType([])
+                        df = self.spark.createDataFrame(data = empty_rdd, schema = columns)
+                    else:
+                        df = pd.DataFrame(rows, columns=columns)
+                        df = self.spark.createDataFrame(df)
                 else:
-                    raise ValueError(
-                        "Fabric KQL API response does not contain a PrimaryResult table."
-                    )
+                    empty_rdd = self.spark.sparkContext.emptyRDD()
+                    columns = StructType([])
+                    df = self.spark.createDataFrame(data = empty_rdd, schema = columns)
             else:
                 raise ValueError(
                     f"Fabric KQL API request failed with status {response.status_code}: {response.text}"
